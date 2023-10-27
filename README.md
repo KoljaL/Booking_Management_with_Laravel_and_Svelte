@@ -1,7 +1,7 @@
 # Progress
 
 ## 27.10.23
-- tried to get an over view of the Laravel components: [LaravelComponents.md](LaravelComponents.md)
+- tried to get an over view of the Laravel components: [LaravelComponents.md](API/LaravelComponents.md)
 - completly new Laravel installation
 - added mogration, model, controller and routes for Location, Member, Staff and Booking
 - Staff and Member are using the same User table, but have different `role`  
@@ -20,7 +20,7 @@
   Password for all is `password`
 - added CRUD for `Staff` -> `Member`
 - binded `name`, `email`and `role` from the `User` Modell to the `Member` Modell 
-- tried to write a jurnal for the progress: [jurnal.md](Jurnal.md), but it is now partially outdated
+- tried to write a jurnal for the progress: [jurnal.md](API/Jurnal.md), but it is now partially outdated
 - project ist ready to use, SQLite database and no secrets in the .env file
 - initial commit
 
