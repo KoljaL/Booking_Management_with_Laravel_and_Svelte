@@ -1,0 +1,32 @@
+meta {
+  name: all Bookings
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{url}}/api/member/2
+  body: formUrlEncoded
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admtoken}}
+}
+
+auth:basic {
+  username: 
+  password: 
+}
+
+auth:bearer {
+  token: {{adm_token}}
+}
+
+vars:pre-request {
+  ~adm_token: {{adm_token}}
+}
+
+script:pre-request {
+  bru.collectionVariables.adm_token
+}

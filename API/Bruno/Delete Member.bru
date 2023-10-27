@@ -1,0 +1,44 @@
+meta {
+  name: Delete Member
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{url}}/api/member/2
+  body: formUrlEncoded
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admtoken}}
+}
+
+auth:basic {
+  username: 
+  password: 
+}
+
+auth:bearer {
+  token: {{adm_token}}
+}
+
+body:form-urlencoded {
+  name: updatexxx
+  email: test@web.de
+  staff_id: 2
+  location_id: 2
+  phone: 1234
+  jc_number: absd
+  active: 1
+  archieved: true
+  max_booking: 3
+}
+
+vars:pre-request {
+  ~adm_token: {{adm_token}}
+}
+
+script:pre-request {
+  bru.collectionVariables.adm_token
+}

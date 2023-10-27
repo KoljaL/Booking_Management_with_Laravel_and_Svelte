@@ -1,0 +1,20 @@
+meta {
+  name: create Member
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{url}}/api/member/
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admtoken}}
+}
+
+body:multipart-form {
+  name: Testuser
+  email: ddddfddcdfdd@tedts.dd
+}
