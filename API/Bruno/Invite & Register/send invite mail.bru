@@ -1,0 +1,36 @@
+meta {
+  name: send invite mail
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{url}}/api/member/invite/1
+  body: formUrlEncoded
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admtoken}}
+}
+
+auth:basic {
+  username: 
+  password: 
+}
+
+auth:bearer {
+  token: {{adm_token}}
+}
+
+vars:post-response {
+  invite_token: res.body.invite_token
+}
+
+script:post-response {
+  console.log(res.body.invite_token)
+}
+
+tests {
+  console.log(res.body.invite_token)
+}

@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\MemberPasswordResetMail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Mail\InviteMail;
+use Illuminate\Support\Benchmark;
 
 class MemberController extends Controller {
 
@@ -21,25 +24,47 @@ class MemberController extends Controller {
      * if the authUser is an admin, then get all members
      */
     public function index() {
-        // return Member::with('user')->get();
-        $authUser = Auth::user();
+        // $members = Member::with('user')->get();
 
-        if ($authUser) {
-            if (isAdmin($authUser)) {
-                $members = Member::with('user')->get();
-            } else {
-                $members = $authUser->staff->members()->with('user')->get();
-            }
 
-            // remove "user" key from the member object
-            $members->transform(function ($member) {
-                unset($member['user']);
-                return $member;
-            });
-            return $members;
+        Benchmark::dd([
+            'join' => fn() => Member::select('members.*', 'users.name as user_name', 'users.email as user_email')
+                ->join('users', 'members.user_id', '=', 'users.id')
+                ->get(),
+            "with" => fn() => Member::with(['user' => function ($query) {
+                $query->select('id', 'name', 'email');
+            }])->get(),
+        ]);
 
-        }
-        return response()->json(['message' => 'Members not found or no associated staff.'], 404);
+        $members = Member::with(['user' => function ($query) {
+            $query->select('id', 'name', 'email');
+        }])->get();
+
+        // $members = Member::select('members.*', 'users.name as user_name', 'users.email as user_email')
+        //     ->join('users', 'members.user_id', '=', 'users.id')
+        //     ->get();
+
+        return response()->json($members);
+
+        // $authUser = Auth::user();
+        // if ($authUser) {
+        //     if (isAdmin($authUser)) {
+        //         $members = Member::with('user')->get();
+        //     } else {
+        //         // $members = $authUser->staff->members()->with('user')->get();
+        //         // get all Member with the same location_id as the logged in staff
+        //         $members = Member::where('location_id', getLocationId($authUser))->with('user')->get();
+        //     }
+
+        //     // remove "user" key from the member object
+        //     $members->transform(function ($member) {
+        //         unset($member['user']);
+        //         return $member;
+        //     });
+        //     return $members;
+
+        // }
+        // return response()->json(['message' => 'Members not found or no associated staff.'], 404);
     }
 
     /*
@@ -47,21 +72,22 @@ class MemberController extends Controller {
      * Get selected data of a single member from the same location as the logged in staff (authUser),
      * including all bookings for this member
      */
-    public function show(Member $member) {
+    public function show($id) {
+        // $member;
         try {
-            // get the logged in user for the staff_id 
+            $member = Member::findOrFail($id);
             $authUser = Auth::user();
-
             if (isAdmin($authUser) || $member->staff_id == $authUser->staff->id) {
-                // Get all bookings for this member
                 $member->load('booking');
                 return $member;
+            } else {
+                return response()->json(['message' => 'Member not associated staff.', 'data' => $id], 404);
             }
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Member not found or no associated staff.'], 404);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Member not found', 'data' => $id], 404);
         }
-        return response()->json(['message' => 'Member not found or no associated staff.'], 404);
     }
+
 
 
     /*
@@ -71,7 +97,7 @@ class MemberController extends Controller {
     public function store(Request $request) {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|string|email|max:255|unique:users',
         ]);
 
         // get the logged in user for the staff_id, location_id and max_booking
@@ -79,6 +105,7 @@ class MemberController extends Controller {
         $location_id = getLocationId($authUser);
         $max_booking = getMaxBooking($location_id);
         $staff_id = getStaffId($authUser);
+        $invite_token = Str::random(60);
 
         // first create a new user
         $user = User::create([
@@ -86,6 +113,7 @@ class MemberController extends Controller {
             'email' => $request->email,
             'password' => bcrypt('password'),
             'role' => 'member',
+            'invite_token' => $invite_token,
         ]);
 
         // then create a new member
@@ -111,17 +139,95 @@ class MemberController extends Controller {
      * INVITE
      * Send a password reset link to the given user.
      */
+
     public function invite(Member $member) {
-        // // Generate a unique token for the member.
-        // $token = Str::random(60);
-        // // Save the token to the member's record.
-        // $member->update(['token' => $token]);
-        // // Send an email with a one-time link.
-        // Mail::to($member->email)->send(new MemberPasswordResetMail($token));
-        // Return a response indicating success.
-        // return response()->json(['message' => 'Password reset link sent']);
+        try {
+            $user = $member->user;
+            $invite_token = Str::random(60);
+            $user->invite_token = $invite_token;
+            $user->save();
+            $mailData = [
+                'title' => 'Login to your account',
+                'body' => 'To set your password, please click the button below.',
+                'token' => $invite_token,
+            ];
+
+            Mail::to($member->email)->send(new InviteMail($mailData));
+            return response()->json([
+                'message' => 'Email has been sent.',
+                'member' =>
+                    [
+                        'name' => $member->name,
+                        'email' => $member->email,
+                    ]
+            ], 200);
+        } catch (\Throwable $th) {
+            // Log the exception for debugging
+            \Log::error('Error sending email: ' . $th->getMessage());
+            return response()->json([
+                'message' => 'Error sending email',
+                'error' => $th->getMessage()
+            ], 500);
+        }
     }
 
+
+
+    // public function invite(Member $member) {
+    //     // dd($member);
+    //     try {
+    //         $user = $member->user;
+    //         $invite_token = Str::random(60);
+    //         $user->invite_token = $invite_token;
+    //         $user->save();
+    //         $mailData = [
+    //             'title' => 'Login to your account',
+    //             'body' => 'To set your password, please click the button below.',
+    //             'invite_token' => $invite_token,
+    //         ];
+
+
+    //         Mail::to('lasar@rasal.de')->send(new InviteMail($mailData));
+    //         return response()->json([
+    //             'message' => 'Email has been sent.'
+    //         ], 200);
+    //     } catch (\Throwable $th) {
+    //         return response()->json([
+    //             'message' => 'Error sending email',
+    //             'error' => $th
+    //         ], 500);
+    //     }
+    // }
+
+
+    // public function invite(Member $member) {
+
+    //     $user = $member->user;
+    //     $email = $user->email;
+    //     $invite_token = Str::random(60);
+    //     $user->invite_token = $invite_token;
+    //     $user->save();
+
+
+    //     $testMailData = [
+    //         'title' => 'Test Email From AllPHPTricks.com',
+    //         'body' => 'This is the body of test email.',
+    //         'invite_token' => $invite_token,
+    //     ];
+    //     // dd($email);
+    //     try {
+    //         $email = 'lasar@rasal.de';
+    //         Mail::to('lasar@rasal.de')->send(new InviteMail($testMailData));
+    //         return response()->json([
+    //             'message' => 'Email has been sent.'
+    //         ], 200);
+    //     } catch (\Throwable $th) {
+    //         return response()->json([
+    //             'message' => 'Error sending email',
+    //             'error' => $th
+    //         ], 500);
+    //     }
+    // }
     /*
      * UPDATE
      * Update a Member
@@ -145,7 +251,6 @@ class MemberController extends Controller {
             // return error message 
             return response()->json(['message' => $e->getMessage()], 500);
         }
-
         // remove "user" key from the member object and return the updated member
         unset($member['user']);
         return $member;
@@ -340,3 +445,22 @@ function getMaxBooking($location_id) {
 //     'archived' => 0,
 //     'staff_id' => getStaffId($authUser),
 // ]);
+
+
+// public function showxx(Member $member) {
+//     // dd($member);
+//     // return response()->json(['message' => 'HAAAALLLLOOOO.'], 200);
+//     try {
+//         // get the logged in user for the staff_id 
+//         $authUser = Auth::user();
+
+//         if (isAdmin($authUser) || $member->staff_id == $authUser->staff->id) {
+//             // Get all bookings for this member
+//             $member->load('booking');
+//             return $member;
+//         }
+//     } catch (\Exception $e) {
+//         return response()->json(['message' => 'Member not found or no associated staff.'], 404);
+//     }
+//     return response()->json(['message' => 'Member not found or no associated staff.'], 404);
+// }

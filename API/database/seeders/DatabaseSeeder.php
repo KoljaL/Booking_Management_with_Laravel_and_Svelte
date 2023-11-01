@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder {
             ])->id,
             'is_admin' => true,
             'phone' => '0123456789',
-            'location_id' => Location::inRandomOrder()->first()->id,
+            'location_id' => 1,
         ]);
 
         // now create one normal staff user
@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder {
             ])->id,
             'is_admin' => false,
             'phone' => '0123456789',
-            'location_id' => Location::inRandomOrder()->first()->id,
+            'location_id' => 1,
         ]);
 
         // now create 5 more staff users
@@ -60,19 +60,19 @@ class DatabaseSeeder extends Seeder {
                 'password' => bcrypt('password'),
                 'role' => 'member',
             ])->id,
+            'location_id' => 1,
+            'staff_id' => 2,
             'phone' => '0123456789',
-            'location_id' => Location::inRandomOrder()->first()->id,
             'jc_number' => '1234567890',
             'max_booking' => 5,
             'active' => true,
             'archived' => false,
-            'staff_id' => Staff::inRandomOrder()->first()->id,
         ]);
 
         // now create 5 more member users
-        Member::factory(5)->create();
+        Member::factory(15)->create();
 
         // at last, create 5 bookings
-        Booking::factory(5)->create();
+        Booking::factory(50)->create();
     }
 }

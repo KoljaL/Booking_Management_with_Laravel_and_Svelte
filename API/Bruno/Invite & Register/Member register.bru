@@ -1,0 +1,17 @@
+meta {
+  name: Member register
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{url}}/api/register
+  body: formUrlEncoded
+  auth: none
+}
+
+body:form-urlencoded {
+  password: password
+  invite_token: kLM6XVC5tNGRLF5SKkNoukWGtQ6qo386qf6W5TskC4ds5SkHDO6cfEkJQqXb
+  ~invite_token: {{invite_token}}
+}

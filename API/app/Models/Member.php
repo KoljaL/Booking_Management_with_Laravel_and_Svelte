@@ -11,8 +11,17 @@ class Member extends Model {
 
     // $fillable is used to specify which attributes can be mass-assigned
     // that is, which attributes can be passed into the create() method
-    protected $fillable = ["name", "email", "password", "phone", "location_id", "jc_number", "max_booking", "active", "archived", "staff_id"];
-
+    // protected $fillable = ["name", "email", "password", "phone", "location_id", "jc_number", "max_booking", "active", "archived", "staff_id"];
+    protected $fillable = [
+        'user_id',
+        'location_id',
+        'staff_id',
+        'phone',
+        'jc_number',
+        'max_booking',
+        'active',
+        'archived',
+    ];
     // $cast is used to specify the data type of the attributes
     // so that when you retrieve the attributes, they will be of the correct data type
     protected $casts = [
@@ -25,31 +34,42 @@ class Member extends Model {
     // A carbon object is a wrapper around the PHP DateTime class
     protected $dates = ['created_at', 'updated_at'];
 
-
-
-    // combine the update of the User and Member models into a single transaction
-    // so that if one fails, the other will be rolled back
-    public function updateMemberAndUser($userData, $memberData) {
-        DB::beginTransaction();
-        try {
-            // Update User attributes
-            $this->user->update($userData);
-            // Update Member attributes
-            $this->update($memberData);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            // return error message 
-            return response()->json(['message' => $e->getMessage()], 500);
-        }
+    public function user() {
+        return $this->belongsTo(User::class);
     }
+
+    public function location() {
+        return $this->belongsTo(Location::class);
+    }
+    public function staff() {
+        return $this->belongsTo(Staff::class);
+    }
+    public function bookings() {
+        return $this->hasMany(Booking::class);
+    }
+
+    // // A member has one location
+    // public function location() {
+    //     return $this->belongsTo(Location::class, 'location_id');
+    // }
+
+    // // A member was created by one staff
+    // public function staff() {
+    //     return $this->belongsTo(Staff::class, 'staff_id');
+    // }
+
+    // //A membercan have many bookings
+    // public function booking() {
+    //     return $this->hasMany(Booking::class, 'member_id');
+    // }
 
 
     // with the 'user' relationship, you can use $member->user->name
     // to get the name of the user associated with this member
-    public function user() {
-        return $this->belongsTo(User::class);
-    }
+    // public function user() {
+    //     return $this->belongsTo(User::class, 'user_id');
+    // }
+
 
     // Eager load the 'user' relationship by default, 
     // so you don't have to do Member::with('user')->get();
@@ -57,41 +77,48 @@ class Member extends Model {
 
     // include the 'name' and 'email' attributes into the $member object
     // so you can use $member->name and $member->email
-    public function toArray() {
-        $data = parent::toArray();
-        $data['name'] = $this->name;
-        $data['email'] = $this->email;
-        $data['role'] = $this->user->role;
-        return $data;
-    }
+    // public function toArray() {
+    //     $data = parent::toArray();
+    //     if ($this->user) {
+    //         $data['name'] = $this->user->name;
+    //         $data['email'] = $this->user->email;
+    //         $data['role'] = $this->user->role;
+    //     }
+    //     // $data['name'] = $this->name;
+    //     if ($this->email) {
+    //         $data['email'] = $this->email;
+    //     }
+    //     if ($this->user) {
+    //         $data['role'] = $this->user->role;
+    //     }
+    //     return $data;
+    // }
 
-    // Accessor for the 'name' attribute, 
-    // so you can use $member->name
-    public function getNameAttribute() {
-        return $this->user->name;
-    }
-    // Accessor for the 'email' attribute, 
-    // so you can use $member->email
-    public function getEmailAttribute() {
-        return $this->user->email;
-    }
+    // // Accessor for the 'name' attribute, 
+    // // so you can use $member->name
+    // public function getNameAttribute() {
+    //     return $this->user->name ?? null;
+    //     // if ($this->user) {
+    //     //     return $this->user->name;
+    //     // }
+    // }
+    // // Accessor for the 'email' attribute, 
+    // // so you can use $member->email
+    // public function getEmailAttribute() {
+    //     return $this->user->email ?? null;
+    //     // if ($this->user) {
+    //     //     return $this->user->email;
+    //     // }
+    // }
 
-    // Accessor for the 'role' attribute,
-    // so you can use $member->role
-    public function getRoleAttribute() {
-        return $this->user->role;
-    }
-
-    public function staff() {
-        return $this->belongsTo(Staff::class);
-    }
-
-    public function booking() {
-        return $this->hasMany(Booking::class);
-    }
+    // // Accessor for the 'role' attribute,
+    // // so you can use $member->role
+    // public function getRoleAttribute() {
+    //     return $this->user->role ?? null;
+    //     // if ($this->user) {
+    //     //     return $this->user->role;
+    //     // }
+    // }
 
 
-    public function location() {
-        return $this->belongsTo(Location::class);
-    }
 }

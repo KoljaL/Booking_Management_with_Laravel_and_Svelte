@@ -8,8 +8,49 @@ use App\Models\Staff;
 use App\Models\Member;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller {
+
+    // register function, gets a token and a password via post request
+    // if this token exixts in the user table add the password to the user
+
+    public function register(Request $request) {
+        $request->validate([
+            // 'invite_token' => 'required|string|min:8|confirmed',
+            'invite_token' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $user = User::where('invite_token', $request->invite_token)->first();
+
+        // dd($user);
+        if ($user) {
+            $user->password = Hash::make($request->password);
+            $user->invite_token = null;
+            $user->save();
+            return response()->json([
+                'user' => $user,
+                'request' => $request->token,
+                'message' => 'Password added to user',
+            ], 201);
+        } else {
+            return response()->json([
+                'message' => 'Token not fosund',
+                'user' => $user,
+                'requesr' => $request->all(),
+                // to-do remove this
+            ], 404);
+        }
+
+    }
+
+
+    /**
+     * Summary of login
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function login(Request $request) {
         $request->validate([
             'email' => 'required|email',

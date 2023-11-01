@@ -16,13 +16,20 @@ class User extends Authenticatable {
     const ROLE_STAFF = 'staff';
     const ROLE_MEMBER = 'member';
 
+    public function staff() {
+        return $this->hasOne(Staff::class);
+    }
     public function member() {
         return $this->hasOne(Member::class);
     }
 
-    public function staff() {
-        return $this->hasOne(Staff::class);
-    }
+    // public function member() {
+    //     return $this->hasOne(Member::class, 'user_id', 'id');
+    // }
+
+    // public function staff() {
+    //     return $this->hasOne(Staff::class, 'user_id', 'id');
+    // }
 
     /**
      * The attributes that are mass assignable.

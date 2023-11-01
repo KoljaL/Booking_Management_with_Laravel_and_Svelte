@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Benchmark;
 
 class BookingController extends Controller {
 
@@ -15,16 +16,44 @@ class BookingController extends Controller {
      * GET /api/booking
      */
     public function index() {
-        // return Booking::all();
+
+        // Benchmark::dd([
+        //     'Booking::get()' => fn() => Booking::get(), // 0.5 ms
+        //     "Booking::with('location')->with('member')->get()" => fn() => Booking::with('location')->with('member')->get(), // 20.0 ms
+        // ]);
+
         $authUser = Auth::user();
 
         if ($authUser) {
             if (isAdmin($authUser)) {
                 // return Booking::all();
-                $bookings = Booking::all();
+                // $bookings = Booking::with('location')->with('member')->get();
+
+
+                // $bookings = Booking::get();
+
+                $bookings = Booking::with([
+                    'location' => function ($query) {
+                        $query->select('id', 'city');
+                    },
+                    'member' => function ($query) {
+                        $query->select('id');
+                        $query->with('user:id,name');
+                    },
+                ])->get();
             } else {
-                $bookings = getMyBookings($authUser);
+                // $bookings = Booking::with('member')->where('location_id', $authUser->staff->location_id)->get();
+                // $bookings = Booking::where('location_id', getLocationId($authUser))->get();
+                // $bookings = Booking::with('location')->where('location_id', $authUser->staff->location_id)->get();
+                $bookings = Booking::where('location_id', $authUser->staff->location_id)->get();
+
             }
+
+            // $bookings->transform(function ($booking) {
+            //     unset($booking->user);
+            //     return $booking;
+            // });
+            return $bookings;
 
             // getthe member to this booking and return the member name
             $member = Booking::with('member')->get();
@@ -59,6 +88,10 @@ class BookingController extends Controller {
         $booking->delete();
         return response()->json(null, 204);
     }
+}
+
+function getLocationId($authUser) {
+    return $authUser->staff->location_id;
 }
 
 function isAdmin($authUser) {

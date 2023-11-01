@@ -12,18 +12,22 @@ return new class extends Migration {
         Schema::create('members', function (Blueprint $table) {
             // This is NOT the same ID as the "User" table's ID
             $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('location_id')->constrained();
+            $table->foreignId('staff_id')->constrained();
+            // // This is the ID of the user who is a member
+            // // $table->foreignId('user_id')->constrained('users');
+            // $table->unsignedBigInteger('user_id');
+            // $table->foreign('user_id')->references('id')->on('users');
 
-            // This is the ID of the user who is a member
-            $table->foreignId('user_id')->constrained('users');
-
-            // This is the ID of the staff member who created the member
-            $table->unsignedBigInteger('staff_id');
-            $table->foreign('staff_id')->references('id')->on('staff');
+            // // This is the ID of the staff member who created the member
+            // $table->unsignedBigInteger('staff_id');
+            // $table->foreign('staff_id')->references('id')->on('staff');
 
 
-            // This is the ID of the location where the member is registered
-            $table->unsignedBigInteger('location_id');
-            $table->foreign('location_id')->references('id')->on('locations');
+            // // This is the ID of the location where the member is registered
+            // $table->unsignedBigInteger('location_id');
+            // $table->foreign('location_id')->references('id')->on('locations');
 
             // These are the attributes of the member
             $table->string('phone')->nullable();
@@ -36,6 +40,15 @@ return new class extends Migration {
             // because the User model does not have timestamps anymore
             $table->timestamps();
         });
+
+        // Create an indexes on the 'user_id', 'location_id' and 'staff_id' columns,
+        // to speed up the search for members by these columns.
+        Schema::table('members', function (Blueprint $table) {
+            $table->index('user_id');
+            $table->index('location_id');
+            $table->index('staff_id');
+        });
+
     }
     // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 

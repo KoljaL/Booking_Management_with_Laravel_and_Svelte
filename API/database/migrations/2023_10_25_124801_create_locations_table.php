@@ -25,6 +25,12 @@ return new class extends Migration {
             $table->string('imap_pw');
             $table->timestamps();
         });
+
+        // Create an indexes on the 'city' column,
+        // to speed up the search for locations by these column.
+        Schema::table('locations', function (Blueprint $table) {
+            $table->index('city');
+        });
     }
 
     /**

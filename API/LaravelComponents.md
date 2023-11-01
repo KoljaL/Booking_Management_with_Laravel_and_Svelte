@@ -321,3 +321,351 @@ This code will listen for the event `PostCreated` and send a notification to the
 ## Sanctum
 
 **Sanctum** is Laravel's lightweight API authentication package. It provides a simple, convenient way to authenticate users in your single-page application (SPA), mobile application, or any other API client using Laravel. Sanctum allows each user of your application to generate multiple API tokens for their account. These tokens may be granted abilities / scopes which specify which actions the tokens are allowed to perform.
+
+
+
+
+# Misc
+
+## `belongsTo` vs `hasOne`
+In Laravel's Eloquent ORM, `belongsTo` and `hasOne` are two different types of relationships between database tables, and they represent the associations between models. Here's the key difference between the two:
+
+### `belongsTo` Relationship:
+
+- `belongsTo` is used to define a "parent" relationship where the current model "belongs to" another model.
+- It's typically used when the foreign key is on the current model's table to reference the related model's table.
+- For example, if you have a `Comment` model that belongs to a `Post`, you would define the relationship like this:
+    
+```php
+class Comment extends Model {
+  public function post() {         
+    return $this->belongsTo(Post::class);     
+  } 
+}
+```
+    
+### `hasOne` Relationship:
+
+- `hasOne` defines a "child" relationship where the current model has a single associated model.
+- It's typically used when the foreign key is on the related model's table to reference the current model's table.
+- For example, if you have a `User` model with a `Profile`, you would define the relationship like this:
+    
+```php
+class User extends Model {     
+  public function profile() {         
+    return $this->hasOne(Profile::class);    
+  } 
+}
+```
+
+So, the key distinction is the direction of the relationship and where the foreign key is located. `belongsTo` means the foreign key is on the current model's table, and it points to the related model's table, while `hasOne` means the foreign key is on the related model's table, and it points to the current model's table.
+
+I will build a Laravel API. 
+There will be four Models: `Location`, `Staff`, `Member` and `Booking`.
+And I need some help with the relationships.
+`Staff` and `Member` are both `User` extending the `User` Model from Laravel.
+Therefore Im using a Middleware to check the role of the user.
+That works fine.
+But now I need to set up the relationships.
+Both `Staff` and `Member` are working in a `Location`.
+A `Member`is created by a `Staff`.
+A `Member` can have create `Booking`s for himself, or a `Staff` can create `Booking`s for his `Member`.
+A `Booking` has the same `Location` as the `Member` or `Staff` who created it.
+
+## First i need the foreign keys for the relationships in the migrations.
+```php
+// /database/migrations/2021_10_01_000000_create_users_table.php
+public function up() {
+  Schema::create('users', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->string('email')->unique();
+    $table->timestamp('email_verified_at')->nullable();
+    $table->string('password');
+    $table->rememberToken();
+    $table->timestamps();
+    $table->string('role');
+  });
+}
+```
+
+```php
+// /database/migrations/2021_10_01_000000_create_locations_table.php
+public function up() {
+  Schema::create('locations', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->timestamps();
+  });
+}
+```
+```php
+// /database/migrations/2021_10_01_000000_create_staffs_table.php
+public function up() {
+  Schema::create('staffs', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->constrained();
+    $table->foreignId('location_id')->constrained();
+    $table->timestamps();
+  });
+}
+```
+```php
+// /database/migrations/2021_10_01_000000_create_members_table.php
+public function up() {
+  Schema::create('members', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->constrained();
+    $table->foreignId('location_id')->constrained();
+    $table->foreignId('staff_id')->constrained();
+    $table->timestamps();
+  });
+}
+```
+```php
+// /database/migrations/2021_10_01_000000_create_bookings_table.php
+public function up() {
+  Schema::create('bookings', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('member_id')->constrained();
+    $table->foreignId('location_id')->constrained();
+    $table->foreignId('staff_id')->constrained();
+    $table->timestamps();
+  });
+}
+```
+## Now I need to set up the relationships in the models.
+```php
+// /app/Models/Location.php
+class Location extends Model {
+  use HasFactory;
+  public function staffs() {
+    return $this->hasMany(Staff::class);
+  }
+  public function members() {
+    return $this->hasMany(Member::class);
+  }
+  public function bookings() {
+    return $this->hasMany(Booking::class);
+  }
+}
+```
+```php
+// /app/Models/Staff.php
+class Staff extends Model {
+  use HasFactory;
+  public function location() {
+    return $this->belongsTo(Location::class);
+  }
+  public function members() {
+    return $this->hasMany(Member::class);
+  }
+  public function bookings() {
+    return $this->hasMany(Booking::class);
+  }
+}
+```
+```php
+// /app/Models/Member.php
+class Member extends Model {
+  use HasFactory;
+  public function location() {
+    return $this->belongsTo(Location::class);
+  }
+  public function staff() {
+    return $this->belongsTo(Staff::class);
+  }
+  public function bookings() {
+    return $this->hasMany(Booking::class);
+  }
+}
+```
+```php
+// /app/Models/Booking.php
+class Booking extends Model {
+  use HasFactory;
+  public function location() {
+    return $this->belongsTo(Location::class);
+  }
+  public function staff() {
+    return $this->belongsTo(Staff::class);
+  }
+  public function member() {
+    return $this->belongsTo(Member::class);
+  }
+}
+```
+```php
+// /app/Models/User.php
+class User extends Authenticatable {
+  use HasApiTokens, HasFactory, Notifiable;
+  public function staff() {
+    return $this->hasOne(Staff::class);
+  }
+  public function member() {
+    return $this->hasOne(Member::class);
+  }
+}
+```
+
+Now I need to set up the factories.
+```php
+// /database/factories/LocationFactory.php
+public function definition() {
+  return [
+    'name' => $this->faker->company(),
+  ];
+}
+```
+```php
+// /database/factories/StaffFactory.php
+public function definition() {
+  return [
+    'user_id' => User::factory(),
+    'location_id' => Location::factory(),
+  ];
+}
+```
+```php
+// /database/factories/MemberFactory.php
+public function definition() {
+  return [
+    'user_id' => User::factory(),
+    'location_id' => Location::factory(),
+    'staff_id' => Staff::factory(),
+  ];
+}
+```
+```php
+// /database/factories/BookingFactory.php
+public function definition() {
+  return [
+    'member_id' => Member::factory(),
+    'location_id' => Location::factory(),
+    'staff_id' => Staff::factory(),
+  ];
+}
+```
+```php
+// /database/factories/UserFactory.php
+public function definition() {
+  return [
+    'name' => $this->faker->name(),
+    'email' => $this->faker->unique()->safeEmail(),
+    'email_verified_at' => now(),
+    'password' => Hash::make('password'),
+    'remember_token' => Str::random(10),
+    'role' => $this->faker->randomElement(['staff', 'member']),
+  ];
+}
+```
+## Now I need to set up the controller function to show all `Member`s. W
+This function returns a json response with all `Member`s and include the Name from the `User` Model and the `Location` from the `Location` Model. But only the `User`-Name and the `Location`-City`, not the whole Model.
+```php
+// /app/Http/Controllers/MemberController.php
+public function index() {
+  $members = Member::with('user:name', 'location:city')->get();
+  return response()->json($members);
+}
+```
+This is the response:
+```json
+  {
+    "id": 1,
+    "user_id": 8,
+    "location_id": 1,
+    "staff_id": 2,
+    "phone": "0123456789",
+    "jc_number": "1234567890",
+    "max_booking": 5,
+    "active": true,
+    "archived": false,
+    "created_at": "2023-11-01T15:30:15.000000Z",
+    "updated_at": "2023-11-01T15:30:15.000000Z",
+    "user": null,
+    "location": null
+  },
+```
+The `user` and the `location` are null. I need to add the `name` to the `User` and the `Location` Model.
+```php
+// /app/Models/User.php
+class User extends Authenticatable {
+  use HasApiTokens, HasFactory, Notifiable;
+  protected $fillable = [
+    'name',
+    'email',
+    'password',
+    'role',
+  ];
+  public function staff() {
+    return $this->hasOne(Staff::class);
+  }
+  public function member() {
+    return $this->hasOne(Member::class);
+  }
+}
+```
+The `name` is now fillable.
+```php
+// /app/Models/Location.php
+class Location extends Model {
+  use HasFactory;
+    protected $fillable = [
+        'city',
+        'address',
+        'phone',
+        'email',
+        'active',
+        'archived',
+    ];
+  public function staffs() {
+    return $this->hasMany(Staff::class);
+  }
+  public function members() {
+    return $this->hasMany(Member::class);
+  }
+  public function bookings() {
+    return $this->hasMany(Booking::class);
+  }
+}
+```
+
+But the response is still the same. I need to add the `name` to the `Member` Model.
+```php
+// /app/Models/Member.php
+class Member extends Model {
+  use HasFactory;
+  protected $fillable = [
+    'user_id',
+    'location_id',
+    'staff_id',
+    'phone',
+    'jc_number',
+    'max_booking',
+    'active',
+    'archived',
+  ];
+  public function location() {
+    return $this->belongsTo(Location::class);
+  }
+  public function staff() {
+    return $this->belongsTo(Staff::class);
+  }
+  public function bookings() {
+    return $this->hasMany(Booking::class);
+  }
+  public function user() {
+    return $this->belongsTo(User::class);
+  }
+}
+```
+
+But the response is still the same. I have to getthe Name from the `User` Model and the `Location` from the `Location` Model.
+```php
+// /app/Http/Controllers/MemberController.php
+public function index() {
+  $members = Member::with('user:name', 'location:city')->get();
+  return response()->json($members);
+}
+```
+
