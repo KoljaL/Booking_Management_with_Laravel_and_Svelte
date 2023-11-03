@@ -1,39 +1,31 @@
-# Issues
+# Laravel Booking System
 
-1. handle two different roles (staff, member) with the same user table is annoying. For every request we need to check the role and get the data from the right table. And both table have timestamps. Is there a better way?
+In this article I will describe my first steps with Laravel and OOP. The poject which I will build is a booking system for a fictional company, which offers workspaces on different locations. It is the final project for my [Coding Bootcamp](https://www.coding-bootcamps.eu/).
+ 
+**Technologies**
+- Backend: [Laravel](https://laravel.com)
+- Frontend: [SvelteKit](https://kit.svelte.dev/)
+- Database: [SQLite](https://www.sqlite.org)
+- API-Testing: [Bruno](https://www.usebruno.com/)
 
-2. There will be no response after a Member is deleted
-3. I a non existing Member is requested, there will be an ugly response:`"message": "No query results for model [App\\Models\\Member]`
+> OOP is very different from procedural programming. It is not just a different way of writing code, it is a different way of thinking about code. Everything is an object, and objects interact with each other through methods and properties. So it feels like everything is connected to everything else. Laravel is a popular and very powerfull PHP framework, which has been developed over years from an uncountable number of developers. So I will trust them and try to follow the Laravel way of OOP.
 
+## Description  
 
-# Coding Bootcamp Final Project
+The company operates CoworkingSpaces in several cities, each of this spaces is called a `Location`. 
+To manage these spaces, every `Location` has minimum one worker, called `Staff`. 
+A `Staff` can create an account for customer, called `Member` and send them a welcome mail with a link to set a password.
+After the `Member` has set a password, he can login to the system and manage his `Bookings` on his `Location`.
 
-This will be the final project for the [Coding Bootcamp](https://www.coding-bootcamps.eu/).
-It consists of two parts, the second part is optional.
+### Permissions
+- Both, `Staff` and `Member` are bind to their `Location`
+- Every `Staff` can create, read, update and delete `Member` for his `Location`. Even if The `Member` was created by another `Staff`.
 
-## Booking System
-
-Part one will be an online booking system for a fictional company, which offers workspaces on different locations.
-
-<dl>
-  <dt>Technologies</dt>
-  <dd>Backend: Laravel</dd>
-  <dd>Frontend: SvelteKit</dd>
-  <dd>Database: SQLite</dd>
-</dl>
-
-**Description**:   
-The company operates Coworking Spaces in several cities, each of this spaces is called a `location`. 
-To manage these spaces, every `location` has minimum one worker, called `staff`. 
-New customer has to register by a `staff` on their `location`, to become a `member`.
-The `staff` creates an account for the `member` and a welcome-mail with a link to set a password is sent to the `member`.
-After the `member` has set a password, he can login to the system and manage his `bookings`.
-
-- A `member` can only create `bookings` for his `location`, the maximum of `bookings` depends on the `location`
+- A `Member` can only create `Bookings` for his `Location`, the maximum amount of `Bookings` depends on the `Location`
 - A `staff` is bind to one `location` and can only manage `bookings` and `member` for his `location`.
 - For creating a `staff` account, there is an admin account, which can create `staff` accounts for all `locations`.
 
-**Data relations**  
+### Data relations
 There are four tables in the database: `locations`, `staff`, `member` and `bookings`.
 
 - `location` has no dependencies
@@ -41,21 +33,7 @@ There are four tables in the database: `locations`, `staff`, `member` and `booki
 - `member` depends on `location` and `staff`
 - `booking` depends on `member` and `location`
 
-
-
-## Multipage Website
-The second, but optional part will be a multipage website for the same fictional company.
-
-<dl>
-<dt>Technologies</dt>
-  <dd>Backend: Laravel</dd>
-  <dd>Frontend: SvelteKit</dd>
-  <dd>Database: SQLite</dd>
-</dl>
-
-
-
-
+ 
 # My first steps with Laravel
 
 ## Development Environment, Composer and Laravel Installer
@@ -568,7 +546,7 @@ To see all `Location` we use the following command:
 App\Models\Location::all();
 ```
 
-But for me, it is easier to use [DB Browser for SQLite](https://sqlitebrowser.org/), or the VSCode extension [SQLite](https://marketplace.visualstudio.com/items?itemName=alexcvzz.vscode-sqlite), to see the data in the database.
+But for me, it is easier to use [Bruno](https://www.usebruno.com/) an API Client for MacOS, or the VSCode extension [SQLite](https://marketplace.visualstudio.com/items?itemName=alexcvzz.vscode-sqlite), to see the data in the database.
 
 ## Routes and Controllers
 
@@ -973,7 +951,7 @@ class BookingTest extends TestCase {
 }
 ```
 
-
+<!-- 
 ### Feature Tests
 
 **Feature tests** are used to test a complete feature of your application. We can find the feature tests in the `tests/Feature` folder. We need one feature test for each table in our database.
@@ -1037,15 +1015,93 @@ class LocationFeatureTest extends TestCase {
     }
 }
 ```
+ -->
 
+
+## Test for the MemberController
+
+To create a test file we can use the following command:
+```bash
+php artisan make:test MemberFeatureTest
+```
+
+and run it with:
+```bash
+php artisan test --filter MemberFeatureTest
+```
+
+
+To test the `MemberController`  we hafe to refresh the database:
+```bash
+php artisan migrate:fresh --seed
+```
+
+Befor we can test the `MemberController` we need to login a `Staff` and get the token.
 ```php
+// /tests/Feature/MemberFeatureTest.php
+namespace Tests\Feature;
+use App\Models\Member;
+use App\Models\Staff;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
+...
+class MemberFeatureTest extends TestCase {
+    use RefreshDatabase;
+    public function test_get_all_members() {
+        $staff = Staff::factory()->create();
+        $user = User::factory()->create([
+            'role' => 'staff',
+        ]);
+        $user->update(['role' => 'staff']);
+        $token = $user->createToken('auth-token')->plainTextToken;
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->get('/api/member');
+        $response->assertStatus(200);
+    }
+    public function test_get_one_member() {
+        $staff = Staff::factory()->create();
+        $user = User::factory()->create([
+            'role' => 'staff',
+        ]);
+        $user->update(['role' => 'staff']);
+        $token = $user->createToken('auth-token')->plainTextToken;
+        $member = Member::factory()->create();
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->get('/api/member/' . $member->id);
+        $response->assertStatus(200);
+    }
+    public function test_create_member() {
+        $staff = Staff::factory()->create();
+        $user = User::factory()->create([
+            'role' => 'staff',
+        ]);
+        $user->update(['role' => 'staff']);
+        $token = $user->createToken('auth-token')->plainTextToken;
+        $member = Member::factory()->make();
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->post('/api/member', $member->toArray());
+        $response->assertStatus(201);
+    }
+    public function test_update_member() {
+        $staff = Staff::factory()->create();
+        $user = User::factory()->create
+        ([
+            'role' => 'staff',
+        ]);
+        $user->update(['role' => 'staff']);
+        
 
 
 
+With this we have seed the database with some data, so we can test the `MemberController`.
+Therefore we use the `Staff` with the email: staff@example.con and the password: password to login.
+We get back a token, which we need to use for the other routes.
 
-
-
-
-
+ 
 
 

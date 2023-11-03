@@ -360,7 +360,10 @@ class User extends Model {
 
 So, the key distinction is the direction of the relationship and where the foreign key is located. `belongsTo` means the foreign key is on the current model's table, and it points to the related model's table, while `hasOne` means the foreign key is on the related model's table, and it points to the current model's table.
 
-I will build a Laravel API. 
+
+--------------------
+# I will build a Laravel API. 
+--------------------
 There will be four Models: `Location`, `Staff`, `Member` and `Booking`.
 And I need some help with the relationships.
 `Staff` and `Member` are both `User` extending the `User` Model from Laravel.
@@ -664,8 +667,151 @@ But the response is still the same. I have to getthe Name from the `User` Model 
 ```php
 // /app/Http/Controllers/MemberController.php
 public function index() {
-  $members = Member::with('user:name', 'location:city')->get();
-  return response()->json($members);
+
+  // either we can use Laravels eager loading with the with() function
+  $members = Member::with([
+    'user' => function ($query) {
+      $query->select('id', 'name');
+    },
+    'location' => function ($query) {
+      $query->select('id', 'city');
+    }
+  ])->get();
+
+  // or we can use the join() function
+  $members = Member::select('members.*', 'users.name as user_name', 'locations.city as location_city')
+    ->join('users', 'members.user_id', '=', 'users.id')
+    ->join('locations', 'members.location_id', '=', 'locations.id')
+    ->get();
+
+
+return response()->json($members);
+```
+
+The difference in the response will be, that the `with()` function will return the `user` and the `location` as nested objects, while the `join()` function will return the `user` and the `location` as flat objects.
+
+
+
+## `::select()` vs `::with()`
+The choice between using Member::select and join() versus Member::with depends on your specific use case and performance considerations.
+
+- Using select and join():  
+This approach allows you to select specific columns from multiple tables in a more fine-grained manner, which can be efficient when you need a flat structure. It can be more efficient when you only require a subset of columns from the related tables and don't want the data to be nested. It minimizes the amount of data retrieved from the database because you only select the columns you need.
+
+- Using with:  
+Eager loading with with is convenient and easy to use. It loads related models and relationships in a single query, reducing the number of database queries. It simplifies the code and can be more intuitive when working with relationships, especially for nested relationships. with may be more efficient when you need a complete set of related data, including relationships and nested data.
+
+In terms of efficiency, if you need all the data associated with the Member model and its relationships, with might be more efficient because it reduces the number of queries sent to the database. However, if you only need specific columns from related tables and want a flat structure, using select and join() can be more efficient and reduce data transfer between the database and your application.
+
+Ultimately, the choice between these two methods should consider your specific use case and whether performance optimizations are needed. You may need to benchmark and profile your application to determine which approach is best for your application's requirements and data volume.
+
+### Benchmarking
+In Laravel we can use the `dd()` function to benchmark the performance of our code. The `dd()` function dumps the given variables and ends ex ecution of the script. So we can use it to measure the time it takes to execute a function.
+```php
+  Benchmark::dd([
+    'join' => fn() =>
+      Member::select('members.*', 'users.name as user_name', 'locations.city as location_city')
+        ->join('users', 'members.user_id', '=', 'users.id')
+        ->join('locations', 'members.location_id', '=', 'locations.id')
+        ->get(),
+    "with" => fn() => Member::with([
+      'user' => function ($query) {
+        $query->select('id', 'name');
+      },
+      'location' => function ($query) {
+        $query->select('id', 'city');
+      }
+    ])->get(),
+  ]);
+```
+The result is:
+```json
+array:2 [// vendor/laravel/framework/src/Illuminate/Support/Benchmark.php:67
+  "join" => "8.186ms"
+  "with" => "25.601ms"
+]
+```
+
+
+## Custom JSOn response
+To enshure, that the response is always the same, I will create a custom JSON response.
+Therefor I will create a custom macro for the Response class.
+
+
+```php
+// app/Providers/AppServiceProvider.php
+
+public function boot(): void {
+  // custom macro for JSON response
+  Response::macro('customJson', function ($data = [], $name = 'data', $message = '', $status = 200) {
+    if (is_countable($data)) {
+      $data_count = count($data);
+    }
+    // data is an Exception object
+    // so we want to return the error message
+    else {
+      $data_count = null;
+      $data = [
+        'message' => $data->getMessage(),
+        'file' => $data->getFile(),
+        'line' => $data->getLine(),
+        'code' => $data->getCode(),
+        // 'string' => $data->__toString(),
+        // 'trace' => $data->getTrace(),
+      ];
+    }
+    return response()->json(['message' => $message, 'data_count' => $data_count, $name => $data], $status);
+
+  });
 }
 ```
+So we can use the custom macro like this:
+```php
+return response()->customJson($data, $name, $message, $status);
+```
+
+And the result will be:
+```json
+{
+  "message": "Here are your members.",
+  "data_count": 2,
+  "member": [
+    {},
+    {}
+  ]
+}
+```
+
+## Resource
+A resource class represents a single model that needs to be transformed into a JSON structure. For example, we can have a `Member` model that needs to be transformed into a JSON structure. To do so, we will create a `MemberResource` class. By default, the `make:resource` command will place the new resource class in the `app/Http/Resources` directory. The `make:resource` command will also create a resource collection class in the same directory. Resource collections are responsible for transforming collections of models into JSON.
+
+```bash
+php artisan make:resource MemberResource
+```
+```php
+
+// app/Http/Resources/MemberResource.php
+
+public function toArray($request) {
+  return [
+    'id' => $this->id,
+    'user_id' => $this->user_id,
+    'location_id' => $this->location_id,
+    'staff_id' => $this->staff_id,
+    'phone' => $this->phone,
+    'jc_number' => $this->jc_number,
+    'max_booking' => $this->max_booking,
+    'active' => $this->active,
+    'archived' => $this->archived,
+    'created_at' => $this->created_at,
+    'updated_at' => $this->updated_at,
+    'user' => $this->user,
+    'location' => $this->location,
+    'staff' => $this->staff,
+    'bookings' => $this->bookings,
+  ];
+}
+```
+```php
+// app/Http/Resources/MemberCollection.php
 

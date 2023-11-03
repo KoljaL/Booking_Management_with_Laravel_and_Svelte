@@ -24,12 +24,24 @@
 - project ist ready to use, SQLite database and no secrets in the .env file
 - initial commit
 
+## 03.11.23
+- rebuild the way to divide the User-roles (using Middleware)
+- moved the code from the MemberController to the Member Model
+- use Scopes to filter the Member
+- use `select` & `join` to get the data from the database
+- made a benchmark against `withs` and `join`is faster
+- added `inviteMail` endpoint to send an email to a new Member
+- added `register` endpoint to register a new Member
+- use the `customJson` to format the response inkl. Exception handling
+
+
 
 # Issues
 
 1. [x] handle two different roles (staff, member) with the same user table is annoying. For every request we need to check the role and get the data from the right table. And both table have timestamps. Is there a better way?
 2. [x] There will be no response after a Member is deleted
 3. [x] I a non existing Member is requested, there will be an ugly response:`"message": "No query results for model [App\\Models\\Member]`
+4. [ ] decide if we sort out the active member in the backend (/member?active) or in the frontend
 
 # ToDo
 - [ ] better error messages:

@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder {
         // then create the bookings
 
         // first create locations, 
-        Location::factory(5)->create();
+        Location::factory(50)->create();
 
         // then create create an admin user, 
         Staff::create([
@@ -70,9 +70,9 @@ class DatabaseSeeder extends Seeder {
         ]);
 
         // now create 5 more member users
-        Member::factory(15)->create();
+        Member::factory(1500)->create();
 
         // at last, create 5 bookings
-        Booking::factory(50)->create();
+        Booking::factory(5000)->create();
     }
 }
