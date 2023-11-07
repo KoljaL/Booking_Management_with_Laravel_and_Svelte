@@ -5,8 +5,8 @@ meta {
 }
 
 post {
-  url: {{url}}/api/login
-  body: formUrlEncoded
+  url: {{url}}/login
+  body: multipartForm
   auth: none
 }
 
@@ -19,7 +19,7 @@ auth:bearer {
   token: 
 }
 
-body:form-urlencoded {
+body:multipart-form {
   email: staff@example.com
   password: password
 }

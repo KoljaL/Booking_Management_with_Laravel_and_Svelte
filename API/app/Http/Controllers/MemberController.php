@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Mail\InviteMail;
 use Illuminate\Support\Benchmark;
-// use Location;
 use App\Models\Location;
+use Illuminate\Support\Facades\Log;
 
 class MemberController extends Controller {
 
@@ -22,6 +22,7 @@ class MemberController extends Controller {
 
     /*
      * INDEX
+     * 
      * Get selected data of all members from the same location as the logged in staff (authUser),
      * if the authUser is an admin, then get all members
      */
@@ -37,7 +38,7 @@ class MemberController extends Controller {
             $authUser = Auth::user();
 
             // start the Member query
-            $membersQuery = Member::getMembers($authUser);
+            $membersQuery = Member::selectMembersByRole($authUser);
 
             // filter the members
             if ($showAll) {
@@ -57,6 +58,7 @@ class MemberController extends Controller {
             // get the Members
             $members = $membersQuery->get();
             $count_members = $members->count();
+
             return response()->json(['message' => $message, 'count_members' => $count_members, 'members' => $members], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Members not found or no associated staff.', 'error' => $th], 404);
@@ -66,6 +68,7 @@ class MemberController extends Controller {
 
     /*
      * SHOW
+     * 
      * Get selected data of a single member from the same location as the logged in staff (authUser),
      * including all bookings for this member
      */
@@ -83,13 +86,14 @@ class MemberController extends Controller {
 
             // check if the member is from the same location as the logged in staff
             // or if the logged in staff is an admin
-            if ($authUser->staff->is_admin || $member->staff_id == $authUser->staff->id) {
+            if ($authUser->staff->is_admin || $member->location_id == $authUser->staff->location_id) {
                 if ($showAll) {
-                    $member->load('bookings');
+                    // $member->load('bookings');
                 } else {
-                    $member->load(['bookings' => function ($query) {
-                        $query->where('date', '>=', date('Y-m-d'));
-                    }]);
+                    // $member->load(['bookings' => function ($query) {
+                    //     // $query->with('user:id,email')->where('date', '>=', date('Y-m-d'));
+                    //     // $query->where('date', '>=', date('Y-m-d'));
+                    // }]);
                 }
                 $count_bookings = $member->bookings->count();
                 return response()->json(['message' => 'Member data', 'count_bookings' => $count_bookings, 'member' => $member], 200);
@@ -108,6 +112,12 @@ class MemberController extends Controller {
      * Create a new User, add the user_id to the Member, and return the Member
      */
     public function store(Request $request) {
+
+        // if request empty 
+        if (!$request->has('name') || !$request->has('email')) {
+            return response()->json(['message' => 'Member not created, name and email required.'], 404);
+        }
+        // dd($request->toArray());
         // read the query parameters
         $request->validate([
             'name' => 'required',
@@ -129,14 +139,17 @@ class MemberController extends Controller {
 
             // first create a new user
             $user = User::create([
-                'name' => $request->name,
                 'email' => $request->email,
                 'role' => 'member',
                 'invite_token' => $invite_token,
             ]);
 
+
+            // dd($user->id);
             // then create a new member
-            $member = new Member([
+            $member = Member::create([
+                'name' => $request->name,
+                'user_id' => $user->id,
                 'phone' => $request->phone,
                 'location_id' => $location_id,
                 'jc_number' => $request->jc_number,
@@ -168,20 +181,39 @@ class MemberController extends Controller {
      * Update a Member
      */
     public function update(Request $request, Member $member) {
-        $request->validate([
-            'email' => 'required|string|email|max:255|unique:users,email,' . $member->user_id,
-        ]);
+        // dd($request->method());
+        // dd($request->toArray());
+        // request is a json object, transform it to an array
+        // $data = $request->json()->all();
+        // dd($request->attributes);
+        // dd($member->toArray());
+        // dd($data);
+        // $request->toArray();
+        // $updateEmail = false;
+        // if ($request->email) {
+        // $updateEmail = true;
+        // $member = Member::findOrFail($request->id);
 
-        $userData = $request->only(['name', 'email']);
+        $request->validate([
+            'email' => 'required|string|email|max:255|unique:users,email,' . $member->email . ',email',
+        ]);
+        $userData = $request->only(['email']);
+        // dd($userData);
+        // }
+
         $memberData = $request->toArray();
-        unset($memberData['name']);
-        unset($memberData['email']);
+        // unset($memberData['name']);
+        // unset($memberData['email']);
 
         DB::beginTransaction();
         try {
+            // if ($updateEmail) {
+            // update the user
+            // $member->user->update($userData);
             $user = $member->user;
             // Update User attributes
             $user->update($userData);
+            // }
             // Update Member attributes
             $member->update($memberData);
 
@@ -189,7 +221,7 @@ class MemberController extends Controller {
             DB::commit();
 
             // return the member
-            unset($member['user']);
+            // unset($member['user']);
             return response()->json(['message' => 'Member updated', 'member' => $member], 201);
         } catch (\Exception $e) {
             DB::rollback();

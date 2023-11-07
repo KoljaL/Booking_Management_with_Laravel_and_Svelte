@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->integer('workspaces');
             $table->string('imap_host');
             $table->string('imap_pw');
+            $table->softDeletes();
             $table->timestamps();
         });
 

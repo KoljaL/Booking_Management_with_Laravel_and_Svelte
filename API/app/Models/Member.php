@@ -5,13 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Member extends Model {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    // $fillable is used to specify which attributes can be mass-assigned
+    // $fillable is used to specify which attributes can be mass-assigned 
     // that is, which attributes can be passed into the create() method
     protected $fillable = [
+        'name',
         'user_id',
         'location_id',
         'staff_id',
@@ -33,6 +35,9 @@ class Member extends Model {
     // A carbon object is a wrapper around the PHP DateTime class
     protected $dates = ['created_at', 'updated_at'];
 
+    // $with is used to specify which relationships to eager load by default
+    // https://laravel.com/docs/10.x/eloquent-relationships#eager-loading-specific-columns
+    // protected $with = ['user:id,email', 'location:id,city'];
 
     //
     // RELATIONSHIPS
@@ -57,17 +62,10 @@ class Member extends Model {
     // A Member has many Bookings
     public function bookings() {
         return $this->hasMany(Booking::class)
-            ->orderBy('date', 'asc');
-    }
-    public function deleteBookings() {
-        return $this->hasMany(Booking::class)
+            ->select('id', 'date', 'time', 'location_id', 'updated_at')
             ->orderBy('date', 'asc');
     }
 
-    public function currentBookings() {
-        return $this->hasMany(Booking::class)
-            ->where('date', '>=', date('Y-m-d'));
-    }
 
 
     //
@@ -76,23 +74,23 @@ class Member extends Model {
 
     // Common method to set up the select and join operations
     public function scopeJoinMembersData($query) {
-        return $query
-            ->select('members.*', 'users.name as name', 'locations.city as city')
-            ->join('users', 'members.user_id', '=', 'users.id')
-            ->join('locations', 'members.location_id', '=', 'locations.id');
+        return $query;
+        // ->select('members.*', 'users.name as name', 'locations.city as city');
+        // ->join('users', 'members.user_id', '=', 'users.id')
+        // ->join('locations', 'members.location_id', '=', 'locations.id');
     }
 
     // Scope to retrieve members with the same location_id as the authenticated staff or all if the staff is an admin
-    public function scopeGetMembers($query, $user) {
+    public function scopeSelectMembersByRole($query, $user) {
         // dd($user->staff->is_admin);
+
         if ($user->staff->is_admin) {
             // If the staff is an admin, return all members
-            return $query->joinMembersData();
+            return $query;
         } else {
             // If the staff is not an admin, filter by location_id
             // dd($user->staff->location_id);
-            return $query->joinMembersData()
-                ->where('location_id', $user->staff->location_id);
+            return $query->where('location_id', $user->staff->location_id);
         }
     }
 
@@ -125,24 +123,37 @@ class Member extends Model {
         }
     }
 
-    public function toArray() {
-        $data = parent::toArray();
-        if ($this->user) {
-            $data['name'] = $this->user->name;
-            $data['email'] = $this->user->email;
-            $data['role'] = $this->user->role;
-        }
-        // $data['name'] = $this->name;
-        if ($this->email) {
-            $data['email'] = $this->email;
-        }
-        if ($this->user) {
-            $data['role'] = $this->user->role;
-        }
-        return $data;
-    }
+
 }
 
+
+// public function toArray() {
+//     $data = parent::toArray();
+//     if ($this->user) {
+//         $data['name'] = $this->user->name;
+//         $data['email'] = $this->user->email;
+//         $data['role'] = $this->user->role;
+//     }
+//     // $data['name'] = $this->name;
+//     if ($this->email) {
+//         $data['email'] = $this->email;
+//     }
+//     if ($this->user) {
+//         $data['role'] = $this->user->role;
+//     }
+//     return $data;
+// }
+
+
+// public function deleteBookings() {
+//     return $this->hasMany(Booking::class)
+//         ->orderBy('date', 'asc');
+// }
+
+// public function currentBookings() {
+//     return $this->hasMany(Booking::class)
+//         ->where('date', '>=', date('Y-m-d'));
+// }
 
 
 // // A member has one location

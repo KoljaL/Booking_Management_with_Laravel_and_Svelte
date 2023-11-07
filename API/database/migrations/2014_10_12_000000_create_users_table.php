@@ -11,13 +11,14 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            // $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->string('invite_token')->nullable();
             $table->enum('role', ['member', 'staff'])->default('member');
             $table->rememberToken();
+            $table->softDeletes();
 
             // we remove the timestamp here because STaff and Member have timestamps
             // $table->timestamps();
@@ -29,7 +30,7 @@ return new class extends Migration {
             $table->index('role');
             $table->index('email');
             $table->index('password');
-            $table->index('name');
+            // $table->index('name');
         });
     }
 

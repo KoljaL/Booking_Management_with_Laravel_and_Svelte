@@ -12,6 +12,7 @@ return new class extends Migration {
         Schema::create('members', function (Blueprint $table) {
             // This is NOT the same ID as the "User" table's ID
             $table->id();
+            $table->string('name');
             $table->foreignId('user_id')->constrained();
             $table->foreignId('location_id')->constrained();
             $table->foreignId('staff_id')->constrained();
@@ -38,6 +39,7 @@ return new class extends Migration {
 
             // we neen the timestamps here, 
             // because the User model does not have timestamps anymore
+            $table->softDeletes();
             $table->timestamps();
         });
 
@@ -47,6 +49,7 @@ return new class extends Migration {
             $table->index('user_id');
             $table->index('location_id');
             $table->index('staff_id');
+            $table->index('name');
         });
 
     }

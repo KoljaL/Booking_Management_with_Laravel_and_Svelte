@@ -9,6 +9,7 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\InviteMailController;
 use App\Models\User;
+use App\Http\Middleware\LogRequests;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +46,7 @@ Route::post('/register', [UserController::class, 'register']); // ✅
 
 // 
 // Routes for ROLE_STAFF
-//
+// LogRequests::class,
 Route::middleware(['auth:sanctum', 'check_role:' . User::ROLE_STAFF])->group(function () {
     // Staff routes for CRUD members
     Route::resource('member', MemberController::class);

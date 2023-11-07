@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('staff', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->foreignId('user_id')->constrained();
             $table->foreignId('location_id')->constrained();
             // $table->unsignedBigInteger('user_id');
@@ -19,6 +20,7 @@ return new class extends Migration {
             // $table->foreign('location_id')->references('id')->on('locations');
             $table->boolean('is_admin')->default(false);
             $table->string('phone');
+            $table->softDeletes();
             $table->timestamps();
         });
 
@@ -28,6 +30,7 @@ return new class extends Migration {
             $table->index('user_id');
             $table->index('location_id');
             $table->index('is_admin');
+            $table->index('name');
         });
 
     }

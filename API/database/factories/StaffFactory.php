@@ -19,6 +19,7 @@ class StaffFactory extends Factory {
             'user_id' => function () {
                 return User::factory()->create()->id;
             },
+            'name' => $this->faker->name,
             'phone' => $this->faker->phoneNumber,
             'is_admin' => false,
             'location_id' => function () {

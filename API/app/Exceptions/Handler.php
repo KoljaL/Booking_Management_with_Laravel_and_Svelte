@@ -29,7 +29,9 @@ class Handler extends ExceptionHandler {
             //
         });
 
+        //
         // better error message for ModelNotFoundException
+        //
         $this->renderable(function (NotFoundHttpException $e, $request) {
             $input = $e->getMessage();
             $pattern = '/No query results for model \[App\\\\Models\\\\(.*?)\] (\d+)/';
@@ -37,7 +39,7 @@ class Handler extends ExceptionHandler {
             if (preg_match($pattern, $input, $matches)) {
                 $modelName = $matches[1];
                 $id = $matches[2];
-                $output = "$modelName $id not found";
+                $output = "$modelName with ID: '$id' not found";
             } else {
                 $output = $input;
             }

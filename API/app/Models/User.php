@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class User extends Authenticatable {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     // both the Staff and Member models have timestamps, 
     // so we don't need it here
@@ -57,15 +59,3 @@ class User extends Authenticatable {
         'password' => 'hashed',
     ];
 }
-
-
-// public function member() {
-//     if ($this->role === self::ROLE_MEMBER) {
-//         return $this->hasOne(Member::class)->onDelete(function ($member) {
-//             $member->delete();
-//         });
-//     } else {
-//         return $this->hasOne(Member::class);
-//     }
-// }
-// return $this->hasOne(Member::class)->onDelete('cascade');

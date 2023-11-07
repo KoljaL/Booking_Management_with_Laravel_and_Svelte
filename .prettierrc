@@ -1,0 +1,12 @@
+{
+  "printWidth": 520,
+  "tabWidth": 2,
+  "wrapAttributes": "auto",
+  "wrapAttributesMinAttrs": 2,
+  "sortTailwindcssClasses": true,
+  "sortHtmlAttributes": "code-guide",
+  "noPhpSyntaxCheck": false,
+  "indentInnerHtml": true,
+  "extraLiners": "",
+  "trailingCommaPHP": true
+}

@@ -17,20 +17,57 @@ To manage these spaces, every `Location` has minimum one worker, called `Staff`.
 A `Staff` can create an account for customer, called `Member` and send them a welcome mail with a link to set a password.
 After the `Member` has set a password, he can login to the system and manage his `Bookings` on his `Location`.
 
-### Permissions
-- Both, `Staff` and `Member` are bind to their `Location`
-- Every `Staff` can create, read, update and delete `Member` for his `Location`. Even if The `Member` was created by another `Staff`.
+### Properties and permissions 
+In this short description I will list the relevant properties and permissions for each table. For more details, please have a look at the migration files.
 
-- A `Member` can only create `Bookings` for his `Location`, the maximum amount of `Bookings` depends on the `Location`
-- A `staff` is bind to one `location` and can only manage `bookings` and `member` for his `location`.
-- For creating a `staff` account, there is an admin account, which can create `staff` accounts for all `locations`.
+#### Location
+
+- Common properties: `city`, `address`,  `phone`, `email`
+- Relevant for Bookings: `opening_hour_from`, `opening_hour_to`, `opening_days`, `slot_duration`, `workspaces`
+- Relevant for Member: `max_booking`
+- Relevant for Email: `imap_host`, `imap_pw`
+
+#### User
+Both, `Staff` and `Member` are using the same `User` table and will be differentiated by the `role` property.
+There are separate Models for `Staff` and `Member`.
+- Comon properties: `name`
+- Login: `email`, `password`
+- Differentiation: `role` (staff, member)
+- Can login to the system and reset his password
+
+#### Staff 
+The `location.city` and the `user.name` are binded to this Model.
+
+- Common properties: `phone`
+- Admin permission: `is_admin`
+- Location: `location_id`
+- Can crate, read, update and delete `Member` for his `Location`
+- As Admin, crate, read, update and delete `Member` and `Staff` for all `Location`
+
+#### Member
+The `location.city` and the `user.name` are binded to this Model.
+
+- Common properties: `phone`
+- Status: `active`, a new `Member` is not active by default, but after the `Member` has set a password, he is active.<>
+- Location: `location_id`, the `Location` where the `Member` is registered
+- Staff: `staff_id`, the `Staff` who created the `Member`
+- Booking: `max_booking`, default is `location.max_booking`, but can be changed by `Staff`
+- Can create, read, update and delete his own `Bookings`.
+
+#### Booking
+- Common properties: `date`, `time`
+- Member: `member_id`
+- Location: `location_id`
+- State: `state`, int, 1 = bookedByMember, 2 = bookedByStaff, 3 = cancelledByMember, 4 = cancelledByStaff
+- Time: `started_at`, `ended_at`, to track the time the `Member` is using the workspace
+
 
 ### Data relations
 There are four tables in the database: `locations`, `staff`, `member` and `bookings`.
 
 - `location` has no dependencies
 - `staff` depends on `location`
-- `member` depends on `location` and `staff`
+- `member` depends on `location` (and `staff`)
 - `booking` depends on `member` and `location`
 
  

@@ -55,7 +55,8 @@
 - [Junior Code Review: Laravel Routes, Middleware, Validation and more - YouTube](https://www.youtube.com/watch?v=sukS7QOBpK0)
 - [7 "Tricks" With dd() in Laravel](https://laraveldaily.com/post/7-tricks-with-dd-in-laravel)
 - [Adding some Laravel magic to your Eloquent joins](https://kirschbaumdevelopment.com/insights/power-joins)
-- 
+- [Laravel Soft Deletes - Papierkorb-Funktion für Eloquent | a coding project](https://www.a-coding-project.de/ratgeber/laravel/soft-deletes)
+- [Best way to flatten a json column on the model](https://laracasts.com/discuss/channels/laravel/best-way-to-flatten-a-json-column-on-the-model?page=1&replyId=906118)
 
 
 ## Responses and Status Codes

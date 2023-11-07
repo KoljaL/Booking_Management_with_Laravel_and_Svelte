@@ -21,6 +21,7 @@ class MemberFactory extends Factory {
             'user_id' => function () {
                 return User::factory()->create()->id;
             },
+            'name' => $this->faker->name,
             'phone' => $this->faker->phoneNumber,
             'location_id' => function () {
                 return \App\Models\Location::inRandomOrder()->first()->id;
