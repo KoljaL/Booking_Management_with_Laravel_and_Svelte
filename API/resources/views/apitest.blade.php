@@ -15,9 +15,11 @@
         box-sizing: border-box;
         scroll-behavior: smooth;
       }
+
       *::-webkit-scrollbar {
         display: none;
       }
+
       * {
         -ms-overflow-style: none;
         scrollbar-width: none;
@@ -38,6 +40,7 @@
         --colors-gray12: hsl(0, 0%, 93%);
         --colors-gray13: hsl(0, 0%, 97%);
       }
+
       @font-face {
         font-family: "Geist";
         font-style: normal;
@@ -45,6 +48,7 @@
         font-display: swap;
         src: url("/fonts/Geist/Geist-Light.woff2") format("woff2");
       }
+
       @font-face {
         font-family: "Geist Mono";
         font-style: normal;
@@ -52,21 +56,26 @@
         font-display: swap;
         src: url("/fonts/GeistMono/GeistMono-Light.woff2") format("woff2");
       }
+
       body {
         margin: 0;
         padding: 0;
         font-family: "Geist", sans-serif;
-        background-color: var(--colors-gray2);
+        background-color: var(--colors-gray1);
+        background-color: black;
         color: var(--colors-gray11);
       }
 
       main {
         display: grid;
-        grid-template-columns: 300px 1fr;
+        grid-template-columns: 250px 1fr;
         grid-template-rows: 1fr;
         height: 100vh;
-        width: 100vw;
+        /* width: 100vw; */
+        max-width: 80rem;
+        margin: 0 auto;
       }
+
       h2 {
         margin: 0;
         padding: 0;
@@ -79,7 +88,7 @@
       button {
         font-size: 15px;
         margin: 0.5rem 0;
-        padding: 0.25rem 0.5rem;
+        padding: 0.15rem 0.5rem;
         border-radius: 0.25rem;
         border: 1px solid var(--colors-gray8);
         background-color: var(--colors-gray5);
@@ -91,6 +100,7 @@
       button {
         cursor: pointer;
       }
+
       button:hover {
         border: 1px solid #4f5b93;
       }
@@ -111,7 +121,7 @@
       .left {
         background-color: var(--colors-gray3);
         padding: 1rem;
-        overflow: hidden;
+        overflow: scroll;
       }
 
       .left header {
@@ -135,22 +145,16 @@
         margin-bottom: 0;
         color: #4f5b93;
       }
-      .newFormFieldButton {
-        color: var(--colors-gray10);
-        font-weight: bold;
-        padding: 0.05rem 0.25rem 0.125rem 0.25rem;
-        margin: 0;
-        line-height: 1;
-        margin-left: 0.5rem;
-      }
+
       .left section {
-        display: none;
+        /* display: none; */
         margin: 1rem 0;
         flex-direction: column;
         align-items: flex-start;
         overflow: scroll;
-        height: calc(100vh - 10rem);
+        /* height: calc(100vh - 10rem); */
       }
+
       details {
         width: 100%;
         margin: 0;
@@ -160,6 +164,7 @@
         border: 1px solid var(--colors-gray8);
         margin-bottom: 1rem;
       }
+
       details summary {
         width: 100%;
         margin: 0;
@@ -171,38 +176,45 @@
         padding: 0.25rem 0.5rem;
         border-radius: 0.5rem;
       }
+
       details[open] {
         border: 1px solid var(--colors-gray8);
       }
+
       details[open] summary {
         border-radius: 0.5rem 0.5rem 0 0;
         border: 0px solid transparent;
       }
+
       label {
         display: flex;
         flex-direction: row;
         align-items: baseline;
         gap: 0.5rem;
       }
+
       label input {
         width: 100%;
         margin-top: 0.5rem;
       }
+
       .left article {
         max-width: 100%;
         margin-inline: 0.5rem;
         padding-block: 5px;
         border-bottom: 1px solid #4f5b9355;
       }
+
       .left article:last-child {
         border-bottom: none;
       }
 
       .right {
-        width: 100%;
-        height: 100%;
+        /* width: 100%; */
+        /* height: 100%; */
         overflow: hidden;
         background-color: var(--colors-gray2);
+        /* background-color: antiquewhite; */
         padding: 1rem;
       }
 
@@ -220,10 +232,22 @@
         font-weight: normal;
         padding-left: 1rem;
       }
+
       .right .method {
         color: var(--colors-gray11);
         font-size: 0.9rem;
         margin-inline: 1rem;
+      }
+
+      .newFormFieldButton {
+        color: var(--colors-gray10);
+        font-weight: bold;
+        padding: 0.05rem 0.25rem 0.125rem 0.25rem;
+        margin: 0;
+        line-height: 1;
+        margin-left: 0.5rem;
+        position: relative;
+        top: -3px;
       }
 
       .newFormFieldOverlay {
@@ -236,13 +260,16 @@
         border-radius: 0.25rem;
         border: 1px solid var(--colors-gray8);
       }
+
       .newFormFieldOverlay form {
         display: block;
       }
+
       .newFormFieldOverlay input {
         width: 122px;
         display: block;
       }
+
       .newFormFieldOverlay button:first-of-type {
         margin-right: 1rem;
       }
@@ -270,9 +297,9 @@
             <button type="submit" data-section="member" id="memberLoginButton" data-url="login">Member</button>
           </form>
         </header>
-
+        <!--
         <section id="staffSection">
-          <details>
+          <details open>
             <summary>Member</summary>
             <article>
               <button id="allMember" data-url="member?all">All</button>
@@ -331,7 +358,7 @@
             </article>
           </details>
 
-          <details open>
+        <details>
             <summary>Booking</summary>
             <article>
               <button id="allBooking" data-url="booking?all">All</button>
@@ -396,10 +423,11 @@
               </label>
               <button id="deleteBooking" data-url="booking">Delete</button>
             </article>
-          </details>
+          </details> 
         </section>
 
         <section id="memberSection"></section>
+        -->
       </div>
       <div class="right">
         <h2>Result <span id="resultUrl"></span></h2>
@@ -410,51 +438,223 @@
     <script>
       const URL = "http://127.0.0.1:8000/api/";
       let token = null;
+      let responseData = null;
 
       // LOGIN
       const adminLoginButton = document.getElementById("adminLoginButton");
       const staffLoginButton = document.getElementById("staffLoginButton");
       const memberLoginButton = document.getElementById("memberLoginButton");
-      // MEMBER
-      const allMemberButton = document.getElementById("allMember");
-      const activeMemberButton = document.getElementById("activeMember");
-      const inactiveMemberButton = document.getElementById("inactiveMember");
-      const oneMemberButton = document.getElementById("oneMember");
-      const oneMemberId = document.querySelector("input[name=oneMemberId]");
-      const createMemberButton = document.getElementById("createMemberButton");
-      const createMemberForm = document.getElementById("createMember");
-      const updateMemberId = document.querySelector("input[name=updateMemberId]");
-      const updateMemberButton = document.getElementById("updateMemberButton");
-      const updateMemberForm = document.getElementById("updateMember");
-      const deleteMemberId = document.querySelector("input[name=deleteMemberId]");
-      const deleteMemberButton = document.getElementById("deleteMember");
-      const newFormFieldButtons = document.querySelectorAll(".newFormFieldButton");
-      // BOOKINGS
-      const allBookingButton = document.getElementById("allBooking");
-      const activeBookingButton = document.getElementById("activeBooking");
-      const inactiveBookingButton = document.getElementById("inactiveBooking");
-      const oneBookingButton = document.getElementById("oneBooking");
-      const oneBookingId = document.querySelector("input[name=oneBookingId]");
-      const createBookingButton = document.getElementById("createBookingButton");
-      const createBookingForm = document.getElementById("createBooking");
-      const updateBookingId = document.querySelector("input[name=updateBookingId]");
-      const updateBookingButton = document.getElementById("updateBookingButton");
-      const updateBookingForm = document.getElementById("updateBooking");
-      const deleteBookingId = document.querySelector("input[name=deleteBookingId]");
-      const deleteBookingButton = document.getElementById("deleteBooking");
-
       // RESULT
       const result = document.getElementById("result");
       const resultUrl = document.getElementById("resultUrl");
 
       window.onload = () => {
-        adminLoginButton.click();
+        createDocument().then(() => {
+          adminLoginButton.click();
+          addNewFormFields();
+        });
       };
 
+      const apiArray = [
+        {
+          user: "staff",
+          cat: [
+            {
+              name: "Member",
+              requests: [
+                {
+                  method: "GET",
+                  url: "member?all",
+                  description: "All",
+                  fields: [],
+                },
+                {
+                  method: "GET",
+                  url: "member",
+                  description: "Active",
+                  fields: [],
+                },
+                {
+                  method: "GET",
+                  url: "member?inactive",
+                  description: "Inactive",
+                  fields: [],
+                },
+                {
+                  method: "GET",
+                  url: "member/{id}",
+                  description: "Get one member",
+                  callback: function () {
+                    updateIds("member");
+                  },
+                  fields: [
+                    {
+                      name: "id",
+                    },
+                  ],
+                },
+                {
+                  method: "POST",
+                  url: "member",
+                  description: "Create a member",
+                  newFields: true,
+                  callback: function () {
+                    updateIds("member");
+                  },
+                  fields: [
+                    {
+                      name: "name",
+                    },
+                    {
+                      name: "email",
+                    },
+                  ],
+                },
+                {
+                  method: "PATCH",
+                  url: "member/{id}",
+                  description: "Edit a member",
+                  newFields: true,
+                  fields: [
+                    {
+                      name: "id",
+                    },
+                    {
+                      name: "name",
+                    },
+                    {
+                      name: "email",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          user: "member",
+          cat: [
+            {
+              name: "Booking",
+              requests: [],
+            },
+          ],
+        },
+      ];
+
       //
-      // UNIVERSAL POST function
+      // CREATE DOCUMENT from apiArray
       //
-      function postData(method, url, form = null) {
+      async function createDocument() {
+        for (let api of apiArray) {
+          const leftSide = document.querySelector(".left");
+          const section = document.createElement("section");
+          if (!api.cat) continue;
+          section.id = api.user + "Section";
+          for (let cat of api.cat) {
+            // console.log(cat);
+            const details = document.createElement("details");
+            const summary = document.createElement("summary");
+            summary.innerHTML = cat.name;
+            details.open = true;
+            details.appendChild(summary);
+            section.appendChild(details);
+
+            for (let req of cat.requests) {
+              const hasFields = req.fields.length > 0 ? true : false;
+
+              //
+              // has form fields
+              if (hasFields) {
+                const article = document.createElement("article");
+                const h3 = document.createElement("h3");
+                h3.innerHTML = req.description;
+                if (req.newFields) {
+                  const button = document.createElement("button");
+                  button.classList.add("newFormFieldButton");
+                  button.dataset.form = req.description.replace(/\s/g, "");
+                  button.innerHTML = "+";
+                  h3.appendChild(button);
+                }
+                article.appendChild(h3);
+                const form = document.createElement("form");
+                form.id = req.description.replace(/\s/g, "");
+                article.appendChild(form);
+                details.appendChild(article);
+                for (let param of req.fields) {
+                  const label = document.createElement("label");
+                  // label first letter uppercase
+                  const labelName = param.name.charAt(0).toUpperCase() + param.name.slice(1);
+                  label.innerHTML = /*html*/ `${labelName}: <input type="text" name="${param.name}" value="" />`;
+                  form.appendChild(label);
+                }
+                const button = document.createElement("button");
+                button.type = "submit";
+                button.innerHTML = req.method;
+                button.dataset.url = req.url;
+                button.dataset.method = req.method;
+                button.addEventListener("click", (e) => {
+                  e.preventDefault();
+                  const url = e.target.dataset.url;
+                  const method = e.target.dataset.method;
+                  postData(method, url, form);
+
+                  setTimeout(() => {
+                    if (req.callback) {
+                      req.callback();
+                    }
+                  }, 100);
+                });
+                form.appendChild(button);
+              }
+              //
+              // no form fields
+              else {
+                const button = document.createElement("button");
+                button.type = "submit";
+                button.innerHTML = req.description;
+                button.style.marginTop = "0.75rem";
+                button.style.marginLeft = "0.5rem";
+                button.dataset.url = req.url;
+                button.dataset.method = req.method;
+                button.addEventListener("click", (e) => {
+                  e.preventDefault();
+                  const url = e.target.dataset.url;
+                  const method = e.target.dataset.method;
+                  postData(method, url);
+                });
+                details.appendChild(button);
+              }
+            }
+          }
+          leftSide.appendChild(section);
+        }
+      }
+
+      function updateIds(section) {
+        console.log("updateIds", section);
+        console.log(responseData);
+        console.log(responseData[section]);
+        const allIds = document.querySelectorAll("input[name=id]");
+        for (let id of allIds) {
+          id.value = responseData[section].id;
+        }
+      }
+      //
+      // POST function
+      //
+      async function postData(method, url, form = null) {
+        // console.log("postData", method, url, form);
+        // if form has only one input field with name id, replace {id} in url with the value of that field
+        if (form) {
+          const idField = form.querySelector("input[name=id]");
+          if (idField) {
+            url = url.replace("{id}", idField.value);
+          }
+          if (form.children.length === 2) {
+            form = null;
+          }
+        }
         resultUrl.innerHTML = `<span class="method">${method}</span> api/${url}`;
 
         let formData = null;
@@ -481,6 +681,7 @@
           .then((response) => response.json())
           .then((data) => {
             result.innerHTML = jsonFormatHighlight(data);
+            responseData = data;
             if (data.token) token = data.token;
             // console.log(data);
           })
@@ -488,97 +689,6 @@
             console.error("Error:", error);
           });
       }
-
-      //
-      // DELETE MEMBER
-      //
-      deleteMemberButton.addEventListener("click", (e) => {
-        e.preventDefault();
-        const url = deleteMemberButton.dataset.url + "/" + deleteMemberId.value;
-        postData("DELETE", url);
-      });
-
-      //
-      // CREATE MEMBER
-      //
-      createMemberForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const url = createMemberButton.dataset.url;
-        postData("POST", url, createMemberForm);
-      });
-
-      //
-      // GET ONE MEMBER
-      //
-      oneMemberButton.addEventListener("click", (e) => {
-        e.preventDefault();
-        const url = oneMemberButton.dataset.url + "/" + oneMemberId.value;
-        postData("GET", url);
-      });
-
-      updateMemberForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const url = updateMemberButton.dataset.url + "/" + updateMemberId.value;
-        postData("PATCH", url, updateMemberForm);
-      });
-
-      //
-      // GET ALL MEMBERS
-      //
-      for (let button of [allMemberButton, activeMemberButton, inactiveMemberButton]) {
-        button.addEventListener("click", (e) => {
-          e.preventDefault();
-          const url = button.dataset.url;
-          postData("GET", url);
-        });
-      }
-
-      //
-      // GET ALL BOOKINGS
-      //
-      for (let button of [allBookingButton, activeBookingButton, inactiveBookingButton]) {
-        button.addEventListener("click", (e) => {
-          e.preventDefault();
-          const url = button.dataset.url;
-          postData("GET", url);
-        });
-      }
-
-      //
-      // GET ONE BOOKING
-      //
-      oneBookingButton.addEventListener("click", (e) => {
-        e.preventDefault();
-        const url = oneBookingButton.dataset.url + "/" + oneBookingId.value;
-        postData("GET", url);
-      });
-
-      //
-      // CREATE BOOKING
-      //
-      createBookingForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const url = createBookingButton.dataset.url;
-        postData("POST", url, createBookingForm);
-      });
-
-      //
-      // UPDATE BOOKING
-      //
-      updateBookingForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const url = updateBookingButton.dataset.url + "/" + updateBookingId.value;
-        postData("PATCH", url, updateBookingForm);
-      });
-
-      //
-      // DELETE BOOKING
-      //
-      deleteBookingButton.addEventListener("click", (e) => {
-        e.preventDefault();
-        const url = deleteBookingButton.dataset.url + "/" + deleteBookingId.value;
-        postData("DELETE", url);
-      });
 
       //
       // LOGIN
@@ -601,6 +711,168 @@
           button.classList.add("active");
         });
       }
+
+      //
+      // ADD NEW FORM FIELDS
+      //
+      function addNewFormFields() {
+        const newFormFieldButtons = document.querySelectorAll(".newFormFieldButton");
+        for (let button of newFormFieldButtons) {
+          // console.log(button);
+          button.addEventListener("click", (e) => {
+            e.preventDefault();
+            const x = e.clientX;
+            const y = e.clientY;
+            const formElement = e.target.parentElement.nextElementSibling.id;
+            // console.log(formElement);
+            // crteate a small overlay with two inputs
+            const overlay = document.createElement("div");
+            overlay.classList.add("newFormFieldOverlay");
+            overlay.style.top = y + "px";
+            overlay.style.left = x + "px";
+            overlay.innerHTML = /*html*/ `
+          <form>
+            <input type="text" name="newFormField" value="new field" />
+            <button class="addNewFormField" data-form=${formElement}>Add</button>
+            <button class="addNewFormFieldClose" >Close</button>
+            </form>`;
+            document.body.appendChild(overlay);
+
+            overlay.getElementsByClassName("addNewFormFieldClose")[0].addEventListener("click", (e) => {
+              e.preventDefault();
+              overlay.remove();
+            });
+
+            overlay.getElementsByClassName("addNewFormField")[0].addEventListener("click", (e) => {
+              e.preventDefault();
+              const formElement = document.getElementById(e.target.dataset.form);
+              const name = e.target.parentElement.querySelector("input").value;
+              const label = document.createElement("label");
+              label.innerHTML = /*html*/ `${name}: <input type="text" name="${name}" value="" />`;
+              formElement.insertBefore(label, formElement.querySelector("button"));
+              overlay.remove();
+            });
+          });
+        }
+      }
+
+      // MEMBER
+      // const allMemberButton = document.getElementById("allMember");
+      // const activeMemberButton = document.getElementById("activeMember");
+      // const inactiveMemberButton = document.getElementById("inactiveMember");
+      // const oneMemberButton = document.getElementById("oneMember");
+      // const oneMemberId = document.querySelector("input[name=oneMemberId]");
+      // const createMemberButton = document.getElementById("createMemberButton");
+      // const createMemberForm = document.getElementById("createMember");
+      // const updateMemberId = document.querySelector("input[name=updateMemberId]");
+      // const updateMemberButton = document.getElementById("updateMemberButton");
+      // const updateMemberForm = document.getElementById("updateMember");
+      // const deleteMemberId = document.querySelector("input[name=deleteMemberId]");
+      // const deleteMemberButton = document.getElementById("deleteMember");
+      // BOOKINGS
+      // const allBookingButton = document.getElementById("allBooking");
+      // const activeBookingButton = document.getElementById("activeBooking");
+      // const inactiveBookingButton = document.getElementById("inactiveBooking");
+      // const oneBookingButton = document.getElementById("oneBooking");
+      // const oneBookingId = document.querySelector("input[name=oneBookingId]");
+      // const createBookingButton = document.getElementById("createBookingButton");
+      // const createBookingForm = document.getElementById("createBooking");
+      // const updateBookingId = document.querySelector("input[name=updateBookingId]");
+      // const updateBookingButton = document.getElementById("updateBookingButton");
+      // const updateBookingForm = document.getElementById("updateBooking");
+      // const deleteBookingId = document.querySelector("input[name=deleteBookingId]");
+      // const deleteBookingButton = document.getElementById("deleteBooking");
+
+      // //
+      // // DELETE MEMBER
+      // //
+      // deleteMemberButton.addEventListener("click", (e) => {
+      //   e.preventDefault();
+      //   const url = deleteMemberButton.dataset.url + "/" + deleteMemberId.value;
+      //   postData("DELETE", url);
+      // });
+
+      // //
+      // // CREATE MEMBER
+      // //
+      // createMemberForm.addEventListener("submit", (e) => {
+      //   e.preventDefault();
+      //   const url = createMemberButton.dataset.url;
+      //   postData("POST", url, createMemberForm);
+      // });
+
+      // //
+      // // GET ONE MEMBER
+      // //
+      // oneMemberButton.addEventListener("click", (e) => {
+      //   e.preventDefault();
+      //   const url = oneMemberButton.dataset.url + "/" + oneMemberId.value;
+      //   postData("GET", url);
+      // });
+
+      // updateMemberForm.addEventListener("submit", (e) => {
+      //   e.preventDefault();
+      //   const url = updateMemberButton.dataset.url + "/" + updateMemberId.value;
+      //   postData("PATCH", url, updateMemberForm);
+      // });
+
+      // //
+      // // GET ALL MEMBERS
+      // //
+      // for (let button of [allMemberButton, activeMemberButton, inactiveMemberButton]) {
+      //   button.addEventListener("click", (e) => {
+      //     e.preventDefault();
+      //     const url = button.dataset.url;
+      //     postData("GET", url);
+      //   });
+      // }
+
+      // //
+      // // GET ALL BOOKINGS
+      // //
+      // for (let button of [allBookingButton, activeBookingButton, inactiveBookingButton]) {
+      //   button.addEventListener("click", (e) => {
+      //     e.preventDefault();
+      //     const url = button.dataset.url;
+      //     postData("GET", url);
+      //   });
+      // }
+
+      // //
+      // // GET ONE BOOKING
+      // //
+      // oneBookingButton.addEventListener("click", (e) => {
+      //   e.preventDefault();
+      //   const url = oneBookingButton.dataset.url + "/" + oneBookingId.value;
+      //   postData("GET", url);
+      // });
+
+      // //
+      // // CREATE BOOKING
+      // //
+      // createBookingForm.addEventListener("submit", (e) => {
+      //   e.preventDefault();
+      //   const url = createBookingButton.dataset.url;
+      //   postData("POST", url, createBookingForm);
+      // });
+
+      // //
+      // // UPDATE BOOKING
+      // //
+      // updateBookingForm.addEventListener("submit", (e) => {
+      //   e.preventDefault();
+      //   const url = updateBookingButton.dataset.url + "/" + updateBookingId.value;
+      //   postData("PATCH", url, updateBookingForm);
+      // });
+
+      // //
+      // // DELETE BOOKING
+      // //
+      // deleteBookingButton.addEventListener("click", (e) => {
+      //   e.preventDefault();
+      //   const url = deleteBookingButton.dataset.url + "/" + deleteBookingId.value;
+      //   postData("DELETE", url);
+      // });
 
       //
       // ENTER key submits form
@@ -661,44 +933,6 @@
           }
           match = match.replace(/"/g, "");
           return `<span style="${style}color:${color}">${match}</span>`;
-        });
-      }
-
-      for (let button of newFormFieldButtons) {
-        // newFormFieldButton.forEach((button) => {
-        button.addEventListener("click", (e) => {
-          e.preventDefault();
-          const x = e.clientX;
-          const y = e.clientY;
-          const formElement = e.target.parentElement.nextElementSibling.id;
-          // console.log(formElement);
-          // crteate a small overlay with two inputs
-          const overlay = document.createElement("div");
-          overlay.classList.add("newFormFieldOverlay");
-          overlay.style.top = y + "px";
-          overlay.style.left = x + "px";
-          overlay.innerHTML = /*html*/ `
-          <form>
-            <input type="text" name="newFormField" value="new field" />
-            <button class="addNewFormField" data-form=${formElement}>Add</button>
-            <button class="addNewFormFieldClose" >Close</button>
-            </form>`;
-          document.body.appendChild(overlay);
-
-          overlay.getElementsByClassName("addNewFormFieldClose")[0].addEventListener("click", (e) => {
-            e.preventDefault();
-            overlay.remove();
-          });
-
-          overlay.getElementsByClassName("addNewFormField")[0].addEventListener("click", (e) => {
-            e.preventDefault();
-            const formElement = document.getElementById(e.target.dataset.form);
-            const name = e.target.parentElement.querySelector("input").value;
-            const label = document.createElement("label");
-            label.innerHTML = /*html*/ `${name}: <input type="text" name="${name}" value="" />`;
-            formElement.insertBefore(label, formElement.querySelector("button"));
-            overlay.remove();
-          });
         });
       }
     </script>

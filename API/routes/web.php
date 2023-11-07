@@ -14,5 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return '<h1><a href="/apitest">API Test</a></h1>';
+});
+
+Route::get('/apitest', function () {
+    return view('apitest');
 });
