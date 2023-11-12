@@ -4,6 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Booking Manager Test</title>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.31.1/ace.min.js" integrity="sha512-iUK+dRJntrD/66cOBtnhcNLxHLSX56pfDw3K3jolmy9hxfpAgHQhIvfsraWd6rJZMy2zewMoynUvYonma81Oqw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.31.1/mode-javascript.min.js" integrity="sha512-1OTGICMOnGWxRYfDZRUdv7qut0O8+9s7JPi6JNxlz1pdpHgDwPo1L0dzYKwftuIb0ossdBzWtkAlnyyYpIEp2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ace-builds@1.31.1/css/theme/one_dark.css" integrity="sha256-nJm9XQTbvCE2jW5agbMIyGO6UKumsQHduwdxF86MVtM=" crossorigin="anonymous" />
+   -->
     <link
       rel="shortcut icon"
       href="data:image/svg+xml,%3Csvg xmlns='http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cg fill='none' stroke='%23f9322c' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5'%3E%3Cpath d='m4.25 9.75l-2-.5s0-1.5.5-3s4-1.5 4-1.5m-.5 7l.5 2s1.5 0 3-.5s1.5-4 1.5-4m-7 .5l2 2s5-2 6.5-4.5s1.5-5.5 1.5-5.5s-3 0-5.5 1.5s-4.5 6.5-4.5 6.5z'%2F%3E%3Cpath fill='%23f9322c' d='m1.75 14.25l2-1l-1-1z'%2F%3E%3Ccircle cx='10.25' cy='5.75' r='.5' fill='currentColor'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"
@@ -39,6 +43,17 @@
         --colors-gray11: hsl(0, 0%, 62.8%);
         --colors-gray12: hsl(0, 0%, 93%);
         --colors-gray13: hsl(0, 0%, 97%);
+        --php: #4f5b93;
+        --svelte: hsl(15, 100%, 50%);
+        --laravel: rgb(249, 50, 44);
+        --javascript: #f0db4f;
+        --tailwind: rgb(14 165 233);
+        --vue: #42b883;
+        --red: rgb(239, 89, 111);
+        --yellow: hsl(39.1, 67.1%, 69%);
+        --green: hsl(107.6, 43.6%, 63.1%);
+        --blue: rgb(97, 175, 239);
+        --purple: rgb(213, 95, 222);
       }
 
       @font-face {
@@ -72,7 +87,7 @@
         grid-template-rows: 1fr;
         height: 100vh;
         /* width: 100vw; */
-        max-width: 80rem;
+        max-width: 120rem;
         margin: 0 auto;
       }
 
@@ -82,6 +97,8 @@
         font-size: 1.5rem;
         font-weight: normal;
         color: var(--colors-gray11);
+        display: flex;
+        gap: 1rem;
       }
 
       input,
@@ -217,14 +234,27 @@
         /* background-color: antiquewhite; */
         padding: 1rem;
       }
-
+      .right .columns {
+        display: flex;
+        flex-direction: column;
+      }
+      .right #editorWrapper,
+      .right #tablesContainer,
       .right pre {
         height: calc(100vh - 5rem);
+        width: 100%;
         overflow: scroll;
+        margin: 1rem;
         color: var(--colors-gray10);
         font-family: "Geist Mono";
         font-size: 14px;
         line-height: 1.7;
+      }
+      .right #tablesContainer {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        overflow-x: auto;
       }
 
       .right #resultUrl {
@@ -232,11 +262,20 @@
         font-weight: normal;
         padding-left: 1rem;
       }
+      .right #editorWrapper {
+        display: none;
+      }
 
       .right .method {
-        color: var(--colors-gray11);
-        font-size: 0.9rem;
-        margin-inline: 1rem;
+        color: #4f5b93;
+        display: inline-block;
+        width: 100px;
+      }
+
+      .right .status {
+        font-weight: normal;
+        margin-left: 0.5rem;
+        font-size: 0.8rem;
       }
 
       .newFormFieldButton {
@@ -273,13 +312,141 @@
       .newFormFieldOverlay button:first-of-type {
         margin-right: 1rem;
       }
+      table {
+        border-collapse: collapse;
+        max-width: 100%;
+        width: max-content;
+        margin-bottom: 1rem;
+        border-spacing: 30px;
+      }
+
+      table caption {
+        margin: 0;
+        padding: 0;
+        padding-left: 0.15rem;
+        text-align: left;
+        font-size: 1.5rem;
+        font-weight: normal;
+        color: var(--blue);
+        position: sticky;
+        z-index: 99;
+        top: 0;
+        background: var(--colors-gray2);
+      }
+      table caption .rowCount {
+        font-size: 0.8rem;
+        color: var(--colors-gray10);
+        margin-left: 0.5rem;
+      }
+      th,
+      td {
+        border: 1px solid var(--colors-gray5);
+
+        border: 1px solid transparent;
+        border-bottom: 1px solid var(--colors-gray5);
+        padding: 2px 5px;
+        text-align: left;
+        width: max-content;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--colors-gray10);
+      }
+      th {
+        color: var(--colors-gray11);
+        border: 1px solid transparent;
+        border-bottom: 1px solid var(--colors-gray5);
+        background: var(--colors-gray5);
+        position: sticky;
+        top: 40px;
+        cursor: pointer;
+      }
+      th:hover {
+        color: var(--blue);
+      }
+
+      td {
+        padding-right: 20px;
+        /* border-right: 5px solid var(--colors-gray2); */
+      }
+
+      a {
+        color: var(--blue);
+        text-decoration: none;
+      }
+      a:hover {
+        filter: brightness(1.2);
+      }
+
+      .icon {
+        width: 2rem;
+        height: 2rem;
+        margin: 0;
+        padding: 0;
+        fill: var(--blue);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 1.5rem;
+        background-color: transparent;
+        border: 1px solid transparent;
+      }
+      .icon:hover,
+      .icon:focus {
+        border: 1px solid transparent;
+        filter: brightness(1.3);
+      }
+
+      .icon-json {
+        fill: var(--blue);
+        background-image: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cpath fill="%234f5b93" d="M5 3h2v2H5v5a2 2 0 0 1-2 2a2 2 0 0 1 2 2v5h2v2H5c-1.07-.27-2-.9-2-2v-4a2 2 0 0 0-2-2H0v-2h1a2 2 0 0 0 2-2V5a2 2 0 0 1 2-2m14 0a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1v2h-1a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-2v-2h2v-5a2 2 0 0 1 2-2a2 2 0 0 1-2-2V5h-2V3h2m-7 12a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1m-4 0a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1m8 0a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1Z"%2F%3E%3C%2Fsvg%3E');
+        background-size: 1.5rem;
+      }
+      .icon-table {
+        background-image: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="256" height="256" viewBox="0 0 256 256"%3E%3Cpath fill="%234f5b93" d="M224 50H32a6 6 0 0 0-6 6v136a14 14 0 0 0 14 14h176a14 14 0 0 0 14-14V56a6 6 0 0 0-6-6ZM38 110h44v36H38Zm56 0h124v36H94Zm124-48v36H38V62ZM38 192v-34h44v36H40a2 2 0 0 1-2-2Zm178 2H94v-36h124v34a2 2 0 0 1-2 2Z"%2F%3E%3C%2Fsvg%3E');
+        background-size: 1.8rem;
+      }
+
+      .highlightWrapper {
+        position: relative;
+        display: flex;
+      }
+      .right #editor {
+        width: 100%;
+        height: 100%;
+      }
+
+      .hightlightArea {
+        display: none;
+        border: 1px solid var(--colors-gray8);
+        /* pointer-events: none; */
+      }
+
+      .right #editor {
+        background-color: var(--colors-gray3);
+        border: 1px solid var(--colors-gray8);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        color: var(--colors-gray10);
+        font-family: "Geist Mono";
+        font-size: 14px;
+        line-height: 1.7;
+      }
+      .right #editor:focus {
+        outline: none;
+        border: 1px solid #4f5b93;
+      }
     </style>
   </head>
 
   <body>
     <main>
       <div class="left">
-        <h2>API Tester</h2>
+        <h2>
+          API Tester
+          <button id="showTables" class="icon icon-table"></button>
+          <!-- <button id="showEditor" class="icon icon-table"></button> -->
+        </h2>
         <header>
           <form id="adminLoginForm" enctype="multipart/form-data">
             <input type="hidden" name="email" value="admin@example.com" />
@@ -294,149 +461,32 @@
           <form id="memberLoginForm" enctype="multipart/form-data">
             <input type="hidden" name="email" value="member@example.com" />
             <input type="hidden" name="password" value="password" />
-            <button type="submit" data-section="member" id="memberLoginButton" data-url="login">Member</button>
+            <button type="submit" data-section="staff" id="memberLoginButton" data-url="login">Member</button>
           </form>
         </header>
-        <!--
-        <section id="staffSection">
-          <details open>
-            <summary>Member</summary>
-            <article>
-              <button id="allMember" data-url="member?all">All</button>
-              <button id="activeMember" data-url="member">Active</button>
-              <button id="inactiveMember" data-url="member?inactive">Inactive</button>
-            </article>
-            <article>
-              <h3>one Member</h3>
-              <label>
-                Id:
-                <input type="text" name="oneMemberId" style="width: 35px" value="1" />
-              </label>
-              <button id="oneMember" data-url="member">Get</button>
-            </article>
-
-            <article>
-              <h3>create Member<button class="newFormFieldButton">+</button></h3>
-              <form id="createMember">
-                <label>
-                  Name:
-                  <input type="text" name="name" value="New Member" />
-                </label>
-                <label>
-                  Email:
-                  <input type="text" name="email" value="test@example.com" />
-                </label>
-                <button type="submit" id="createMemberButton" data-url="member">Create</button>
-              </form>
-            </article>
-
-            <article>
-              <h3>update Member<button class="newFormFieldButton">+</button></h3>
-              <form id="updateMember" enctype="multipart/form-data">
-                <label>
-                  Id:
-                  <input type="text" name="updateMemberId" style="width: 35px" value="1" />
-                </label>
-                <label>
-                  Name:
-                  <input type="text" name="name" value="name" />
-                </label>
-                <label>
-                  Email:
-                  <input type="text" name="email" value="email" />
-                </label>
-                <button type="submit" id="updateMemberButton" data-url="member">Update</button>
-              </form>
-            </article>
-            <article>
-              <h3>delete Member</h3>
-              <label>
-                Id:
-                <input type="text" name="deleteMemberId" style="width: 35px" value="1" />
-              </label>
-              <button id="deleteMember" data-url="member">Delete</button>
-            </article>
-          </details>
-
-        <details>
-            <summary>Booking</summary>
-            <article>
-              <button id="allBooking" data-url="booking?all">All</button>
-              <button id="activeBooking" data-url="booking">Active</button>
-              <button id="inactiveBooking" data-url="booking?inactive">Inactive</button>
-            </article>
-            <article>
-              <h3>one Booking</h3>
-              <label>
-                Id:
-                <input type="text" name="oneBookingId" style="width: 35px" value="1" />
-              </label>
-              <button id="oneBooking" data-url="booking">Get</button>
-            </article>
-
-            <article>
-              <h3>create Booking<button class="newFormFieldButton">+</button></h3>
-              <form id="createBooking">
-                <label>
-                  Member Id:
-                  <input type="text" name="memberId" value="1" />
-                </label>
-                <label>
-                  Start:
-                  <input type="text" name="start" value="2021-01-01 12:00:00" />
-                </label>
-                <label>
-                  End:
-                  <input type="text" name="end" value="2021-01-01 13:00:00" />
-                </label>
-                <button type="submit" id="createBookingButton" data-url="booking">Create</button>
-              </form>
-            </article>
-
-            <article>
-              <h3>update Booking<button class="newFormFieldButton">+</button></h3>
-              <form id="updateBooking" enctype="multipart/form-data">
-                <label>
-                  Id:
-                  <input type="text" name="updateBookingId" style="width: 35px" value="1" />
-                </label>
-                <label>
-                  Member Id:
-                  <input type="text" name="memberId" value="1" />
-                </label>
-                <label>
-                  Start:
-                  <input type="text" name="start" value="2021-01-01 12:00:00" />
-                </label>
-                <label>
-                  End:
-                  <input type="text" name="end" value="2021-01-01 13:00:00" />
-                </label>
-                <button type="submit" id="updateBookingButton" data-url="booking">Update</button>
-              </form>
-            </article>
-            <article>
-              <h3>delete Booking</h3>
-              <label>
-                Id:
-                <input type="text" name="deleteBookingId" style="width: 35px" value="1" />
-              </label>
-              <button id="deleteBooking" data-url="booking">Delete</button>
-            </article>
-          </details> 
-        </section>
-
-        <section id="memberSection"></section>
-        -->
       </div>
       <div class="right">
-        <h2>Result <span id="resultUrl"></span></h2>
-        <pre id="result"></pre>
+        <h2>
+          <span id="resultUrl"></span>
+        </h2>
+        <div id="code-mirror-container"></div>
+        <div class="columns">
+          <pre id="result"></pre>
+          <div id="tablesContainer"></div>
+          <div id="editorWrapper">
+            <header>
+              <h2>Editor</h2>
+              <button>Save</button>
+            </header>
+            <div id="editor"></div>
+          </div>
+        </div>
       </div>
     </main>
 
     <script>
-      const URL = "http://127.0.0.1:8000/api/";
+      // const URL = "http://127.0.0.1:8000/api/";
+      const URL = "https://public.test/api/";
       let token = null;
       let responseData = null;
 
@@ -444,16 +494,91 @@
       const adminLoginButton = document.getElementById("adminLoginButton");
       const staffLoginButton = document.getElementById("staffLoginButton");
       const memberLoginButton = document.getElementById("memberLoginButton");
+      // BUTTONS
+      const showTablesButton = document.getElementById("showTables");
       // RESULT
       const result = document.getElementById("result");
       const resultUrl = document.getElementById("resultUrl");
+      const tablesContainer = document.getElementById("tablesContainer");
+      // EDITOR
+      const editor = document.getElementById("editor");
+      const showEditorButton = document.getElementById("showEditor");
+      const editorWrapper = document.getElementById("editorWrapper");
+      const editorSaveButton = document.getElementById("editorSaveButton");
+      const editorHighlightArea = document.querySelector(".hightlightArea");
 
+      // document.addEventListener("DOMContentLoaded", () => {
+      //   const codeMirrorContainer = document.getElementById("editor");
+      //   var editor = ace.edit("editor");
+      //   editor.setTheme("ace/theme/one_dark");
+      //   editor.session.setMode("ace/mode/javascript");
+      //   // add apiArray to editor
+      //   editor.setValue(JSON.stringify(apiArray, null, 2));
+      // });
+
+      // SWITCHES
+      let showTables = true;
+      let showEditor = false;
+
+      // showEditorButton.addEventListener("click", (e) => {
+      //   e.preventDefault();
+      //   if (!showEditor) {
+      //     showEditor = true;
+      //     editorWrapper.style.display = "block";
+      //     result.style.display = "none";
+      //     tablesContainer.style.display = "none";
+      //   } else {
+      //     showEditor = false;
+      //     editorWrapper.style.display = "none";
+      //     tablesContainer.style.display = "none";
+      //     result.style.display = "block";
+      //   }
+      // });
+
+      showTablesButton.addEventListener("click", async (e) => {
+        if (!showTables) {
+          showTables = true;
+          resultAsTable();
+        } else {
+          showTables = false;
+          resultAsJSON();
+        }
+      });
+
+      function resultAsJSON() {
+        result.style.display = "block";
+        tablesContainer.style.display = "none";
+        showTablesButton.classList.remove("icon-json");
+        showTablesButton.classList.add("icon-table");
+        result.innerHTML = jsonFormatHighlight(responseData);
+      }
+
+      function resultAsTable() {
+        showTables = true;
+        result.style.display = "none";
+        tablesContainer.style.display = "flex";
+        tablesContainer.innerHTML = "";
+        showTablesButton.classList.remove("icon-table");
+        showTablesButton.classList.add("icon-json");
+        createTable(responseData);
+      }
       window.onload = () => {
         createDocument().then(() => {
           adminLoginButton.click();
           addNewFormFields();
+          increaseId();
+          // loadEditor();
         });
       };
+
+      function loadEditor() {
+        showEditor = true;
+        editorWrapper.style.display = "block";
+        result.style.display = "none";
+        tablesContainer.style.display = "none";
+        // editor.value = JSON.stringify(apiArray, null, 2);
+        // editorHighlightArea.innerHTML = jsonFormatHighlight(apiArray);
+      }
 
       const apiArray = [
         {
@@ -464,7 +589,7 @@
               requests: [
                 {
                   method: "GET",
-                  url: "member?all",
+                  url: "member?show=all",
                   description: "All",
                   fields: [],
                 },
@@ -476,27 +601,48 @@
                 },
                 {
                   method: "GET",
-                  url: "member?inactive",
+                  url: "member?show=inactive",
                   description: "Inactive",
                   fields: [],
                 },
                 {
                   method: "GET",
+                  url: "member?show=deleted",
+                  description: "Deleted",
+                  fields: [],
+                },
+                {
+                  method: "GET",
                   url: "member/{id}",
-                  description: "Get one member",
+                  description: "Get one Member",
                   callback: function () {
                     updateIds("member");
                   },
                   fields: [
                     {
                       name: "id",
+                      value: 1,
+                    },
+                  ],
+                },
+                {
+                  method: "GET",
+                  url: "member/{id}?show=allBookings",
+                  description: "Get one M w all B.",
+                  callback: function () {
+                    updateIds("member");
+                  },
+                  fields: [
+                    {
+                      name: "id",
+                      value: 1,
                     },
                   ],
                 },
                 {
                   method: "POST",
                   url: "member",
-                  description: "Create a member",
+                  description: "Create a Member",
                   newFields: true,
                   callback: function () {
                     updateIds("member");
@@ -504,26 +650,42 @@
                   fields: [
                     {
                       name: "name",
+                      value: "John Doe",
                     },
                     {
                       name: "email",
+                      value: "John@Doe.com",
                     },
                   ],
                 },
                 {
                   method: "PATCH",
                   url: "member/{id}",
-                  description: "Edit a member",
+                  description: "Edit a Member",
                   newFields: true,
                   fields: [
                     {
                       name: "id",
+                      value: 1,
                     },
                     {
                       name: "name",
+                      value: "John Doe",
                     },
                     {
                       name: "email",
+                      value: "John@Doe.com",
+                    },
+                  ],
+                },
+                {
+                  method: "DELETE",
+                  url: "member/{id}",
+                  description: "Delete a Member",
+                  fields: [
+                    {
+                      name: "id",
+                      value: 1,
                     },
                   ],
                 },
@@ -585,7 +747,8 @@
                   const label = document.createElement("label");
                   // label first letter uppercase
                   const labelName = param.name.charAt(0).toUpperCase() + param.name.slice(1);
-                  label.innerHTML = /*html*/ `${labelName}: <input type="text" name="${param.name}" value="" />`;
+                  const value = param.value ? param.value : "";
+                  label.innerHTML = /*html*/ `${labelName}: <input type="text" name="${param.name}" value="${value}" />`;
                   form.appendChild(label);
                 }
                 const button = document.createElement("button");
@@ -632,9 +795,10 @@
       }
 
       function updateIds(section) {
-        console.log("updateIds", section);
-        console.log(responseData);
-        console.log(responseData[section]);
+        // console.log("updateIds", section);
+        // console.log(responseData);
+        // console.log(responseData[section]);
+        if (!responseData[section]) return;
         const allIds = document.querySelectorAll("input[name=id]");
         for (let id of allIds) {
           id.value = responseData[section].id;
@@ -655,7 +819,6 @@
             form = null;
           }
         }
-        resultUrl.innerHTML = `<span class="method">${method}</span> api/${url}`;
 
         let formData = null;
         if (form) {
@@ -678,15 +841,31 @@
           },
           body: formData,
         })
-          .then((response) => response.json())
+          .then((response) => {
+            const status = response.status;
+            let color = "var(--green)";
+            if (status >= 400) color = "var(--yellow)";
+            if (status >= 500) color = "var(--red)";
+            resultUrl.innerHTML = `<span class="method">${method}</span> api/${url} <span class=status style="color: ${color};">${status}</span>`;
+            return response.json();
+          })
           .then((data) => {
-            result.innerHTML = jsonFormatHighlight(data);
             responseData = data;
+
+            if (showTables) {
+              resultAsTable();
+            } else {
+              resultAsJSON();
+            }
+
             if (data.token) token = data.token;
-            // console.log(data);
+            console.log(data);
           })
           .catch((error) => {
+            responseData = null;
             console.error("Error:", error);
+            tablesContainer.innerHTML = error;
+            result.innerHTML = error;
           });
       }
 
@@ -756,134 +935,37 @@
         }
       }
 
-      // MEMBER
-      // const allMemberButton = document.getElementById("allMember");
-      // const activeMemberButton = document.getElementById("activeMember");
-      // const inactiveMemberButton = document.getElementById("inactiveMember");
-      // const oneMemberButton = document.getElementById("oneMember");
-      // const oneMemberId = document.querySelector("input[name=oneMemberId]");
-      // const createMemberButton = document.getElementById("createMemberButton");
-      // const createMemberForm = document.getElementById("createMember");
-      // const updateMemberId = document.querySelector("input[name=updateMemberId]");
-      // const updateMemberButton = document.getElementById("updateMemberButton");
-      // const updateMemberForm = document.getElementById("updateMember");
-      // const deleteMemberId = document.querySelector("input[name=deleteMemberId]");
-      // const deleteMemberButton = document.getElementById("deleteMember");
-      // BOOKINGS
-      // const allBookingButton = document.getElementById("allBooking");
-      // const activeBookingButton = document.getElementById("activeBooking");
-      // const inactiveBookingButton = document.getElementById("inactiveBooking");
-      // const oneBookingButton = document.getElementById("oneBooking");
-      // const oneBookingId = document.querySelector("input[name=oneBookingId]");
-      // const createBookingButton = document.getElementById("createBookingButton");
-      // const createBookingForm = document.getElementById("createBooking");
-      // const updateBookingId = document.querySelector("input[name=updateBookingId]");
-      // const updateBookingButton = document.getElementById("updateBookingButton");
-      // const updateBookingForm = document.getElementById("updateBooking");
-      // const deleteBookingId = document.querySelector("input[name=deleteBookingId]");
-      // const deleteBookingButton = document.getElementById("deleteBooking");
-
-      // //
-      // // DELETE MEMBER
-      // //
-      // deleteMemberButton.addEventListener("click", (e) => {
-      //   e.preventDefault();
-      //   const url = deleteMemberButton.dataset.url + "/" + deleteMemberId.value;
-      //   postData("DELETE", url);
-      // });
-
-      // //
-      // // CREATE MEMBER
-      // //
-      // createMemberForm.addEventListener("submit", (e) => {
-      //   e.preventDefault();
-      //   const url = createMemberButton.dataset.url;
-      //   postData("POST", url, createMemberForm);
-      // });
-
-      // //
-      // // GET ONE MEMBER
-      // //
-      // oneMemberButton.addEventListener("click", (e) => {
-      //   e.preventDefault();
-      //   const url = oneMemberButton.dataset.url + "/" + oneMemberId.value;
-      //   postData("GET", url);
-      // });
-
-      // updateMemberForm.addEventListener("submit", (e) => {
-      //   e.preventDefault();
-      //   const url = updateMemberButton.dataset.url + "/" + updateMemberId.value;
-      //   postData("PATCH", url, updateMemberForm);
-      // });
-
-      // //
-      // // GET ALL MEMBERS
-      // //
-      // for (let button of [allMemberButton, activeMemberButton, inactiveMemberButton]) {
-      //   button.addEventListener("click", (e) => {
-      //     e.preventDefault();
-      //     const url = button.dataset.url;
-      //     postData("GET", url);
-      //   });
-      // }
-
-      // //
-      // // GET ALL BOOKINGS
-      // //
-      // for (let button of [allBookingButton, activeBookingButton, inactiveBookingButton]) {
-      //   button.addEventListener("click", (e) => {
-      //     e.preventDefault();
-      //     const url = button.dataset.url;
-      //     postData("GET", url);
-      //   });
-      // }
-
-      // //
-      // // GET ONE BOOKING
-      // //
-      // oneBookingButton.addEventListener("click", (e) => {
-      //   e.preventDefault();
-      //   const url = oneBookingButton.dataset.url + "/" + oneBookingId.value;
-      //   postData("GET", url);
-      // });
-
-      // //
-      // // CREATE BOOKING
-      // //
-      // createBookingForm.addEventListener("submit", (e) => {
-      //   e.preventDefault();
-      //   const url = createBookingButton.dataset.url;
-      //   postData("POST", url, createBookingForm);
-      // });
-
-      // //
-      // // UPDATE BOOKING
-      // //
-      // updateBookingForm.addEventListener("submit", (e) => {
-      //   e.preventDefault();
-      //   const url = updateBookingButton.dataset.url + "/" + updateBookingId.value;
-      //   postData("PATCH", url, updateBookingForm);
-      // });
-
-      // //
-      // // DELETE BOOKING
-      // //
-      // deleteBookingButton.addEventListener("click", (e) => {
-      //   e.preventDefault();
-      //   const url = deleteBookingButton.dataset.url + "/" + deleteBookingId.value;
-      //   postData("DELETE", url);
-      // });
-
       //
       // ENTER key submits form
       //
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && e.target.tagName === "INPUT") {
           e.preventDefault();
           const button = e.target.parentElement.nextElementSibling;
           button.click();
         }
       });
+
+      //
+      // increase id with arrow keys
+      //
+      function increaseId() {
+        const allIds = document.querySelectorAll("input[name=id]");
+
+        allIds.forEach((id) => {
+          // console.log(id);
+          id.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              id.value = parseInt(id.value) + 1;
+            }
+            if (e.key === "ArrowDown") {
+              e.preventDefault();
+              id.value = parseInt(id.value) - 1;
+            }
+          });
+        });
+      }
 
       const defaultColors = {
         keyColor: "rgb(239, 89, 111)",
@@ -934,6 +1016,130 @@
           match = match.replace(/"/g, "");
           return `<span style="${style}color:${color}">${match}</span>`;
         });
+      }
+
+      // Function to create tables recursively
+      function createTable(data, name = "Root") {
+        // console.info("\n\n\n\n\n\ncreateTable " + name, typeof data, data);
+        const isArray = Array.isArray(data) ? true : false;
+        const columns = Object.keys(data);
+        const columnsHeadings = isArray ? Object.keys(data[0]) : Object.keys(data);
+        const table = document.createElement("table");
+        const caption = document.createElement("caption");
+        const rowCount = isArray ? data.length : "";
+        const captionName = name.charAt(0).toUpperCase() + name.slice(1);
+        caption.id = "table_" + name;
+        caption.innerHTML = `${captionName}<span class=rowCount>${rowCount}</span>`;
+
+        var tableHtml = "<tr>";
+        let colomnCount = 0;
+        columnsHeadings.forEach(function (columnHead) {
+          // console.log(data[columnHead]);
+          colomnCount++;
+          tableHtml += `<th onclick="sortTable(${colomnCount},'table_${name}')">${columnHead}</th>`;
+        });
+        tableHtml += "</tr>";
+
+        if (isArray) {
+          data.forEach((arrayColumn) => {
+            tableHtml += "<tr>";
+            Object.keys(arrayColumn).forEach((arrayColumnKey) => {
+              let style = "";
+              if (typeof arrayColumn[arrayColumnKey] === "string") {
+                style = "color:var(--green);";
+              }
+              if (typeof arrayColumn[arrayColumnKey] === "number" || arrayColumn[arrayColumnKey] === null) {
+                style = "color:var(--yellow);";
+              }
+              if (typeof arrayColumn[arrayColumnKey] === "boolean" && arrayColumn[arrayColumnKey] === true) {
+                style = "color:var(--blue);";
+              }
+              if (typeof arrayColumn[arrayColumnKey] === "boolean" && arrayColumn[arrayColumnKey] === false) {
+                style = "color:var(--purple);";
+              }
+              tableHtml += `<td style="${style}">` + arrayColumn[arrayColumnKey] + "</td>";
+              // tableHtml += "<td>" + arrayColumn[arrayColumnKey] + "</td>";
+            });
+            tableHtml += "</tr>";
+          });
+        } else {
+          columns.forEach(function (column) {
+            if (data[column] === null) {
+              tableHtml += "<td style='color:var(--orange)'>null</td>";
+            } else if (typeof data[column] === "object" && Object.keys(data[column]).length > 0 && !isArray) {
+              createTable(data[column], column);
+              tableHtml += `<td>-> <a href="#table_${column}">${column}</a></td>`;
+            } else {
+              let style = "";
+              if (typeof data[column] === "string") {
+                style = "color:var(--green);";
+              }
+              if (typeof data[column] === "number") {
+                style = "color:var(--yellow);";
+              }
+              if (typeof data[column] === "boolean" && data[column] === true) {
+                style = "color:var(--blue);";
+              }
+              if (typeof data[column] === "boolean" && data[column] === false) {
+                style = "color:var(--purple);";
+              }
+              tableHtml += `<td style="${style}">` + data[column] + "</td>";
+            }
+          });
+        }
+
+        tableHtml += "</table>";
+        table.innerHTML = tableHtml;
+        table.prepend(caption);
+        tablesContainer.prepend(table);
+      }
+
+      //
+      // SORT TABLE
+      //
+      function sortTable(column, tableId) {
+        var table,
+          rows,
+          switching,
+          i,
+          x,
+          y,
+          shouldSwitch,
+          dir,
+          switchcount = 0;
+        table = document.getElementById(tableId).parentElement;
+        switching = true;
+        dir = "asc";
+        while (switching) {
+          switching = false;
+          rows = table.rows;
+          for (i = 1; i < rows.length - 1; i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[column - 1];
+            y = rows[i + 1].getElementsByTagName("TD")[column - 1];
+            if (dir == "asc") {
+              if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+              }
+            } else if (dir == "desc") {
+              if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+              }
+            }
+          }
+          if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount++;
+          } else {
+            if (switchcount == 0 && dir == "asc") {
+              dir = "desc";
+              switching = true;
+            }
+          }
+        }
       }
     </script>
   </body>

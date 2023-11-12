@@ -14,12 +14,8 @@ return new class extends Migration {
             $table->foreignId('member_id')->constrained();
             $table->foreignId('location_id')->constrained();
             $table->foreignId('staff_id')->constrained();
-            // $table->unsignedBigInteger('member_id');
-            // $table->unsignedBigInteger('location_id');
-            // $table->unsignedBigInteger('staff_id');
-            // $table->foreign('member_id')->references('id')->on('members');
-            // $table->foreign('location_id')->references('id')->on('locations');
-            // $table->foreign('staff_id')->references('id')->on('staff');
+            $table->string('comment_member')->nullable();
+            $table->string('comment_staff')->nullable();
             $table->date('date');
             $table->string('time');
             $table->integer('slots');
@@ -28,6 +24,13 @@ return new class extends Migration {
             $table->timestamp('ended_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            // $table->unsignedBigInteger('member_id');
+            // $table->unsignedBigInteger('location_id');
+            // $table->unsignedBigInteger('staff_id');
+            // $table->foreign('member_id')->references('id')->on('members');
+            // $table->foreign('location_id')->references('id')->on('locations');
+            // $table->foreign('staff_id')->references('id')->on('staff');
         });
 
 

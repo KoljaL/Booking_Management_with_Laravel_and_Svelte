@@ -35,7 +35,6 @@ return new class extends Migration {
             $table->string('jc_number')->nullable();
             $table->integer('max_booking')->default(1);
             $table->boolean('active')->default(true);
-            $table->boolean('archived')->default(false);
 
             // we neen the timestamps here, 
             // because the User model does not have timestamps anymore

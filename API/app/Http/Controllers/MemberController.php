@@ -29,39 +29,11 @@ class MemberController extends Controller {
     public function index(Request $request) {
         // dd($request->all());
         try {
-            // read the query parameters
-            $showArchived = $request->has('archived');
-            $showAll = $request->has('all');
-            $showInactive = $request->has('inactive');
-
-            // get the logged in Staff
-            $authUser = Auth::user();
-
-            // start the Member query
-            $membersQuery = Member::selectMembersByRole($authUser);
-
-            // filter the members
-            if ($showAll) {
-                $membersQuery->allMembers();
-                $message = 'All members';
-            } else if ($showInactive) {
-                $membersQuery->inactiveMembers();
-                $message = 'Inactive members';
-            } else if ($showArchived) {
-                $membersQuery->archived();
-                $message = 'Archived members';
-            } else {
-                $membersQuery->activeMembers();
-                $message = 'Active members';
-            }
-
-            // get the Members
-            $members = $membersQuery->get();
+            $members = Member::byAccessLevel()->showMembers($request->show);
             $count_members = $members->count();
-
-            return response()->json(['message' => $message, 'count_members' => $count_members, 'members' => $members], 200);
+            return response()->json(['message' => $request->show . ' Members', 'count_members' => $count_members, 'members' => $members], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'Members not found or no associated staff.', 'error' => $th], 404);
+            return response()->json(['message' => 'Members not found or no Members associated staff.', 'error' => $th], 404);
         }
     }
 
@@ -72,36 +44,14 @@ class MemberController extends Controller {
      * Get selected data of a single member from the same location as the logged in staff (authUser),
      * including all bookings for this member
      */
-    public function show(Member $member) {
+    public function show(Request $request, $id) {
         try {
-            // read the query parameters
-            $showAll = request()->has('all');
+            $member = Member::withTrashed()->byAccessLevel()->withBookings($request->show)->findOrFail($id);
+            $count_bookings = $member->bookings->count();
 
-            // get the logged in Staff
-            $authUser = Auth::user();
-
-            // get the Member
-            // $member = Member::findOrFail($id);
-            $id = 0;
-
-            // check if the member is from the same location as the logged in staff
-            // or if the logged in staff is an admin
-            if ($authUser->staff->is_admin || $member->location_id == $authUser->staff->location_id) {
-                if ($showAll) {
-                    // $member->load('bookings');
-                } else {
-                    // $member->load(['bookings' => function ($query) {
-                    //     // $query->with('user:id,email')->where('date', '>=', date('Y-m-d'));
-                    //     // $query->where('date', '>=', date('Y-m-d'));
-                    // }]);
-                }
-                $count_bookings = $member->bookings->count();
-                return response()->json(['message' => 'Member data', 'count_bookings' => $count_bookings, 'member' => $member], 200);
-            } else {
-                return response()->json(['message' => 'Member not associated staff.', 'data' => $id], 404);
-            }
+            return response()->json(['message' => 'Member data', 'show' => $request->show, 'count_bookings' => $count_bookings, 'member' => $member], 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Member not found', 'data' => $id], 404);
+            return response()->json(['message' => 'Member with ID ' . $id . ' not found', 'exception' => $e], 404);
         }
     }
 
@@ -112,59 +62,59 @@ class MemberController extends Controller {
      * Create a new User, add the user_id to the Member, and return the Member
      */
     public function store(Request $request) {
+        // get the logged in Staff
+        $authUser = Auth::user();
 
+        // check if the logged in staff is an admin
+        // and if the request has a location_id
+        if ($authUser->isAdmin() && !$request->has('location_id')) {
+            return response()->json(['message' => 'Only staff can create members.'], 404);
+        }
         // if request empty 
         if (!$request->has('name') || !$request->has('email')) {
             return response()->json(['message' => 'Member not created, name and email required.'], 404);
         }
-        // dd($request->toArray());
-        // read the query parameters
+
+        // validate the request, email must be unique for users
         $request->validate([
             'name' => 'required',
             'email' => 'required|string|email|max:255|unique:users',
         ]);
+
         DB::beginTransaction();
-
         try {
-            // get the logged in Staff
-            $authUser = Auth::user();
-
             // get the location_id, max_booking and staff_id
-            $location_id = Location::find($authUser->staff->location_id)->id;
-            $max_booking = Location::find($location_id)->max_booking;
+            $location = Location::find($authUser->staff->location_id);
+            $location_id = $location->id;
+            $max_booking = $location->max_booking;
             $staff_id = $authUser->staff->id;
-
-            // generate a random invite_token
-            $invite_token = Str::random(60);
 
             // first create a new user
             $user = User::create([
                 'email' => $request->email,
                 'role' => 'member',
-                'invite_token' => $invite_token,
             ]);
-
-
             // dd($user->id);
+
             // then create a new member
             $member = Member::create([
-                'name' => $request->name,
                 'user_id' => $user->id,
-                'phone' => $request->phone,
-                'location_id' => $location_id,
-                'jc_number' => $request->jc_number,
-                'max_booking' => $max_booking,
-                'active' => 1,
-                'archived' => 0,
                 'staff_id' => $staff_id,
+                'location_id' => $location_id,
+                'max_booking' => $max_booking,
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'jc_number' => $request->jc_number,
             ]);
 
             // associate the member with the user
             $user->member()->save($member);
             DB::commit();
 
+            // get the new member with the
+            $newMember = Member::find($member->id);
             // return the member
-            return response()->json(['message' => 'Member created', 'member' => $member], 201);
+            return response()->json(['message' => 'Member created', 'member' => $newMember], 201);
         } catch (\Throwable $th) {
             DB::rollback();
             return response()->json(['message' => 'Error creating member', 'error' => $th], 500);
@@ -180,48 +130,37 @@ class MemberController extends Controller {
      * UPDATE
      * Update a Member
      */
-    public function update(Request $request, Member $member) {
-        // dd($request->method());
-        // dd($request->toArray());
-        // request is a json object, transform it to an array
-        // $data = $request->json()->all();
-        // dd($request->attributes);
-        // dd($member->toArray());
-        // dd($data);
-        // $request->toArray();
-        // $updateEmail = false;
-        // if ($request->email) {
-        // $updateEmail = true;
-        // $member = Member::findOrFail($request->id);
+    public function update(Request $request, $id) {
+        $member = Member::withTrashed()->byAccessLevel()->findOrFail($id);
+        // $member = Member::byAccessLevel()->findOrFail($id);
+        $updateEmail = false;
+        // dd($request->email, $member->user->email);
 
-        $request->validate([
-            'email' => 'required|string|email|max:255|unique:users,email,' . $member->email . ',email',
-        ]);
-        $userData = $request->only(['email']);
-        // dd($userData);
-        // }
+        // the email is a User attribute, so we need to check if it has changed
+        if ($request->has('email') && $request->email != $member->user->email) {
+            $updateEmail = true;
+            $request->validate([
+                'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            ]);
+            $userData = $request->only(['email']);
+        }
 
         $memberData = $request->toArray();
-        // unset($memberData['name']);
-        // unset($memberData['email']);
 
         DB::beginTransaction();
         try {
-            // if ($updateEmail) {
-            // update the user
-            // $member->user->update($userData);
-            $user = $member->user;
-            // Update User attributes
-            $user->update($userData);
-            // }
-            // Update Member attributes
+            if ($updateEmail) {
+                // update User
+                $user = $member->user;
+                $user->update($userData);
+            }
+            // update Member  
             $member->update($memberData);
 
             // try to update the member
             DB::commit();
 
             // return the member
-            // unset($member['user']);
             return response()->json(['message' => 'Member updated', 'member' => $member], 201);
         } catch (\Exception $e) {
             DB::rollback();
@@ -233,18 +172,16 @@ class MemberController extends Controller {
      * DESTROY
      * Delete a Member
      */
-    public function destroy(Member $member) {
+    public function destroy($id) {
+        // get Member
+        $member = Member::withTrashed()->byAccessLevel()->findOrFail($id);
 
-        // check if member has the same location as the logged in staff
-        $authUser = Auth::user();
-        if ($authUser->staff->location_id != $member->location_id) {
-            return response()->json(['message' => 'Member not found or no associated staff.'], 404);
-        }
-        // dd($member->toArray());
         DB::beginTransaction();
         try {
+            $member->active = false;
+            $member->save();
             $oldMember = $member->toArray();
-            // unset($oldMember['user']);
+
 
             // first delete all bookings for this member
             try {
@@ -252,12 +189,14 @@ class MemberController extends Controller {
             } catch (\Throwable $th) {
                 return response()->json(['message' => 'Error deleting bookings', 'error' => $th], 500);
             }
+
             // then delete the member
             try {
                 $member->delete();
             } catch (\Throwable $th) {
                 return response()->json(['message' => 'Error deleting member', 'error' => $th], 500);
             }
+
             // and finally delete the user
             try {
                 $member->user()->delete();
@@ -265,11 +204,8 @@ class MemberController extends Controller {
                 return response()->json(['message' => 'Error deleting user', 'error' => $th], 500);
             }
 
-
-            // try to delete the member
             DB::commit();
 
-            // return info 
             return response()->json(['message' => 'Member deleted', 'data' => $oldMember], 201);
         } catch (\Throwable $th) {
             DB::rollback();

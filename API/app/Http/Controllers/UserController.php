@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Staff;
 use App\Models\Member;
+use App\Models\Location;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -70,21 +71,23 @@ class UserController extends Controller {
             $roleData = Staff::where('user_id', $user->id)->first();
             $userData = [
                 'id' => $roleData->id,
-                'name' => $user->name,
+                'name' => $roleData->name,
                 'email' => $user->email,
                 'role' => $role,
                 'phone' => $roleData->phone,
                 'location_id' => $roleData->location_id,
+                'location' => Location::where('id', $roleData->location_id)->first()->name,
                 'is_admin' => $roleData->is_admin,
             ];
         } else {
             $roleData = Member::where('user_id', $user->id)->first();
             $userData = [
                 'id' => $roleData->id,
-                'name' => $user->name,
+                'name' => $roleData->name,
                 'email' => $user->email,
                 'role' => $role,
                 'location_id' => $roleData->location_id,
+                'location' => Location::where('id', $roleData->location_id)->first()->name,
             ];
         }
         $response = [

@@ -30,7 +30,6 @@ class MemberFactory extends Factory {
             'jc_number' => $this->faker->unique()->numberBetween(1000000000, 9999999999),
             'max_booking' => $this->faker->numberBetween(1, 10),
             'active' => $this->faker->boolean,
-            'archived' => $this->faker->boolean,
             'staff_id' => function (array $attributes) {
                 return \App\Models\Staff::where('location_id', $attributes['location_id'])->inRandomOrder()->first()->id ?? \App\Models\Staff::inRandomOrder()->first()->id;
             },

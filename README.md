@@ -57,6 +57,12 @@
 - [Adding some Laravel magic to your Eloquent joins](https://kirschbaumdevelopment.com/insights/power-joins)
 - [Laravel Soft Deletes - Papierkorb-Funktion für Eloquent | a coding project](https://www.a-coding-project.de/ratgeber/laravel/soft-deletes)
 - [Best way to flatten a json column on the model](https://laracasts.com/discuss/channels/laravel/best-way-to-flatten-a-json-column-on-the-model?page=1&replyId=906118)
+- [alexeymezenin/laravel-best-practices: Laravel best practices](https://github.com/alexeymezenin/laravel-best-practices#methods-should-do-just-one-thing)
+- [Global scope in Laravel, the easy way. - DEV Community](https://dev.to/baronsindo/global-scope-in-laravel-the-easy-way-7jf)
+- [Move Model Scopes To Traits In Laravel | by Code Axion The Security Breach | Medium](https://medium.com/@codeaxion77/move-model-scopes-to-traits-in-laravel-a07b36cc04da)
+
+### Not used, but maybe useful in the future
+- [Laravel Active Trait](https://www.trovster.com/blog/2023/02/laravel-active-trait)
 
 
 ## Responses and Status Codes

@@ -16,7 +16,6 @@ class Location extends Model {
         'phone',
         'email',
         'active',
-        'archived',
     ];
 
     public function staffs() {

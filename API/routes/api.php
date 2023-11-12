@@ -46,8 +46,9 @@ Route::post('/register', [UserController::class, 'register']); // ✅
 
 // 
 // Routes for ROLE_STAFF
-// LogRequests::class,
-Route::middleware(['auth:sanctum', 'check_role:' . User::ROLE_STAFF])->group(function () {
+// , 'check_role:' . User::ROLE_STAFF
+// 
+Route::middleware(['auth:sanctum', LogRequests::class])->group(function () {
     // Staff routes for CRUD members
     Route::resource('member', MemberController::class);
     // Staff sending mails

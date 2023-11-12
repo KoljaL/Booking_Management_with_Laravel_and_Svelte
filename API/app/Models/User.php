@@ -25,6 +25,10 @@ class User extends Authenticatable {
         return $this->hasOne(Member::class);
     }
 
+    public function isAdmin() {
+        return $this->staff->is_admin;
+    }
+
     // public function member() {
     //     return $this->hasOne(Member::class, 'user_id', 'id');
     // }

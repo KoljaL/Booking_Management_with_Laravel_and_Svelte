@@ -26,16 +26,20 @@ class BookingFactory extends Factory {
             'staff_id' => function (array $attributes) {
                 return Member::find($attributes['member_id'])->staff_id;
             },
-            'date' => fake()->dateTimeBetween('now', '+30 days')->format('Y-m-d'),
+            'comment_staff' => fake()->colorName(),
+            'comment_member' => fake()->emoji() . fake()->emoji() . fake()->emoji(),
+            'date' => fake()->dateTimeBetween('-30 days', '+30 days')->format('Y-m-d'),
             'time' => fake()->dateTimeBetween('09:00', '18:00')->format('H:00'),
             'slots' => fake()->numberBetween(1, 4),
             'state' => fake()->numberBetween(1, 3),
-            'started_at' => function (array $attributes) {
-                return \Carbon\Carbon::parse($attributes['time'])->addMinutes(15);
-            },
-            'ended_at' => function (array $attributes) {
-                return \Carbon\Carbon::parse($attributes['started_at'])->addMinutes(15);
-            },
+            'started_at' => '',
+            'ended_at' => '',
+            // 'started_at' => function (array $attributes) {
+            //     return \Carbon\Carbon::parse($attributes['time'])->addMinutes(15);
+            // },
+            // 'ended_at' => function (array $attributes) {
+            //     return \Carbon\Carbon::parse($attributes['started_at'])->addMinutes(15);
+            // },
         ];
     }
 }
