@@ -174,6 +174,6 @@ class DatabaseSeeder extends Seeder {
         Member::factory(5)->create();
 
         // at last, create 5 bookings
-        Booking::factory(50)->create();
+        Booking::factory(150)->create();
     }
 }

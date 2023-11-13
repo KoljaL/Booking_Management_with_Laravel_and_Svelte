@@ -49,6 +49,11 @@ Route::post('/register', [UserController::class, 'register']); // ✅
 // , 'check_role:' . User::ROLE_STAFF
 // 
 Route::middleware(['auth:sanctum', LogRequests::class])->group(function () {
+    Route::resource('booking', BookingController::class);
+});
+
+// 
+Route::middleware(['auth:sanctum', LogRequests::class, 'check_role:' . User::ROLE_STAFF])->group(function () {
     // Staff routes for CRUD members
     Route::resource('member', MemberController::class);
     // Staff sending mails
@@ -58,23 +63,19 @@ Route::middleware(['auth:sanctum', LogRequests::class])->group(function () {
 
 
 // protected routes
-Route::middleware('auth:sanctum')->group(function () {
-
-
-
-    // Staff -> Booking
-    Route::get('/booking', [BookingController::class, 'index']);
-    Route::get('/booking/{booking}', [BookingController::class, 'show']);
-    Route::post('/booking', [BookingController::class, 'store']);
-    Route::put('/booking/{booking}', [BookingController::class, 'update']);
-    Route::delete('/booking/{booking}', [BookingController::class, 'destroy']);
-
-    // Member -> Booking
-    Route::get('/booking', [BookingController::class, 'index']);
-    Route::post('/booking', [BookingController::class, 'store']);
-    Route::put('/booking/{booking}', [BookingController::class, 'update']);
-    Route::delete('/booking/{booking}', [BookingController::class, 'destroy']);
-});
+// Route::middleware('auth:sanctum')->group(function () {
+// Staff -> Booking
+// Route::get('/booking', [BookingController::class, 'index']);
+// Route::get('/booking/{booking}', [BookingController::class, 'show']);
+// Route::post('/booking', [BookingController::class, 'store']);
+// Route::put('/booking/{booking}', [BookingController::class, 'update']);
+// Route::delete('/booking/{booking}', [BookingController::class, 'destroy']);
+// Member -> Booking
+// Route::get('/booking', [BookingController::class, 'index']);
+// Route::post('/booking', [BookingController::class, 'store']);
+// Route::put('/booking/{booking}', [BookingController::class, 'update']);
+// Route::delete('/booking/{booking}', [BookingController::class, 'destroy']);
+// });
 
 
 

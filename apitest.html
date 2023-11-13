@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -57,7 +57,7 @@
         font-style: normal;
         font-weight: 400;
         font-display: swap;
-        src: url("./fonts/Geist/Geist-Light.woff2") format("woff2");
+        src: url("/fonts/Geist/Geist-Light.woff2") format("woff2");
       }
 
       @font-face {
@@ -65,7 +65,7 @@
         font-style: normal;
         font-weight: 400;
         font-display: swap;
-        src: url("./fonts/GeistMono/GeistMono-Light.woff2") format("woff2");
+        src: url("/fonts/GeistMono/GeistMono-Light.woff2") format("woff2");
       }
 
       body {
@@ -95,7 +95,6 @@
         color: var(--colors-gray11);
         display: flex;
         gap: 1rem;
-        height: 2rem;
       }
 
       input,
@@ -441,8 +440,8 @@
 
     <script>
       // const URL = "http://127.0.0.1:8000/api/";
-      // const URL = "https://public.test/api/";
-      const URL = "https://dev.rasal.de/booking/API/public/api/";
+      const URL = "https://public.test/api/";
+      // const URL = "https://dev.rasal.de/booking/API/public/";
       let token = null;
       let responseData = null;
 
@@ -501,7 +500,6 @@
           cat: [
             {
               name: "Member",
-              state: "closed",
               requests: [
                 {
                   method: "GET",
@@ -607,128 +605,6 @@
                 },
               ],
             },
-            {
-              name: "Booking",
-              state: "open",
-              requests: [
-                {
-                  method: "GET",
-                  url: "booking?show=all",
-                  description: "All",
-                  fields: [],
-                },
-                {
-                  method: "GET",
-                  url: "booking?show=today",
-                  description: "Today",
-                  fields: [],
-                },
-                {
-                  method: "GET",
-                  url: "booking?show=2023-11-11",
-                  description: "Date",
-                  fields: [],
-                },
-                {
-                  method: "GET",
-                  url: "booking?show=deleted",
-                  description: "Deleted",
-                  fields: [],
-                },
-                {
-                  method: "GET",
-                  url: "booking/{id}",
-                  description: "Get one Booking",
-                  callback: function () {
-                    updateIds("booking");
-                  },
-                  fields: [
-                    {
-                      name: "id",
-                      value: 1,
-                    },
-                  ],
-                },
-                {
-                  method: "POST",
-                  url: "booking",
-                  description: "Create a booking",
-                  newFields: true,
-                  callback: function () {
-                    updateIds("booking");
-                  },
-                  fields: [
-                    {
-                      name: "member_id",
-                      value: "1",
-                    },
-                    {
-                      name: "location_id",
-                      value: "1",
-                    },
-                    {
-                      name: "date",
-                      value: "2023-11-15",
-                    },
-                    {
-                      name: "time",
-                      value: "12:00",
-                    },
-                    {
-                      name: "slots",
-                      value: "1",
-                    },
-                  ],
-                },
-                {
-                  method: "PATCH",
-                  url: "booking/{id}",
-                  description: "Edit a booking",
-                  newFields: true,
-                  fields: [
-                    {
-                      name: "id",
-                      value: 1,
-                    },
-                    {
-                      name: "member_id",
-                      value: "1",
-                    },
-                    {
-                      name: "location_id",
-                      value: "1",
-                    },
-                    {
-                      name: "date",
-                      value: "2023-11-15",
-                    },
-                    {
-                      name: "time",
-                      value: "12:00",
-                    },
-                    {
-                      name: "slots",
-                      value: "1",
-                    },
-                    {
-                      name: "comment_staff",
-                      value: "just a comment",
-                    },
-                  ],
-                },
-                {
-                  method: "DELETE",
-                  url: "booking/{id}",
-                  description: "Delete a booking",
-                  fields: [
-                    {
-                      name: "id",
-                      value: 1,
-                    },
-                  ],
-                },
-              ],
-            },
           ],
         },
         {
@@ -756,7 +632,7 @@
             const details = document.createElement("details");
             const summary = document.createElement("summary");
             summary.innerHTML = cat.name;
-            details.open = cat.state === "open" ? true : false;
+            details.open = true;
             details.appendChild(summary);
             section.appendChild(details);
 

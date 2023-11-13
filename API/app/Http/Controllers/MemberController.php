@@ -70,10 +70,7 @@ class MemberController extends Controller {
         if ($authUser->isAdmin() && !$request->has('location_id')) {
             return response()->json(['message' => 'Only staff can create members.'], 404);
         }
-        // if request empty 
-        if (!$request->has('name') || !$request->has('email')) {
-            return response()->json(['message' => 'Member not created, name and email required.'], 404);
-        }
+
 
         // validate the request, email must be unique for users
         $request->validate([

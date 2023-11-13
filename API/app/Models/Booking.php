@@ -5,10 +5,39 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\AccessControlTrait;
 
 
 class Booking extends Model {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, AccessControlTrait;
+
+    // $fillable is used to specify which attributes can be mass-assigned 
+    // that is, which attributes can be passed into the create() method
+    protected $fillable = [
+        'member_id',
+        'staff_id',
+        'location_id',
+        'date',
+        'time',
+        'slots',
+        'state',
+        'started_at',
+        'ended_at',
+        'comment_member',
+        'comment_staff',
+    ];
+
+    // $dates is used to specify which attributes are dates
+    protected $dates = ['created_at', 'updated_at'];
+
+    // $with is used to specify which relationships to eager load by default
+    // https://laravel.com/docs/10.x/eloquent-relationships#eager-loading-specific-columns
+    protected $with = ['member:id,name', 'location:id,city'];
+
+
+    //
+    // RELATIONSHIPS
+    //
 
     // A booking belongs to one Member
     public function member() {
@@ -21,16 +50,34 @@ class Booking extends Model {
         return $this->belongsTo(Location::class, 'location_id');
     }
 
-    //     // include the 'name' and 'email' attributes into the $member object
-//     // so you can use $member->name and $member->email
-//     public function toArray() {
-//         $data = parent::toArray();
-//         $data['member_name'] = $this->name;
-//         return $data;
-//     }
-//     // Accessor for the 'name' attribute, 
-//     // so you can use $member->name
-//     public function getNameAttribute() {
-//         return $this->member->name;
-//     }
+    // A Member belongs to one Staff
+    public function staff() {
+        return $this->belongsTo(Staff::class);
+    }
+
+
+
+    //
+    // SCOPES
+    //
+    public function scopeShowBookings($query, $show) {
+        // get the date from the $show parameter
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $show)) {
+            $date = $show;
+            $show = 'date';
+        }
+        switch ($show) {
+            case 'all':
+                return $query->withTrashed()->get();
+            case 'date':
+                return $query->whereDate('date', $date)->get();
+            case 'deleted':
+                return $query->onlyTrashed()->get();
+            default:
+                return $query->whereDate('date', today())->get();
+
+        }
+    }
+
+
 }
