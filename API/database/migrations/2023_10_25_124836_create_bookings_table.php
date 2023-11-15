@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('member_id')->constrained();
             $table->foreignId('location_id')->constrained();
-            $table->foreignId('staff_id')->constrained();
+            // $table->foreignId('staff_id')->constrained();
             $table->string('comment_member')->nullable();
             $table->string('comment_staff')->nullable();
             $table->date('date');
@@ -39,7 +39,7 @@ return new class extends Migration {
         Schema::table('bookings', function (Blueprint $table) {
             $table->index('member_id');
             $table->index('location_id');
-            $table->index('staff_id');
+            // $table->index('staff_id');
         });
     }
 

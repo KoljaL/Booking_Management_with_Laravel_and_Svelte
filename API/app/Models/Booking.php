@@ -51,9 +51,9 @@ class Booking extends Model {
     }
 
     // A Member belongs to one Staff
-    public function staff() {
-        return $this->belongsTo(Staff::class);
-    }
+    // public function staff() {
+    //     return $this->belongsTo(Staff::class, 'staff_id');
+    // }
 
 
 

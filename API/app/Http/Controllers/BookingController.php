@@ -5,46 +5,63 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Benchmark;
 use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller {
 
-    /*
-     * Get selected data of all bookings from the same location as the logged in staff (authUser),
-     * if the authUser is an admin, then get all bookings
+
+    /**
+     * Bookings INDEX
      * 
-     * GET /api/booking
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \Exception
+     * @description Get all bookings by access level. 
+     * @path GET api/bookings
      */
     public function index(Request $request) {
-
-
-        // Benchmark::dd([
-        //     'Booking::get()' => fn() => Booking::get(), // 0.5 ms
-        //     'Booking::byAccessLevel()' => fn() => Booking::byAccessLevel()->showBookings($request->show), // 0.5 ms
-        //     "Booking::with('location')->with('member')->get()" => fn() => Booking::with('location')->with('member')->get(), // 20.0 ms
-        // ]);
-
-        // dd($request->all());
         try {
             $bookings = Booking::byAccessLevel()->showBookings($request->show);
             $count_bookings = $bookings->count();
             return response()->json(['message' => $request->show . ' bookings', 'count_bookings' => $count_bookings, 'bookings' => $bookings], 200);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => 'bookings not found or no bookings associated staff.', 'error' => $th], 404);
+        } catch (\Exception $th) {
+            return response()->json(['message' => 'bookings not found or no bookings associated staff.', 'error' => $th->getMessage()], 404);
         }
-
-
     }
+    /**
+     * Bookings SHOW
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @param mixed $id
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \Exception
+     * @description Get a booking by access level.
+     * @path GET api/bookings/{id}
+     */
     public function show(Request $request, $id) {
         try {
             $booking = Booking::withTrashed()->byAccessLevel()->findOrFail($id);
+
+            // It not allowed for a Member to see a soft deleted Booking
+            if ($booking->trashed() && Auth::user()->role == 'member') {
+                return response()->json(['message' => 'Only staff can update deleted bookings.'], 404);
+            }
 
             return response()->json(['message' => 'Booking data', 'show' => $request->show, 'booking' => $booking], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Booking with ID ' . $id . ' not found', 'exception' => $e], 404);
         }
     }
+
+    /**
+     * Bookings STORE
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \Exception
+     * @description Create a booking by access level.
+     * @path POST api/bookings
+     */
     public function store(Request $request) {
         // get the logged in Staff
         $authUser = Auth::user();
@@ -55,8 +72,7 @@ class BookingController extends Controller {
             $request->merge(['member_id' => (string) $authUser->member->id]);
         }
 
-        // check if the logged in staff is an admin
-        // and if the request has a location_id
+        // check if the logged in staff is an admin and if the request has no location_id
         // if ($authUser->staff && $authUser->isAdmin() && !$request->has('location_id')) {
         //     return response()->json(['message' => 'Only staff can create members.'], 404);
         // }
@@ -80,16 +96,27 @@ class BookingController extends Controller {
                 'time' => $request->time,
                 'slots' => $request->slots,
                 'state' => 'created by ' . $userRole,
-                'staff_id' => $authUser->staff->id,
+                // 'staff_id' => $authUser->staff->id ?? 999,
             ]);
             DB::commit();
             return response()->json(['message' => 'Booking created', 'booking' => $booking], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['message' => 'Booking not created', 'error' => $e], 404);
+            return response()->json(['message' => 'Booking not created', 'error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()], 404);
         }
 
     }
+
+    /**
+     * Bookings UPDATE
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @param mixed $id
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \Exception
+     * @description Update a booking by access level.
+     * @path PUT api/bookings/{id}
+     */
     public function update(Request $request, $id) {
 
         // validate the request
@@ -104,6 +131,12 @@ class BookingController extends Controller {
         ]);
 
         $booking = Booking::withTrashed()->byAccessLevel()->findOrFail($id);
+
+        // It not allowed for a Member to update a soft deleted Booking
+        if ($booking->trashed() && Auth::user()->role == 'member') {
+            return response()->json(['message' => 'Only staff can update deleted bookings.'], 404);
+        }
+
         DB::beginTransaction();
         try {
             $booking->update([
@@ -122,6 +155,18 @@ class BookingController extends Controller {
             return response()->json(['message' => 'Booking not updated', 'error' => $e], 404);
         }
     }
+
+
+
+    /**
+     * Bookings DESTROY
+     * 
+     * @param mixed $id
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \Exception
+     * @description Delete a booking by access level.
+     * @path DELETE api/bookings/{id}
+     */
     public function destroy($id) {
         // get the logged in Staff
         $authUser = Auth::user();
@@ -142,15 +187,3 @@ class BookingController extends Controller {
         }
     }
 }
-
-// function getLocationId($authUser) {
-//     return $authUser->staff->location_id;
-// }
-
-// function isAdmin($authUser) {
-//     return $authUser->staff->is_admin;
-// }
-
-// function getMyBookings($authUser) {
-//     return Booking::with('member')->where('location_id', $authUser->staff->location_id)->get();
-// }

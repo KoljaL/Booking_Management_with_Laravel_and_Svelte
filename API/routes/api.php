@@ -7,7 +7,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\InviteMailController;
+use App\Http\Controllers\Mail\InviteMailController;
 use App\Models\User;
 use App\Http\Middleware\LogRequests;
 
@@ -62,6 +62,15 @@ Route::middleware(['auth:sanctum', LogRequests::class, 'check_role:' . User::ROL
 
 
 
+
+
+
+
+
+
+
+///////////// OLD STUFF ///////////////
+
 // protected routes
 // Route::middleware('auth:sanctum')->group(function () {
 // Staff -> Booking
@@ -79,7 +88,6 @@ Route::middleware(['auth:sanctum', LogRequests::class, 'check_role:' . User::ROL
 
 
 
-///////////// OLD STUFF ///////////////
 
 // // Staff -> Member
 // Route::get('/member', [MemberController::class, 'index']); // ✅

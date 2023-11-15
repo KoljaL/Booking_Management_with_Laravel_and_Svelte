@@ -399,6 +399,26 @@
         background-image: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="256" height="256" viewBox="0 0 256 256"%3E%3Cpath fill="%234f5b93" d="M224 50H32a6 6 0 0 0-6 6v136a14 14 0 0 0 14 14h176a14 14 0 0 0 14-14V56a6 6 0 0 0-6-6ZM38 110h44v36H38Zm56 0h124v36H94Zm124-48v36H38V62ZM38 192v-34h44v36H40a2 2 0 0 1-2-2Zm178 2H94v-36h124v34a2 2 0 0 1-2 2Z"%2F%3E%3C%2Fsvg%3E');
         background-size: 1.8rem;
       }
+
+      pre.sf-dump,
+      pre.sf-dump .sf-dump-default {
+        background-color: transparent !important;
+        color: var(--colors-gray11) !important;
+        font: 15px "Geist Mono" !important;
+        line-height: 1.7em !important;
+        font-weight: normal !important;
+        /* font-size: 16px !important; */
+      }
+      pre.sf-dump .sf-dump-str {
+        font-weight: normal !important;
+        color: var(--green) !important;
+      }
+      pre.sf-dump .sf-dump-key {
+        color: var(--red) !important;
+      }
+      pre.sf-dump .sf-dump-note {
+        color: var(--blue) !important;
+      }
     </style>
   </head>
 
@@ -441,8 +461,8 @@
 
     <script>
       // const URL = "http://127.0.0.1:8000/api/";
-      // const URL = "https://public.test/api/";
-      const URL = "https://dev.rasal.de/booking/API/public/api/";
+      const URL = "https://public.test/api/";
+      // const URL = "https://dev.rasal.de/booking/API/public/api/";
       let token = null;
       let responseData = null;
 
@@ -459,6 +479,7 @@
 
       // SWITCHES
       let showTables = true;
+      let noJson = "";
 
       showTablesButton.addEventListener("click", async (e) => {
         if (!showTables) {
@@ -571,6 +592,35 @@
                     {
                       name: "email",
                       value: "John@Doe.com",
+                    },
+                  ],
+                },
+                {
+                  method: "GET",
+                  url: "member/invite/{id}",
+                  description: "Invite Member",
+                  callback: function () {
+                    updateIds("member");
+                  },
+                  fields: [
+                    {
+                      name: "id",
+                      value: 1,
+                    },
+                  ],
+                },
+                {
+                  method: "POST",
+                  url: "register",
+                  description: "Register as Member",
+                  fields: [
+                    {
+                      name: "invite_token",
+                      value: "",
+                    },
+                    {
+                      name: "password",
+                      value: "password",
                     },
                   ],
                 },
@@ -885,19 +935,29 @@
             if (status >= 400) color = "var(--yellow)";
             if (status >= 500) color = "var(--red)";
             resultUrl.innerHTML = `<span class="method">${method}</span> api/${url} <span class=status style="color: ${color};">${status}</span>`;
-            return response.json();
+            const contentType = response.headers.get("Content-Type");
+
+            if (contentType && contentType.includes("application/json")) {
+              return response.json();
+            } else {
+              return response.text();
+            }
           })
           .then((data) => {
-            responseData = data;
-
-            if (showTables) {
-              resultAsTable();
+            if (typeof data === "object") {
+              if (showTables) {
+                responseData = data;
+                resultAsTable();
+              } else {
+                resultAsJSON();
+              }
+              if (data.token) token = data.token;
+              console.log(data);
             } else {
-              resultAsJSON();
+              // console.log("Text response:", data);
+              tablesContainer.innerHTML = data;
+              result.innerHTML = data;
             }
-
-            if (data.token) token = data.token;
-            console.log(data);
           })
           .catch((error) => {
             responseData = null;

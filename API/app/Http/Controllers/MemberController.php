@@ -20,17 +20,22 @@ class MemberController extends Controller {
 
 
 
-    /*
-     * INDEX
+
+    /**
+     * Member INDEX
      * 
-     * Get selected data of all members from the same location as the logged in staff (authUser),
-     * if the authUser is an admin, then get all members
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \Exception
+     * @description Get all members by access level.
+     * @path GET api/members
      */
     public function index(Request $request) {
         // dd($request->all());
         try {
             $members = Member::byAccessLevel()->showMembers($request->show);
             $count_members = $members->count();
+            // dd($members);
             return response()->json(['message' => $request->show . ' Members', 'count_members' => $count_members, 'members' => $members], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Members not found or no Members associated staff.', 'error' => $th], 404);
@@ -38,11 +43,15 @@ class MemberController extends Controller {
     }
 
 
-    /*
-     * SHOW
+    /**
+     * Member SHOW
      * 
-     * Get selected data of a single member from the same location as the logged in staff (authUser),
-     * including all bookings for this member
+     * @param \Illuminate\Http\Request $request
+     * @param mixed $id
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \Exception
+     * @description Get a member by access level.
+     * @path GET api/members/{id}
      */
     public function show(Request $request, $id) {
         try {
@@ -57,9 +66,14 @@ class MemberController extends Controller {
 
 
 
-    /*
-     * STORE
-     * Create a new User, add the user_id to the Member, and return the Member
+    /**
+     * Member STORE
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \Exception
+     * @description Create a new member by access level.
+     * @path POST api/members
      */
     public function store(Request $request) {
         // get the logged in Staff
@@ -122,10 +136,15 @@ class MemberController extends Controller {
 
 
 
-
-    /*
-     * UPDATE
-     * Update a Member
+    /**
+     * Member UPDATE
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @param mixed $id
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \Exception
+     * @description Update a member by access level.
+     * @path PUT api/members/{id}
      */
     public function update(Request $request, $id) {
         $member = Member::withTrashed()->byAccessLevel()->findOrFail($id);
@@ -165,9 +184,14 @@ class MemberController extends Controller {
         }
     }
 
-    /*
-     * DESTROY
-     * Delete a Member
+    /**
+     * Member DESTROY
+     * 
+     * @param mixed $id
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \Exception
+     * @description Delete a member by access level.
+     * @path DELETE api/members/{id}
      */
     public function destroy($id) {
         // get Member
@@ -211,37 +235,39 @@ class MemberController extends Controller {
     }
 
 
-    /**
-     * INVITE
-     * Send a password reset link to the given user.
-     */
+    //     /**
+//      * Member INVITE 
+//      * @param \App\Models\Member $member
+//      * @return \Illuminate\Http\JsonResponse|mixed
+//      * @throws \Exception
+//      * @description Send an invite email to a member.
+//      * @path POST api/members/{member}/invite
+//      */
+//     public function invite(Member $member) {
+//         try {
+//             $user = $member->user;
+//             $invite_token = Str::random(60);
+//             $user->invite_token = $invite_token;
+//             $user->save();
+//             $mailData = [
+//                 'title' => 'Login to your account',
+//                 'body' => 'To set your password, please click the button below.',
+//                 'token' => $invite_token,
+//             ];
+//             dd($mailData);
 
-    public function invite(Member $member) {
-        try {
-            $user = $member->user;
-            $invite_token = Str::random(60);
-            $user->invite_token = $invite_token;
-            $user->save();
-            $mailData = [
-                'title' => 'Login to your account',
-                'body' => 'To set your password, please click the button below.',
-                'token' => $invite_token,
-            ];
-
-            Mail::to($member->email)->send(new InviteMail($mailData));
-            return response()->json([
-                'message' => 'Email has been sent.',
-                'member' => $member,
-            ], 200);
-        } catch (\Throwable $th) {
-            // Log the exception for debugging
-            // \Log::error('Error sending email: ' . $th->getMessage());
-            return response()->json([
-                'message' => 'Error sending email',
-                'error' => $th->getMessage()
-            ], 500);
-        }
-    }
+    //             Mail::to($member->email)->send(new InviteMail($mailData));
+//             return response()->json([
+//                 'message' => 'Email has been sent.',
+//                 'member' => $member,
+//             ], 200);
+//         } catch (\Throwable $th) {
+//             return response()->json([
+//                 'message' => 'Controller: Error sending email',
+//                 'error' => $th->getMessage()
+//             ], 500);
+//         }
+//     }
 }
 
 /**
@@ -424,61 +450,4 @@ class MemberController extends Controller {
 //         return response()->json(['message' => 'Member not found or no associated staff.'], 404);
 //     }
 //     return response()->json(['message' => 'Member not found or no associated staff.'], 404);
-// }
-
-
-// public function invite(Member $member) {
-//     // dd($member);
-//     try {
-//         $user = $member->user;
-//         $invite_token = Str::random(60);
-//         $user->invite_token = $invite_token;
-//         $user->save();
-//         $mailData = [
-//             'title' => 'Login to your account',
-//             'body' => 'To set your password, please click the button below.',
-//             'invite_token' => $invite_token,
-//         ];
-
-
-//         Mail::to('lasar@rasal.de')->send(new InviteMail($mailData));
-//         return response()->json([
-//             'message' => 'Email has been sent.'
-//         ], 200);
-//     } catch (\Throwable $th) {
-//         return response()->json([
-//             'message' => 'Error sending email',
-//             'error' => $th
-//         ], 500);
-//     }
-// }
-
-
-// public function invite(Member $member) {
-
-//     $user = $member->user;
-//     $email = $user->email;
-//     $invite_token = Str::random(60);
-//     $user->invite_token = $invite_token;
-//     $user->save();
-
-
-//     $testMailData = [
-//         'title' => 'Test Email From AllPHPTricks.com',
-//         'body' => 'This is the body of test email.',
-//         'invite_token' => $invite_token,
-//     ];
-//     // dd($email);
-//     try {
-//         $email = 'lasar@rasal.de';
-//         Mail::to('lasar@rasal.de')->send(new InviteMail($testMailData));
-//         return response()->json([
-//             'message' => 'Email has been sent.'
-//         ], 200);
-//     } catch (\Throwable $th) {
-//         return response()->json([
-//             'message' => 'Error sending email',
-//             'error' => $th
-//         ], 500);
-//     }
 // }

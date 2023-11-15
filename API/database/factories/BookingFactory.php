@@ -23,9 +23,9 @@ class BookingFactory extends Factory {
             'location_id' => function (array $attributes) {
                 return Member::find($attributes['member_id'])->location_id;
             },
-            'staff_id' => function (array $attributes) {
-                return Member::find($attributes['member_id'])->staff_id;
-            },
+            // 'staff_id' => function (array $attributes) {
+            //     return Member::find($attributes['member_id'])->staff_id;
+            // },
             'comment_staff' => fake()->colorName(),
             'comment_member' => fake()->emoji() . fake()->emoji() . fake()->emoji(),
             'date' => fake()->dateTimeBetween('-5 days', '+5 days')->format('Y-m-d'),

@@ -23,26 +23,47 @@ class UserController extends Controller {
             'password' => 'required|string',
         ]);
 
-        $user = User::where('invite_token', $request->invite_token)->first();
-
-        // dd($user);
-        if ($user) {
+        // dd($request->all());
+        try {
+            $user = User::where('invite_token', $request->invite_token)->first();
+            // dd($user);
             $user->password = Hash::make($request->password);
             $user->invite_token = null;
             $user->save();
             return response()->json([
                 'user' => $user,
                 'request' => $request->token,
-                'message' => 'Password added to user',
+                'message' => 'User registered and password added',
             ], 201);
-        } else {
+
+        } catch (\Throwable $th) {
             return response()->json([
-                'message' => 'Token not fosund',
                 'user' => $user,
-                'requesr' => $request->all(),
-                // to-do remove this
+                'message' => 'User not registered',
+                'error' => $th->getMessage(),
             ], 404);
         }
+
+        // $user = User::where('invite_token', $request->invite_token)->first();
+
+        // // dd($user);
+        // if ($user) {
+        //     $user->password = Hash::make($request->password);
+        //     $user->invite_token = null;
+        //     $user->save();
+        //     return response()->json([
+        //         'user' => $user,
+        //         'request' => $request->token,
+        //         'message' => 'Password added to user',
+        //     ], 201);
+        // } else {
+        //     return response()->json([
+        //         'message' => 'Token not found',
+        //         'user' => $user,
+        //         'request' => $request->all(),
+        //         // to-do remove this
+        //     ], 404);
+        // }
 
     }
 
@@ -67,29 +88,16 @@ class UserController extends Controller {
 
         $role = $user->role;
 
-        if ($role == 'staff') {
-            $roleData = Staff::where('user_id', $user->id)->first();
-            $userData = [
-                'id' => $roleData->id,
-                'name' => $roleData->name,
-                'email' => $user->email,
-                'role' => $role,
-                'phone' => $roleData->phone,
-                'location_id' => $roleData->location_id,
-                'location' => Location::where('id', $roleData->location_id)->first()->name,
-                'is_admin' => $roleData->is_admin,
-            ];
+        // get the user data depending on the role
+        if ($role == 'member') {
+            $userData = Member::findOrfail($user->id);
+        } elseif ($role == 'staff') {
+            $userData = Staff::findOrfail($user->id);
         } else {
-            $roleData = Member::where('user_id', $user->id)->first();
-            $userData = [
-                'id' => $roleData->id,
-                'name' => $roleData->name,
-                'email' => $user->email,
-                'role' => $role,
-                'location_id' => $roleData->location_id,
-                'location' => Location::where('id', $roleData->location_id)->first()->name,
-            ];
+            return response()->json(['message' => 'User role not found'], 404);
         }
+
+
         $response = [
             'user' => $userData,
             'token' => $token,
@@ -97,6 +105,12 @@ class UserController extends Controller {
 
         return response($response, 201);
     }
+
+    /**
+     * Summary of logout
+     * @param \Illuminate\Http\Request $request
+     * @return array
+     */
     public function logout(Request $request) {
         auth()->user()->tokens()->delete();
         return [

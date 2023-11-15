@@ -8,14 +8,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\AccessControlTrait;
 
 // use Illuminate\Support\Facades\DB;
-// use App\Models\Scopes\MemberScope;
 
 class Member extends Model {
     use HasFactory, SoftDeletes, AccessControlTrait;
 
-    // protected static function booted() {
-    //     static::addGlobalScope(new MemberScope);
-    // }
 
     // $fillable is used to specify which attributes can be mass-assigned 
     // that is, which attributes can be passed into the create() method
@@ -42,12 +38,11 @@ class Member extends Model {
 
     // $with is used to specify which relationships to eager load by default
     // https://laravel.com/docs/10.x/eloquent-relationships#eager-loading-specific-columns
-    protected $with = ['user:id,email', 'location:id,city'];
+    protected $with = ['user:id,email,invite_token', 'location:id,city'];
 
     //
     // RELATIONSHIPS
     //
-
 
     // A Member belongs to one User
     public function user() {

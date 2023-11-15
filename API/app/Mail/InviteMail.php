@@ -3,24 +3,31 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+
+// use Illuminate\Contracts\Queue\ShouldQueue;
+// use Illuminate\Mail\Mailables\Content;
+// use Illuminate\Mail\Mailables\Envelope;
 
 class InviteMail extends Mailable {
     use Queueable, SerializesModels;
-    public $testMailData;
+    public $mailData;
     /**
      * Create a new message instance.
      */
-    public function __construct($testMailData) {
-        $this->testMailData = $testMailData;
+    public function __construct($mailData) {
+        $this->mailData = $mailData;
     }
     public function build() {
-        return $this->subject('Please join us!')
-            ->view('emails.inviteMail');
+        $mailContent = /*HTML*/<<<EOT
+        <h2>{$this->mailData['title']}</h2>
+        <p>{$this->mailData['body']}</p>
+        <a href="http://localhost:3000/reset-password/{$this->mailData['token']}">Click here</a>
+        EOT;
+
+        return $this->subject($this->mailData['title'])
+            ->html($mailContent);
     }
     /**
      * Get the message envelope.

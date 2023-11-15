@@ -812,6 +812,31 @@ public function toArray($request) {
   ];
 }
 ```
-```php
-// app/Http/Resources/MemberCollection.php
 
+
+
+
+## Benchmarking
+
+In Laravel we can use the `dd()` function to benchmark the performance of our code. The `dd()` function dumps the given variables and ends ex ecution of the script. So we can use it to measure the time it takes to execute a function.
+```php
+use Illuminate\Support\Benchmark;
+...
+Benchmark::dd([
+  'join' => fn() =>
+    Member::select('members.*', 'users.name as user_name', 'locations.city as location_city')
+      ->join('users', 'members.user_id', '=', 'users.id')
+      ->join('locations', 'members.location_id', '=', 'locations.id')
+      ->get(),
+  "with" => fn() => Member::with([
+    'user' => function ($query) {
+      $query->select('id', 'name');
+    },
+    'location' => function ($query) {
+      $query->select('id', 'city');
+    }
+  ])->get(),
+]);
+```
+
+ 

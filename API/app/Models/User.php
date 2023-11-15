@@ -45,6 +45,7 @@ class User extends Authenticatable {
         'email',
         'password',
         'role',
+        'invite_token'
     ];
 
     /**
