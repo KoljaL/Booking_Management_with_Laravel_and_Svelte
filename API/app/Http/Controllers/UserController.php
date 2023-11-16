@@ -82,14 +82,29 @@ class UserController extends Controller {
         // get the user data depending on the role
         if ($role == 'member') {
             $userData = Member::findOrfail($user->id);
+            $data = [
+                'name' => $userData->name,
+                'id' => $userData->id,
+                'role' => $user->role,
+                'location' => $userData->location,
+            ];
+
         } elseif ($role == 'staff') {
             $userData = Staff::findOrfail($user->id);
+            $data = [
+                'name' => $userData->name,
+                'id' => $userData->id,
+                'role' => $user->role,
+                'is_admin' => $userData->is_admin,
+                'location' => $userData->location,
+            ];
         } else {
             return response()->json(['message' => 'User role not found'], 404);
         }
 
         return response()->json([
-            'user' => $userData,
+            // 'userdata' => $userData,
+            'user' => $data,
             'token' => $token,
         ], 201);
     }

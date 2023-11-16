@@ -37,9 +37,11 @@ use App\Http\Middleware\LogRequests;
 
 
 // Unprotected routes (no authentication required)
-Route::post('/login', [UserController::class, 'login']); // ✅
-Route::post('/register', [UserController::class, 'register']); // ✅
-Route::post('/logout', [UserController::class, 'logout']); // ❓
+Route::middleware(['cors'])->group(function () {
+    Route::post('/login', [UserController::class, 'login']); // ✅
+    Route::post('/register', [UserController::class, 'register']); // ✅
+    Route::post('/logout', [UserController::class, 'logout']); // ❓
+});
 
 // Routes for Staff and Member
 Route::middleware(['auth:sanctum', LogRequests::class, 'access_control:staff,member'])->group(function () {
