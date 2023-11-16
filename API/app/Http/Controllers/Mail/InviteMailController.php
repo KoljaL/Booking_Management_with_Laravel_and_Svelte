@@ -12,14 +12,13 @@ use Illuminate\Support\Facades\Route;
 class InviteMailController extends \App\Http\Controllers\Controller {
 
     // own route for invide Member or Staff, parameter in controller or get route in controller?
-    public function memberInvite($id) {
+    public function userInvite($userType, $id) {
         // get the route 
         try {
-            $route = Route::current();
-            if (str_contains($route->uri, 'member')) {
+            if ($userType === 'member') {
                 $user = Member::findOrFail($id);
 
-            } elseif (str_contains($route->uri, 'staff')) {
+            } elseif ($userType === 'staff') {
                 $user = Staff::findOrFail($id);
             }
             $email = $user->user->email;
@@ -54,6 +53,8 @@ class InviteMailController extends \App\Http\Controllers\Controller {
                 // ->bcc('test@werb.de')
 
             });
+
+
             return response()->json([
                 'message' => 'Email has been sent.',
                 'member' =>
@@ -62,7 +63,9 @@ class InviteMailController extends \App\Http\Controllers\Controller {
                         'email' => $email,
                         'invite_token' => $invite_token,
                     ]
-            ], 200);
+            ], 201);
+
+
         } catch (\Throwable $th) {
             // Log the exception for debugging
             return response()->json([

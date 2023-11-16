@@ -7,27 +7,41 @@ use Illuminate\Support\Facades\Auth;
 trait AccessControlTrait {
 
   /**
-   * Summary of scopeByAccessLevel
-   * 
-   * @param \Illuminate\Database\Eloquent\Builder $query
-   * @description Get records by access level
+   * Scope a query to only include records that the user has access to.
+   *
+   * @param  \Illuminate\Database\Eloquent\Builder  $query
+   * @return \Illuminate\Database\Eloquent\Builder
+   * @description This scope is used to filter records based on the user's role
    */
   public function scopeByAccessLevel(Builder $query) {
-    $user = Auth::user();
+
+    // Get user role and id from AccessControlMiddleware
+    $role = request()->role;
+    $role_id = request()->role_id;
+    $role_isAdmin = request()->role_isAdmin;
+    $role_location_id = request()->role_location_id;
+    // dd($role, $role_id, $role_isAdmin, $role_location_id);
 
     // Admins get all records
-    if (!empty($user->staff) && $user->staff->is_admin) {
+    if ($role_isAdmin) {
       return $query;
     }
 
     // Staff get records for their location only
-    elseif (!empty($user->staff)) {
-      return $query->where('location_id', $user->staff->location_id);
+    elseif ($role == 'staff') {
+      return $query->where('location_id', $role_location_id);
     }
 
     // Members get records for their own member_id
-    elseif ($user->member) {
-      return $query->where('member_id', $user->member->id);
+    elseif ($role == 'member') {
+      return $query->where('member_id', $role_id);
+    }
+
+    // If no user is logged in, return error
+    else {
+      return response()->json([
+        'message' => 'AccessControlTrait: Access denied',
+      ], 403);
     }
   }
 }

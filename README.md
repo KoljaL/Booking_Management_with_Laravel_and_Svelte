@@ -60,6 +60,9 @@
 - [alexeymezenin/laravel-best-practices: Laravel best practices](https://github.com/alexeymezenin/laravel-best-practices#methods-should-do-just-one-thing)
 - [Global scope in Laravel, the easy way. - DEV Community](https://dev.to/baronsindo/global-scope-in-laravel-the-easy-way-7jf)
 - [Move Model Scopes To Traits In Laravel | by Code Axion The Security Breach | Medium](https://medium.com/@codeaxion77/move-model-scopes-to-traits-in-laravel-a07b36cc04da)
+- [sveltekit-starter/src/hooks/laravel-sanctum.ts at develop · daison12006013/sveltekit-starter](https://github.com/daison12006013/sveltekit-starter/blob/develop/src/hooks/laravel-sanctum.ts)
+- [dedoc/scramble: Modern Laravel OpenAPI (Swagger) documentation generator. No PHPDoc annotations required.](https://github.com/dedoc/scramble)
+- [Authentication in Svelte using cookies - LogRocket Blog](https://blog.logrocket.com/authentication-svelte-using-cookies/#what-http-cookies)
 
 ### Not used, but maybe useful in the future
 - [Laravel Active Trait](https://www.trovster.com/blog/2023/02/laravel-active-trait)

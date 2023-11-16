@@ -50,34 +50,48 @@ class Booking extends Model {
         return $this->belongsTo(Location::class, 'location_id');
     }
 
-    // A Member belongs to one Staff
-    // public function staff() {
-    //     return $this->belongsTo(Staff::class, 'staff_id');
-    // }
 
 
 
     //
     // SCOPES
     //
-    public function scopeShowBookings($query, $show) {
-        // get the date from the $show parameter
-        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $show)) {
-            $date = $show;
-            $show = 'date';
-        }
+    public function scopeShowBookings($query, $show, $date) {
+        // dd($show);
+        // $date = request()->date ?? null;
+        // $show = request()->show ?? null;
+        // dd($date, $show);
+
         switch ($show) {
             case 'all':
-                return $query->withTrashed()->get();
-            case 'date':
-                return $query->whereDate('date', $date)->get();
+                return $query->withTrashed()->showBookingsByDate($date);
             case 'deleted':
-                return $query->onlyTrashed()->get();
+                return $query->onlyTrashed()->showBookingsByDate($date);
             default:
-                return $query->whereDate('date', today())->get();
-
+                return $query->showBookingsByDate($date);
         }
     }
 
+    public function scopeShowBookingsByDate($query, $date) {
+        // return $query->whereDate('date', $date)->get();
+        switch ($date) {
+            case null:
+                return $query->get();
+            case 'today':
+                return $query->whereDate('date', date('Y-m-d'))->get();
+            case 'upcoming':
+                return $query->whereDate('date', '>=', date('Y-m-d'))->get();
+            default:
+                return $query->whereDate('date', $date)->get();
+        }
+    }
 
 }
+
+// get the date from the $show parameter
+// if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $show)) {
+//     $date = $show;
+//     $show = 'date';
+// }
+// case 'date':
+//     return $query->whereDate('date', $date)->get();

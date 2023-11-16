@@ -38,7 +38,7 @@ class MemberController extends Controller {
             // dd($members);
             return response()->json(['message' => $request->show . ' Members', 'count_members' => $count_members, 'members' => $members], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'Members not found or no Members associated staff.', 'error' => $th], 404);
+            return response()->json(['message' => 'Members not found or no Members associated staff.', 'error' => $th->getMessage()], 404);
         }
     }
 
@@ -77,7 +77,7 @@ class MemberController extends Controller {
      */
     public function store(Request $request) {
         // get the logged in Staff
-        $authUser = Auth::user();
+        $authUser = $request->user;
 
         // check if the logged in staff is an admin
         // and if the request has a location_id

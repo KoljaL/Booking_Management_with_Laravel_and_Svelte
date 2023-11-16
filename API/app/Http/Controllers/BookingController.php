@@ -20,10 +20,23 @@ class BookingController extends Controller {
      * @path GET api/bookings
      */
     public function index(Request $request) {
+        $date = request()->date ?? null;
+        $show = request()->show ?? null;
         try {
-            $bookings = Booking::byAccessLevel()->showBookings($request->show);
+            // dd($request->all());
+            $bookings = Booking::byAccessLevel()->showBookings($show, $date);
+            // dd($bookings);
             $count_bookings = $bookings->count();
-            return response()->json(['message' => $request->show . ' bookings', 'count_bookings' => $count_bookings, 'bookings' => $bookings], 200);
+
+            $messageDate = $date ? ' date: ' . $date : '';
+            $messageShow = $show ? ' show: ' . $show : '';
+
+            return response()->json([
+                'message' => 'Bookings' . $messageDate . $messageShow,
+                'count_bookings' => $count_bookings,
+                'bookings' => $bookings
+            ], 200);
+
         } catch (\Exception $th) {
             return response()->json(['message' => 'bookings not found or no bookings associated staff.', 'error' => $th->getMessage()], 404);
         }

@@ -307,8 +307,9 @@
       }
       table {
         border-collapse: collapse;
-        max-width: 100%;
-        width: max-content;
+        /* max-width: 100%; */
+        /* width: max-content; */
+        table-layout: fixed;
         margin-bottom: 1rem;
         border-spacing: 30px;
       }
@@ -339,8 +340,10 @@
         border-bottom: 1px solid var(--colors-gray5);
         padding: 2px 5px;
         text-align: left;
-        width: max-content;
-        max-width: 200px;
+        /* width: max-content; */
+        /* max-width: 200px; */
+        width: 10px;
+        max-width: 300px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -522,7 +525,7 @@
           cat: [
             {
               name: "Member",
-              state: "closed",
+              state: "open",
               requests: [
                 {
                   method: "GET",
@@ -597,7 +600,7 @@
                 },
                 {
                   method: "GET",
-                  url: "member/invite/{id}",
+                  url: "invite/member/{id}",
                   description: "Invite Member",
                   callback: function () {
                     updateIds("member");
@@ -669,13 +672,13 @@
                 },
                 {
                   method: "GET",
-                  url: "booking?show=today",
+                  url: "booking?date=today",
                   description: "Today",
                   fields: [],
                 },
                 {
                   method: "GET",
-                  url: "booking?show=2023-11-11",
+                  url: "booking?date=2023-11-11",
                   description: "Date",
                   fields: [],
                 },
@@ -896,7 +899,14 @@
       // POST function
       //
       async function postData(method, url, form = null) {
+        console.time("fetch");
+        // get time in ms
+        const fetchTime = Date.now();
+
         // console.log("postData", method, url, form);
+        responseData = null;
+        tablesContainer.innerHTML = "";
+        result.innerHTML = "";
         // if form has only one input field with name id, replace {id} in url with the value of that field
         if (form) {
           const idField = form.querySelector("input[name=id]");
@@ -930,6 +940,7 @@
           body: formData,
         })
           .then((response) => {
+            console.timeEnd("fetch");
             const status = response.status;
             let color = "var(--green)";
             if (status >= 400) color = "var(--yellow)";
@@ -944,9 +955,14 @@
             }
           })
           .then((data) => {
+            console.log(fetchTime);
+
             if (typeof data === "object") {
+              if (data.debug) {
+                data.debug = { fetchTime: Date.now() - fetchTime + " ms", ...data.debug };
+              }
+              responseData = data;
               if (showTables) {
-                responseData = data;
                 resultAsTable();
               } else {
                 resultAsJSON();
@@ -1106,12 +1122,14 @@
             } else {
               color = colors.stringColor;
               match = '"' + escapeHtml(match.substr(1, match.length - 2)) + '"';
-              style = "word-wrap:break-word;white-space:pre-wrap;";
+              style = "word-wrap:break-word;";
+              // style = "word-wrap:break-word;white-space:pre-wrap;";
             }
           } else {
             color = /true/.test(match) ? colors.trueColor : /false/.test(match) ? colors.falseColor : /null/.test(match) ? colors.nullColor : color;
           }
           match = match.replace(/"/g, "");
+          match = match.replace(/\\&quot;/g, "&quot;");
           return `<span style="${style}color:${color}">${match}</span>`;
         });
       }

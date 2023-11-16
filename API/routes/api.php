@@ -2,11 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\StaffController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\LocationController;
-use App\Http\Controllers\MemberController;
-use App\Http\Controllers\StaffController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\Mail\InviteMailController;
 use App\Models\User;
 use App\Http\Middleware\LogRequests;
@@ -33,31 +33,35 @@ use App\Http\Middleware\LogRequests;
 
 // ✅ = done
 // 👷 = in progress
-// ❓ = is it needed?
+// ❓ = is needed?
 
 
-// unprotected route to login
+// Unprotected routes (no authentication required)
 Route::post('/login', [UserController::class, 'login']); // ✅
-Route::post('/logout', [UserController::class, 'logout']); // ❓
 Route::post('/register', [UserController::class, 'register']); // ✅
+Route::post('/logout', [UserController::class, 'logout']); // ❓
 
-
-
-
-// 
-// Routes for ROLE_STAFF
-// , 'check_role:' . User::ROLE_STAFF
-// 
-Route::middleware(['auth:sanctum', LogRequests::class])->group(function () {
+// Routes for Staff and Member
+Route::middleware(['auth:sanctum', LogRequests::class, 'access_control:staff,member'])->group(function () {
     Route::resource('booking', BookingController::class);
 });
 
-// 
-Route::middleware(['auth:sanctum', LogRequests::class, 'check_role:' . User::ROLE_STAFF])->group(function () {
-    // Staff routes for CRUD members
+// Routes for Staff only
+Route::middleware(['auth:sanctum', LogRequests::class, 'access_control:staff'])->group(function () {
+    // CRUD members
     Route::resource('member', MemberController::class);
-    // Staff sending mails
-    Route::get('/member/invite/{member}', [InviteMailController::class, 'memberInvite']); // ✅
+    // Send invite mail to member
+    Route::get('invite/{user}/{id}', [InviteMailController::class, 'userInvite']); // ✅
+});
+
+// Routes for Admin only
+Route::middleware(['auth:sanctum', LogRequests::class, 'access_control:admin'])->group(function () {
+    // CRUD staff
+    Route::resource('staff', StaffController::class);
+    // CRUD locations
+    Route::resource('location', LocationController::class);
+    // Send invite mail to staff
+    Route::get('invite/{user}/{id}', [InviteMailController::class, 'userInvite']); // ✅
 });
 
 

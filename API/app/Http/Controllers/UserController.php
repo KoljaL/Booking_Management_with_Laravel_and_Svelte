@@ -13,9 +13,17 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller {
 
-    // register function, gets a token and a password via post request
-    // if this token exixts in the user table add the password to the user
 
+    /**
+     * REGISTER
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \Illuminate\Validation\ValidationException
+     * @description register function, gets a token and a password via post request 
+     * if this token exists in the user table add the password to the user
+     * @route /api/register
+     */
     public function register(Request $request) {
         $request->validate([
             // 'invite_token' => 'required|string|min:8|confirmed',
@@ -43,35 +51,18 @@ class UserController extends Controller {
                 'error' => $th->getMessage(),
             ], 404);
         }
-
-        // $user = User::where('invite_token', $request->invite_token)->first();
-
-        // // dd($user);
-        // if ($user) {
-        //     $user->password = Hash::make($request->password);
-        //     $user->invite_token = null;
-        //     $user->save();
-        //     return response()->json([
-        //         'user' => $user,
-        //         'request' => $request->token,
-        //         'message' => 'Password added to user',
-        //     ], 201);
-        // } else {
-        //     return response()->json([
-        //         'message' => 'Token not found',
-        //         'user' => $user,
-        //         'request' => $request->all(),
-        //         // to-do remove this
-        //     ], 404);
-        // }
-
     }
 
 
     /**
-     * Summary of login
+     * LOGIN
+     * 
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \Illuminate\Validation\ValidationException
+     * @description login function, gets email and password via post request 
+     * if the email and password are correct, return the user data and a token
+     * @route /api/login
      */
     public function login(Request $request) {
         $request->validate([
@@ -97,24 +88,25 @@ class UserController extends Controller {
             return response()->json(['message' => 'User role not found'], 404);
         }
 
-
-        $response = [
+        return response()->json([
             'user' => $userData,
             'token' => $token,
-        ];
-
-        return response($response, 201);
+        ], 201);
     }
 
     /**
-     * Summary of logout
+     * LOGOUT
+     * 
      * @param \Illuminate\Http\Request $request
-     * @return array
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \Illuminate\Validation\ValidationException
+     * @description delete the token from the user table
+     * @route /api/logout
      */
     public function logout(Request $request) {
         auth()->user()->tokens()->delete();
-        return [
+        return response()->json([
             'message' => 'Logged out',
-        ];
+        ], 201);
     }
 }
