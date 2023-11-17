@@ -63,7 +63,7 @@
 - [sveltekit-starter/src/hooks/laravel-sanctum.ts at develop · daison12006013/sveltekit-starter](https://github.com/daison12006013/sveltekit-starter/blob/develop/src/hooks/laravel-sanctum.ts)
 - [dedoc/scramble: Modern Laravel OpenAPI (Swagger) documentation generator. No PHPDoc annotations required.](https://github.com/dedoc/scramble)
 - [Authentication in Svelte using cookies - LogRocket Blog](https://blog.logrocket.com/authentication-svelte-using-cookies/#what-http-cookies)
-
+- [A simple way to enable CORS on Laravel - DEV Community](https://dev.to/keikesu0122/a-simple-way-to-enable-cors-on-laravel-55i)
 ### Not used, but maybe useful in the future
 - [Laravel Active Trait](https://www.trovster.com/blog/2023/02/laravel-active-trait)
 

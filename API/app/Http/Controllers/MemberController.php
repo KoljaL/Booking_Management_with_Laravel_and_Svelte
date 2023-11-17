@@ -36,7 +36,7 @@ class MemberController extends Controller {
             $members = Member::byAccessLevel()->showMembers($request->show);
             $count_members = $members->count();
             // dd($members);
-            return response()->json(['message' => $request->show . ' Members', 'count_members' => $count_members, 'members' => $members], 200);
+            return response()->json(['message' => 'All ' . $request->show . ' Members', 'count_members' => $count_members, 'member' => $members], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Members not found or no Members associated staff.', 'error' => $th->getMessage()], 404);
         }
@@ -227,7 +227,7 @@ class MemberController extends Controller {
 
             DB::commit();
 
-            return response()->json(['message' => 'Member deleted', 'data' => $oldMember], 201);
+            return response()->json(['message' => 'Member deleted', 'member' => $oldMember], 201);
         } catch (\Throwable $th) {
             DB::rollback();
             return response()->json(['message' => 'Member not found', 'error' => $th], 404);

@@ -57,7 +57,7 @@ Route::middleware(['auth:sanctum', LogRequests::class, 'access_control:staff'])-
 });
 
 // Routes for Admin only
-Route::middleware(['auth:sanctum', LogRequests::class, 'access_control:admin'])->group(function () {
+Route::middleware(['auth:sanctum', LogRequests::class, 'access_control:staff'])->group(function () {
     // CRUD staff
     Route::resource('staff', StaffController::class);
     // CRUD locations

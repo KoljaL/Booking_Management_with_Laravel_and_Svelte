@@ -25,6 +25,15 @@ class Staff extends Model {
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function toArray() {
+        $staff = parent::toArray();
+        if ($this->user) {
+            $staff['email'] = $this->user->email;
+            $staff['role'] = $this->user->role;
+            $staff['location_city'] = $this->location->city;
+        }
+        return $staff;
+    }
     // public function members() {
     //     return $this->hasMany(Member::class, 'staff_id');
     // }

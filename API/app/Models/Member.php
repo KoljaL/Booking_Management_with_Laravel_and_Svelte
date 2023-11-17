@@ -38,8 +38,17 @@ class Member extends Model {
 
     // $with is used to specify which relationships to eager load by default
     // https://laravel.com/docs/10.x/eloquent-relationships#eager-loading-specific-columns
-    protected $with = ['user:id,email,invite_token', 'location:id,city'];
+    // protected $with = ['user:id,email,invite_token', 'location:id,city'];
 
+    public function toArray() {
+        $member = parent::toArray();
+        if ($this->user) {
+            $member['email'] = $this->user->email;
+            $member['role'] = $this->user->role;
+            $member['location_city'] = $this->location->city;
+        }
+        return $member;
+    }
     //
     // RELATIONSHIPS
     //

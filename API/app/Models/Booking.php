@@ -32,8 +32,16 @@ class Booking extends Model {
 
     // $with is used to specify which relationships to eager load by default
     // https://laravel.com/docs/10.x/eloquent-relationships#eager-loading-specific-columns
-    protected $with = ['member:id,name', 'location:id,city'];
+    // protected $with = ['member:id,name', 'location:id,city'];
 
+    public function toArray() {
+        $booking = parent::toArray();
+        // if ($this->booking) {
+        $booking['member_name'] = $this->member->name;
+        $booking['location_city'] = $this->location->city;
+        // }
+        return $booking;
+    }
 
     //
     // RELATIONSHIPS

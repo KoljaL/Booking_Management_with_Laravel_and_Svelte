@@ -32,9 +32,9 @@ class BookingController extends Controller {
             $messageShow = $show ? ' show: ' . $show : '';
 
             return response()->json([
-                'message' => 'Bookings' . $messageDate . $messageShow,
+                'message' => 'All Bookings' . $messageDate . $messageShow,
                 'count_bookings' => $count_bookings,
-                'bookings' => $bookings
+                'booking' => $bookings
             ], 200);
 
         } catch (\Exception $th) {

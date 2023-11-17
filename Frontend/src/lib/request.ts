@@ -16,9 +16,7 @@ export async function request(method, url, body = null) {
 			if (response.status === 200) {
 				return response.json();
 			} else {
-				return response.json().then((err) => {
-					throw err;
-				});
+				return response.json();
 			}
 		})
 		.catch((err) => {

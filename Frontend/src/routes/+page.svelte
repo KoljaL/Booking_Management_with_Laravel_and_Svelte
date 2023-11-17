@@ -5,14 +5,13 @@
 	/**
 	 * Login with the selected user
 	 */
-	async function login(e: Event) {
-		e.preventDefault();
-		const target = e.target as HTMLButtonElement;
-		const form = target.closest('form') as HTMLFormElement;
-		const formData = new FormData(form);
-		// console.log(formData);
+	async function login(user: string) {
+		const formData = new FormData();
+		formData.append('email', user + '@example.com');
+		formData.append('password', 'password');
 		const URL = 'https://public.test/api/login/';
 		// const URL = 'https://dev.rasal.de/booking/API/public/login/';
+
 		const response = await fetch(URL, {
 			method: 'POST',
 			headers: {
@@ -35,17 +34,6 @@
 </script>
 
 <h1>Landingpage for Booking Management</h1>
-<h2>You have to be logged in to manage your bookings.</h2>
-
-<form action="login" method="post">
-	<select name="email" on:change={(e) => login(e)}>
-		<option value="">Select a user</option>
-		<option value="admin@example.com">admin</option>
-		<option value="staff@example.com">staff</option>
-		<option value="member@example.com">member</option>
-	</select>
-	<input type="hidden" name="password" value="password" required />
-</form>
 
 <h2>Roles</h2>
 <p>
@@ -54,10 +42,15 @@
 	The member can manage his Bookings.
 </p>
 
+<div class="buttons">
+	<button on:click={() => login('admin')}>Admin</button>
+	<button on:click={() => login('staff')}>Staff</button>
+	<button on:click={() => login('member')}>Member</button>
+</div>
+
 <style>
-	form {
+	.buttons {
 		display: flex;
-		flex-direction: column;
-		width: 300px;
+		gap: 1rem;
 	}
 </style>

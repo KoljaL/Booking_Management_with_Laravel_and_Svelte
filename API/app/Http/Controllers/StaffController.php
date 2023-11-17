@@ -6,8 +6,13 @@ use App\Models\Staff;
 use Illuminate\Http\Request;
 
 class StaffController extends Controller {
-    public function index() {
-        return Staff::all();
+    public function index(Request $request) {
+        // dd($request->all());
+        if (!$request->role_isAdmin) {
+            return response()->json(['message' => 'Only Admin can see Staff.'], 404);
+        }
+        $staff = Staff::all();
+        return response()->json(['message' => 'All Staff', 'staff' => $staff], 200);
     }
     public function show(Staff $staff) {
         return $staff;
@@ -23,4 +28,6 @@ class StaffController extends Controller {
         $staff->delete();
         return response()->json(null, 204);
     }
+
+
 }

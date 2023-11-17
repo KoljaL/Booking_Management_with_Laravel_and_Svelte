@@ -2,13 +2,32 @@
 	import { tokenST, userST } from '$lib/store';
 	import { goto } from '$app/navigation';
 
-	if ($tokenST === null || $tokenST === undefined || !$tokenST) {
-		console.log('no token');
-		goto('/test');
+	if (!$tokenST) {
+		// console.log('no token');
+		goto('./login?noToken=true');
 	}
 
-	console.log($tokenST);
+	function logout() {
+		tokenST.set('');
+		userST.set({});
+		window.location.href = './';
+	}
+	// console.log($tokenST);
 </script>
 
-<h2>Hallo {$userST.name}</h2>
+<header>
+	<h2>Hallo {$userST.name}</h2>
+	<p>Role: {$userST.role}</p>
+	<p>Admin: {$userST.is_admin}</p>
+	<p>Location: {$userST.location.city}</p>
+	<button on:click={logout}>Logout</button>
+</header>
 <slot />
+
+<style>
+	header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+</style>

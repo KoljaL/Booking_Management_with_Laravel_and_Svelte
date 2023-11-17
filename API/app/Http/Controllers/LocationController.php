@@ -8,7 +8,13 @@ use App\Models\Location;
 
 class LocationController extends Controller {
     public function index() {
-        return Location::all();
+        try {
+            $locations = Location::all();
+            return response()->json(['message' => 'All Locations', 'location' => $locations], 200);
+        } catch (\Exception $th) {
+            return response()->json(['message' => 'Locations not found.', 'error' => $th->getMessage()], 404);
+
+        }
     }
     public function show(Location $location) {
         return $location;
