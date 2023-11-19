@@ -14,10 +14,6 @@ return new class extends Migration {
             $table->string('name');
             $table->foreignId('user_id')->constrained();
             $table->foreignId('location_id')->constrained();
-            // $table->unsignedBigInteger('user_id');
-            // $table->foreign('user_id')->references('id')->on('users');
-            // $table->unsignedBigInteger('location_id');
-            // $table->foreign('location_id')->references('id')->on('locations');
             $table->boolean('is_admin')->default(false);
             $table->string('phone');
             $table->softDeletes();
@@ -41,3 +37,8 @@ return new class extends Migration {
         Schema::dropIfExists('staff');
     }
 };
+
+// $table->unsignedBigInteger('user_id');
+// $table->foreign('user_id')->references('id')->on('users');
+// $table->unsignedBigInteger('location_id');
+// $table->foreign('location_id')->references('id')->on('locations');

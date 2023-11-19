@@ -3,8 +3,8 @@
 	import { goto } from '$app/navigation';
 
 	if (!$tokenST) {
-		// console.log('no token');
-		goto('./login?noToken=true');
+		console.log('no token');
+		// goto('./login?noToken=true');
 	}
 
 	function logout() {
@@ -22,12 +22,46 @@
 	<p>Location: {$userST.location.city}</p>
 	<button on:click={logout}>Logout</button>
 </header>
-<slot />
+
+<main>
+	<slot />
+</main>
 
 <style>
+	:global(:root) {
+		--header-height: 3rem;
+		--menu-height: 3rem;
+		--footer-height: 3rem;
+		--main-height: calc(100vh - var(--header-height) - var(--footer-height));
+		--page-width: 800px;
+	}
+	:global(body) {
+		margin: 0;
+		padding: 0;
+		min-height: 100vh;
+	}
+	:global(#SvelteKit) {
+		min-height: 100vh;
+		max-width: var(--page-width);
+		margin: 0 auto;
+		/* display: grid; */
+		/* grid-template-rows: auto 1fr auto; */
+		display: flex;
+		flex-direction: column;
+	}
+
 	header {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		height: var(--header-height);
+	}
+
+	main {
+		/* flex: 1 1 auto; */
+		/* max-height: 100%; */
+		/* align-self: stretch; */
+		/* overflow: auto; */
+		height: var(--main-height);
 	}
 </style>
