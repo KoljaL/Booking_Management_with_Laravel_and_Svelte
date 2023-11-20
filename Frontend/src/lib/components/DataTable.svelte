@@ -4,8 +4,8 @@
 	export let caption: string = '';
 	export let model: string;
 	export let callback: any = (id: string) => {};
+	export let show = false;
 
-	let showTable = true;
 	let table: HTMLTableElement;
 	let rowCount = tableData.length;
 
@@ -14,8 +14,6 @@
 		const row = target.closest('tr');
 		if (!row) return;
 		const id = row.querySelector('td.id')?.textContent;
-		// console.log('id', id);
-		console.log('callback', callback, id);
 		callback(id);
 	}
 
@@ -233,10 +231,11 @@
 			]
 		}
 	];
+	$: console.log('show', show);
 </script>
 
-{#if showTable}
-	<div class="tableWrapper" transition:fade={{ delay: 250, duration: 300 }}>
+{#if show}
+	<div class="tableWrapper" in:fade={{ duration: 200 }} out:fade={{ duration: 300 }}>
 		<table id="table_{model}" bind:this={table}>
 			{#if caption}
 				<caption>
@@ -272,8 +271,6 @@
 			</tbody>
 		</table>
 	</div>
-{:else}
-	<p>No model</p>
 {/if}
 
 <style>
@@ -313,6 +310,7 @@
 		background-color: #f5f5f5;
 		top: 3em;
 		cursor: pointer;
+		text-align: left;
 	}
 	th:hover {
 		color: grey;

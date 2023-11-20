@@ -35,6 +35,7 @@ export interface ModelMember {
 	location_id: number;
 	staff_id: number;
 	phone: string;
+	email: string;
 	jc_number: string;
 	max_booking: number;
 	active: number;

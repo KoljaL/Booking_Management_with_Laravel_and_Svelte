@@ -10,7 +10,7 @@ class LocationController extends Controller {
     public function index() {
         try {
             $locations = Location::all();
-            return response()->json(['message' => 'All Locations', 'location' => $locations], 200);
+            return response()->json(['message' => 'All Locations', 'data' => $locations], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => 'Locations not found.', 'error' => $th->getMessage()], 404);
 

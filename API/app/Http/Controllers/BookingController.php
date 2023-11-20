@@ -34,7 +34,7 @@ class BookingController extends Controller {
             return response()->json([
                 'message' => 'All Bookings' . $messageDate . $messageShow,
                 'count_bookings' => $count_bookings,
-                'booking' => $bookings
+                'data' => $bookings
             ], 200);
 
         } catch (\Exception $th) {
@@ -60,7 +60,7 @@ class BookingController extends Controller {
                 return response()->json(['message' => 'Only staff can update deleted bookings.'], 404);
             }
 
-            return response()->json(['message' => 'Booking data', 'show' => $request->show, 'booking' => $booking], 200);
+            return response()->json(['message' => 'Booking data', 'show' => $request->show, 'data' => $booking], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Booking with ID ' . $id . ' not found', 'exception' => $e], 404);
         }
@@ -112,7 +112,7 @@ class BookingController extends Controller {
                 // 'staff_id' => $authUser->staff->id ?? 999,
             ]);
             DB::commit();
-            return response()->json(['message' => 'Booking created', 'booking' => $booking], 201);
+            return response()->json(['message' => 'Booking created', 'data' => $booking], 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Booking not created', 'error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()], 404);
@@ -162,7 +162,7 @@ class BookingController extends Controller {
                 'comment_staff' => $request->comment_staff,
             ]);
             DB::commit();
-            return response()->json(['message' => 'Booking updated', 'booking' => $booking], 200);
+            return response()->json(['message' => 'Booking updated', 'data' => $booking], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Booking not updated', 'error' => $e], 404);
@@ -193,7 +193,7 @@ class BookingController extends Controller {
             ]);
             $booking->delete();
             DB::commit();
-            return response()->json(['message' => 'Booking deleted', 'booking' => $booking], 200);
+            return response()->json(['message' => 'Booking deleted', 'data' => $booking], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Booking not deleted', 'error' => $e], 404);

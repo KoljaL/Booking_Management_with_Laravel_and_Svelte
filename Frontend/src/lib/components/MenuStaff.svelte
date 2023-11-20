@@ -4,7 +4,14 @@
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
-	export let endpoint: string = 'location';
+
+	function menuClick(slug: string) {
+		dispatch('menuClick', {
+			endpoint: slug
+		});
+		activeSlug = slug;
+	}
+	$: activeSlug = 'member';
 	const menuItems: ModelMenu[] = [
 		{
 			name: 'Location',
@@ -29,6 +36,13 @@
 	];
 </script>
 
+<!-- 
+on:click={() => {
+	dispatch('menuClick', {
+		endpoint: item.slug
+	});
+}} -->
+
 <nav>
 	<ul>
 		{#each menuItems as item}
@@ -36,10 +50,9 @@
 				<li>
 					<button
 						on:click={() => {
-							dispatch('menuClick', {
-								endpoint: item.slug
-							});
+							menuClick(item.slug);
 						}}
+						class:active={activeSlug === item.slug}
 					>
 						{item.name}
 					</button>
@@ -53,14 +66,36 @@
 	nav {
 		height: var(--menu-height);
 		display: flex;
+		margin-bottom: 1rem;
 	}
 	nav ul {
 		display: flex;
+		align-items: center;
 		justify-content: space-between;
+		height: 2rem;
 		padding: 0;
 		list-style: none;
+		border: 1px solid black;
+		border-radius: 0.5rem;
 	}
 	nav ul li {
+		height: 2rem;
 		margin: 0 1rem;
+	}
+	nav ul li button {
+		background-color: transparent;
+		border: none;
+		font-size: 1rem;
+		font-weight: bold;
+		cursor: pointer;
+		padding: 0;
+		line-height: 2rem;
+		transition: color 0.2s ease-in-out;
+	}
+	nav ul li button.active {
+		color: var(--blue);
+	}
+	button:hover {
+		color: var(--blue);
 	}
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { fade } from 'svelte/transition';
 
 	export let isOpen: boolean = false;
 	export let onClose: () => void;
@@ -24,6 +24,7 @@
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<div
+		transition:fade={{ duration: 300 }}
 		class="modalBackdrop"
 		bind:this={backdrop}
 		on:click={handleClickOutside}
@@ -32,17 +33,15 @@
 		<div class="modalWrapper">
 			<div class="modalHeader">
 				<h2>
-					<slot name="name">
-						<span class="missing">Unknown name</span>
-					</slot>
+					<slot name="header" />
 				</h2>
 			</div>
 			<div class="modalBody">
 				<slot />
 			</div>
 			<div class="modalFooter">
+				<slot name="footer" />
 				<button on:click={onClose}>Close Modal</button>
-				<!-- <button on:click={callback}>Callback</button> -->
 			</div>
 		</div>
 	</div>
@@ -63,36 +62,39 @@
 	}
 
 	.modalWrapper {
-		width: 100%;
-		height: 100%;
+		width: 80ch;
+		max-width: 95vw;
+		max-height: 95vh;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		/* pointer-events: none; */
 	}
 
 	.modalHeader {
-		width: 50%;
-		height: 10%;
+		width: 100%;
+		padding-inline: 1rem;
 		background-color: white;
 		border-radius: 10px 10px 0 0;
 		z-index: 1001;
 	}
 
 	.modalBody {
-		width: 50%;
+		width: 100%;
 		height: 50%;
+		overflow: auto;
 		background-color: white;
 		padding: 1rem;
 		z-index: 1001;
 	}
 
 	.modalFooter {
-		width: 50%;
-		height: 10%;
+		width: 100%;
+		padding: 1rem;
 		background-color: white;
 		border-radius: 0 0 10px 10px;
 		z-index: 1001;
+		display: flex;
+		gap: 1rem;
 	}
 </style>

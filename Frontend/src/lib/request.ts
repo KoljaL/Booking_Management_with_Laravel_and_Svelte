@@ -23,3 +23,36 @@ export async function request(method, url, body = null) {
 			throw err;
 		});
 }
+
+export const requestNEW = async (method, endpoint, body = null) => {
+	const options = {
+		method,
+		headers: {
+			Authorization: `Bearer ${get(tokenST)}`,
+			'Content-Type': 'application/json'
+		},
+		body: body ? JSON.stringify(body) : null
+	};
+
+	try {
+		const response = await fetch(URL + endpoint, options);
+		const responseData = await response.json();
+
+		if (!response.ok) {
+			throw new Error(responseData.message || 'Something went wrong');
+		}
+
+		return {
+			status: response.status,
+			message: responseData.message,
+			data: responseData.data
+		};
+	} catch (error) {
+		return {
+			status: 500,
+			message: error.message,
+			data: null,
+			error: error
+		};
+	}
+};

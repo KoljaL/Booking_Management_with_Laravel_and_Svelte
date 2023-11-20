@@ -36,7 +36,7 @@ class MemberController extends Controller {
             $members = Member::byAccessLevel()->showMembers($request->show);
             $count_members = $members->count();
             // dd($members);
-            return response()->json(['message' => 'All ' . $request->show . ' Members', 'count_members' => $count_members, 'member' => $members], 200);
+            return response()->json(['message' => 'All ' . $request->show . ' Members', 'count_members' => $count_members, 'data' => $members], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Members not found or no Members associated staff.', 'error' => $th->getMessage()], 404);
         }
@@ -58,7 +58,7 @@ class MemberController extends Controller {
             $member = Member::withTrashed()->byAccessLevel()->withBookings($request->show)->findOrFail($id);
             $count_bookings = $member->bookings->count();
 
-            return response()->json(['message' => 'Member data', 'show' => $request->show, 'count_bookings' => $count_bookings, 'member' => $member], 200);
+            return response()->json(['message' => 'Member data', 'show' => $request->show, 'count_bookings' => $count_bookings, 'data' => $member], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Member with ID ' . $id . ' not found', 'exception' => $e], 404);
         }
@@ -125,7 +125,7 @@ class MemberController extends Controller {
             // get the new member with the
             $newMember = Member::find($member->id);
             // return the member
-            return response()->json(['message' => 'Member created', 'member' => $newMember], 201);
+            return response()->json(['message' => 'Member created', 'data' => $newMember], 201);
         } catch (\Throwable $th) {
             DB::rollback();
             return response()->json(['message' => 'Error creating member', 'error' => $th], 500);
@@ -177,7 +177,7 @@ class MemberController extends Controller {
             DB::commit();
 
             // return the member
-            return response()->json(['message' => 'Member updated', 'member' => $member], 201);
+            return response()->json(['message' => 'Member updated', 'data' => $member], 201);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['message' => 'Error update member', 'error' => $e], 500);
@@ -227,7 +227,7 @@ class MemberController extends Controller {
 
             DB::commit();
 
-            return response()->json(['message' => 'Member deleted', 'member' => $oldMember], 201);
+            return response()->json(['message' => 'Member deleted', 'data' => $oldMember], 201);
         } catch (\Throwable $th) {
             DB::rollback();
             return response()->json(['message' => 'Member not found', 'error' => $th], 404);

@@ -12,7 +12,7 @@ class StaffController extends Controller {
             return response()->json(['message' => 'Only Admin can see Staff.'], 404);
         }
         $staff = Staff::all();
-        return response()->json(['message' => 'All Staff', 'staff' => $staff], 200);
+        return response()->json(['message' => 'All Staff', 'data' => $staff], 200);
     }
     public function show(Staff $staff) {
         return $staff;
