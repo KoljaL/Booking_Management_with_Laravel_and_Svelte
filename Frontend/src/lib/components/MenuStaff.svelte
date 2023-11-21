@@ -1,17 +1,11 @@
 <script lang="ts">
+	import type { ModelMenu, Endpoint } from '$lib/types';
+	import { getParamFromUrl, setParamToUrl } from '$lib/utils';
 	import { userST } from '$lib/store';
-	import type { ModelMenu } from '$lib/types';
-	import { createEventDispatcher } from 'svelte';
 
-	const dispatch = createEventDispatcher();
-
-	function menuClick(slug: string) {
-		dispatch('menuClick', {
-			endpoint: slug
-		});
-		activeSlug = slug;
-	}
-	$: activeSlug = 'member';
+	export let endpoint: Endpoint;
+	// $: console.log('MenuStaff', endpoint);
+	// let activeSlug = 'member';
 	const menuItems: ModelMenu[] = [
 		{
 			name: 'Location',
@@ -34,14 +28,26 @@
 			is_admin: false
 		}
 	];
+
+	function menuClick(slug: string) {
+		setParamToUrl('e', slug);
+	}
+	// menuClick(item.slug);
+
+	// function hashChanged() {
+	// const urlParams = new URLSearchParams(window.location.search);
+	// console.log('hashChanged', urlParams);
+	// const hash = window.location.hash.replace('#', '').split('/')[0] as Endpoint;
+	// if (hash) {
+	// 	endpoint = hash;
+	// }
+	// endpoint = getParamFromUrl('e') as Endpoint;
+	// console.log('hashChanged', endpoint);
+	// }
+	// $: console.log('MenuStaff', endpoint);
 </script>
 
-<!-- 
-on:click={() => {
-	dispatch('menuClick', {
-		endpoint: item.slug
-	});
-}} -->
+<!-- <svelte:window on:hashchange={hashChanged} /> -->
 
 <nav>
 	<ul>
@@ -50,9 +56,9 @@ on:click={() => {
 				<li>
 					<button
 						on:click={() => {
-							menuClick(item.slug);
+							setParamToUrl('e', item.slug);
 						}}
-						class:active={activeSlug === item.slug}
+						class:active={endpoint === item.slug}
 					>
 						{item.name}
 					</button>
@@ -68,7 +74,7 @@ on:click={() => {
 		display: flex;
 		margin-bottom: 1rem;
 	}
-	nav ul {
+	ul {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -78,11 +84,11 @@ on:click={() => {
 		border: 1px solid black;
 		border-radius: 0.5rem;
 	}
-	nav ul li {
+	li {
 		height: 2rem;
 		margin: 0 1rem;
 	}
-	nav ul li button {
+	button {
 		background-color: transparent;
 		border: none;
 		font-size: 1rem;
@@ -92,7 +98,7 @@ on:click={() => {
 		line-height: 2rem;
 		transition: color 0.2s ease-in-out;
 	}
-	nav ul li button.active {
+	button.active {
 		color: var(--blue);
 	}
 	button:hover {

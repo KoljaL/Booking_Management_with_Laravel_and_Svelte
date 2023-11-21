@@ -1,17 +1,94 @@
 <script lang="ts">
-	import { request } from '$lib/request';
+	import type { ModelBooking } from '$lib/types';
+	import { request, requestNEW } from '$lib/request';
+	import { getParamFromUrl, setParamToUrl } from '$lib/utils';
+	import JsonView from '$lib/components/debug/JsonView.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 
 	export let id = '';
+	export let callback: () => void;
 
-	// request('member', 'GET', { id: id }).then((response) => {
-	// 	console.log('response', response);
-	// });
+	let showModal: boolean = false;
+	let form: HTMLFormElement;
+	let booking: ModelBooking = {
+		id: 0,
+		date: '',
+		time: '',
+		created_at: '',
+		updated_at: '',
+		deleted_at: '',
+		location_id: 0,
+		member_id: 0,
+		slots: 0,
+		comment_member: '',
+		comment_staff: '',
+		state: '',
+		started_at: '',
+		ended_at: '',
+		member_name: '',
+		location_city: ''
+	};
 
-	console.log('id', id);
+	getBookingData();
+
+	async function getBookingData() {
+		try {
+			const { status, message, data } = await requestNEW('GET', 'booking/' + id);
+			if (status === 200) {
+				booking = data as ModelBooking;
+				showModal = true;
+			} else {
+				console.error('Booking data loading failed', message);
+			}
+		} catch (error: any) {
+			console.error('Error:', error.message);
+		}
+	}
+
+	async function storeBookingData() {
+		if (!form) return;
+		console.log('storeBookingData', booking);
+		const formData = new FormData(form)!;
+		const { status, message, data } = await requestNEW('PUT', 'booking/' + id, formData);
+		if (status === 201) {
+			booking = data as ModelBooking;
+			console.log('booking', data);
+			closeModal();
+		} else {
+			console.error('TableData loading failed', message);
+		}
+	}
+
+	function closeModal() {
+		// window.location.hash = 'booking';
+		setParamToUrl('id', '');
+		showModal = false;
+		callback();
+	}
+
+	async function openBooking(id: number) {
+		showModal = false;
+		callback();
+		// window.location.hash = 'booking/' + id;
+		setParamToUrl('id', id.toString());
+	}
 </script>
 
-<h2>Booking {id}</h2>
-<form action=""></form>
+<Modal isOpen={showModal} onClose={closeModal}>
+	<span slot="header">Booking: {booking.id}</span>
+	<form bind:this={form}></form>
+	<div slot="footer">
+		<button type="button" on:click={storeBookingData}>Save</button>
+	</div>
+
+	<div class="jsonWrapper">
+		<JsonView json={booking} />
+	</div>
+</Modal>
 
 <style>
+	.jsonWrapper {
+		max-height: 200px;
+		overflow-y: scroll;
+	}
 </style>

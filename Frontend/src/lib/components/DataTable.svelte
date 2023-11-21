@@ -1,21 +1,14 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
+
 	export let tableData: any;
 	export let caption: string = '';
 	export let model: string;
-	export let callback: any = (id: string) => {};
-	export let show = false;
+	export let getRowId: any = (id: string) => {};
+	export let showTable = false;
 
 	let table: HTMLTableElement;
 	let rowCount = tableData.length;
-
-	function getRowId(e: Event) {
-		const target = e.target as HTMLElement;
-		const row = target.closest('tr');
-		if (!row) return;
-		const id = row.querySelector('td.id')?.textContent;
-		callback(id);
-	}
 
 	//
 	// SORT TABLE
@@ -70,32 +63,32 @@
 				{
 					header: 'Id',
 					accessor: 'id',
-					width: '10%'
+					width: '4ch'
 				},
 				{
 					header: 'Name',
 					accessor: 'name',
-					width: '20%'
+					width: '25ch'
 				},
 				{
 					header: 'Email',
 					accessor: 'email',
-					width: '20%'
+					width: '25ch'
 				},
 				{
 					header: 'Phone',
 					accessor: 'phone',
-					width: '20%'
+					width: '20ch'
 				},
 				{
 					header: 'City',
 					accessor: 'location_city',
-					width: '20%'
+					width: '20ch'
 				},
 				{
 					header: 'Created',
 					accessor: 'created_at',
-					width: '10%'
+					width: '15ch'
 				}
 			]
 		},
@@ -196,7 +189,7 @@
 				{
 					header: 'Id',
 					accessor: 'id',
-					width: '10%'
+					width: '4ch'
 				},
 				{
 					header: 'Member',
@@ -231,10 +224,10 @@
 			]
 		}
 	];
-	$: console.log('show', show);
+	// $: console.log('showTable', showTable);
 </script>
 
-{#if show}
+{#if showTable}
 	<div class="tableWrapper" in:fade={{ duration: 200 }} out:fade={{ duration: 300 }}>
 		<table id="table_{model}" bind:this={table}>
 			{#if caption}
@@ -256,7 +249,7 @@
 			</thead>
 			<tbody>
 				{#each tableData as row}
-					<tr on:click={(e) => getRowId(e)}>
+					<tr on:click={(e) => getRowId(row.id)}>
 						{#each tableColumns as tableColumn}
 							{#if tableColumn.endpoint === model}
 								{#each tableColumn.columns as column}
@@ -303,17 +296,22 @@
 		font-size: 0.9em;
 		font-weight: normal;
 	}
-
-	th {
-		padding: 0.5em;
+	thead {
 		position: sticky;
-		background-color: #f5f5f5;
 		top: 3em;
+		background-color: #f5f5f5;
+	}
+	th {
+		display: inline-block;
+		padding: 0.5em;
+
+		background-color: #f5f5f5;
 		cursor: pointer;
 		text-align: left;
+		transition: 0.3s;
 	}
 	th:hover {
-		color: grey;
+		color: var(--blue);
 	}
 	tr:nth-child(even) {
 		background-color: #f2f2f2;
@@ -323,6 +321,7 @@
 		background-color: #ddd;
 	}
 	td {
+		display: inline-block;
 		padding: 0.5em;
 		padding-right: 1em;
 		white-space: nowrap;

@@ -6,7 +6,7 @@
 	function logout() {
 		tokenST.set('');
 		userST.set({});
-		window.location.href = './';
+		window.location.href = 'http://localhost:5173/';
 	}
 </script>
 

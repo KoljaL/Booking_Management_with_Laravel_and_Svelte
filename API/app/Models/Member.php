@@ -40,6 +40,7 @@ class Member extends Model {
     // https://laravel.com/docs/10.x/eloquent-relationships#eager-loading-specific-columns
     // protected $with = ['user:id,email,invite_token', 'location:id,city'];
 
+
     public function toArray() {
         $member = parent::toArray();
         if ($this->user) {
@@ -49,6 +50,8 @@ class Member extends Model {
         }
         return $member;
     }
+
+
     //
     // RELATIONSHIPS
     //

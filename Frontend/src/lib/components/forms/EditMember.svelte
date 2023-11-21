@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ModelMember } from '$lib/types';
+	import { getParamFromUrl, setParamToUrl } from '$lib/utils';
 	import { request, requestNEW } from '$lib/request';
 	import JsonView from '$lib/components/debug/JsonView.svelte';
 	import Modal from '$lib/components/Modal.svelte';
@@ -8,9 +9,6 @@
 	export let callback: () => void;
 
 	let showModal: boolean = false;
-	let showBookingModal: boolean = false;
-	let bookingForm: any = null;
-	let bookingId: number;
 	let form: HTMLFormElement;
 	let member: ModelMember = {
 		id: 0,
@@ -36,9 +34,6 @@
 			const { status, message, data } = await requestNEW('GET', 'member/' + id);
 			if (status === 200) {
 				member = data as ModelMember;
-				console.log('message', message);
-				console.log('member', member);
-				console.log('data', data);
 				showModal = true;
 			} else {
 				console.error('Member data loading failed', message);
@@ -63,25 +58,20 @@
 	}
 
 	function closeModal() {
+		// window.location.hash = 'member';
+		setParamToUrl('id', '');
 		showModal = false;
 		callback();
 	}
 
 	async function openBooking(id: number) {
-		console.log('openBooking', id);
-		const bookingForm = (await import('$lib/components/forms/EditBooking.svelte')).default;
-		console.log('bookingForm', bookingForm);
-		showBookingModal = true;
-		bookingId = id;
+		showModal = false;
+		callback();
+		setParamToUrl('id', id.toString());
+		setParamToUrl('e', 'booking');
 	}
-
-	$: console.log('showBookingModal', showBookingModal);
 </script>
 
-{#if showBookingModal}
-	xx
-	<svelte:component this={bookingForm} id={bookingId} callback={close}></svelte:component>
-{/if}
 <Modal isOpen={showModal} onClose={closeModal}>
 	<span slot="header">Member: {member.name}</span>
 	<form bind:this={form}>

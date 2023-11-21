@@ -24,7 +24,7 @@ export async function request(method, url, body = null) {
 		});
 }
 
-export const requestNEW = async (method, endpoint, body = null) => {
+export const requestNEW = async (method, endpoint, body: unknown = null) => {
 	const options = {
 		method,
 		headers: {

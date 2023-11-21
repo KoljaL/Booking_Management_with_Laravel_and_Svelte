@@ -17,7 +17,7 @@
 		}
 	};
 
-	$: console.log('isOpen MODAL', isOpen);
+	// $: console.log('isOpen MODAL', isOpen);
 </script>
 
 {#if isOpen}

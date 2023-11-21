@@ -2,6 +2,7 @@
 	import { tokenST, userST } from '$lib/store';
 	import { goto } from '$app/navigation';
 
+	let store = false;
 	/**
 	 * Login with the selected user
 	 */
@@ -24,6 +25,10 @@
 		if (data.token) {
 			tokenST.set(data.token);
 			userST.set(data.user);
+			if (store) {
+				localStorage.setItem('RB_token', data.token);
+				localStorage.setItem('RB_user', JSON.stringify(data.user));
+			}
 		}
 		if (data.user.role === 'member') {
 			goto('/member');
@@ -37,9 +42,9 @@
 
 <h2>Roles</h2>
 <p>
-	The admin can manage Bookings, Staff and Member. <br />
-	The staff can manage Bookings and Member of the same location. <br />
-	The member can manage his Bookings.
+	Admin can manage Locations, Staff and Member. <br />
+	Staff can manage Bookings and Member of the same location. <br />
+	Member can manage his Bookings.
 </p>
 
 <div class="buttons">
@@ -47,10 +52,22 @@
 	<button on:click={() => login('staff')}>Staff</button>
 	<button on:click={() => login('member')}>Member</button>
 </div>
+<div class="store">
+	<label>
+		Store in local storage
+		<input type="checkbox" bind:checked={store} />
+	</label>
+</div>
 
 <style>
 	.buttons {
 		display: flex;
 		gap: 1rem;
+	}
+	.store {
+		margin-top: 1rem;
+	}
+	p {
+		line-height: 1.5rem;
 	}
 </style>

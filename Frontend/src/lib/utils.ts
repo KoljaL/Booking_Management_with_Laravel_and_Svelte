@@ -56,3 +56,29 @@ export function formatDate(date: string, locale = 'en-US') {
 		day: 'numeric'
 	});
 }
+
+export const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+
+export function setParamToUrl(param: string, value: string) {
+	const urlParams = new URLSearchParams(window.location.search);
+	// console.log('urlParams', value);
+	if (value === '' || value === null || value === undefined || !value) {
+		// console.log('delete', param);
+		urlParams.delete(param);
+		const newUrl = '?' + urlParams.toString();
+		history.pushState({ path: newUrl }, '', newUrl);
+	} else {
+		urlParams.set(param, value);
+		const newUrl = '?' + urlParams.toString();
+		history.pushState({ path: newUrl }, '', newUrl);
+		window.location.hash = '';
+		// remove hash from url
+		// const newUrl1 = window.location.href.split('#')[0];
+		// window.history.replaceState(null, '', newUrl1);
+	}
+}
+
+export function getParamFromUrl(param: string) {
+	const urlParams = new URLSearchParams(window.location.search);
+	return urlParams.get(param);
+}
