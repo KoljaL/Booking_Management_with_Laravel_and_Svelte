@@ -1,49 +1,46 @@
 <script lang="ts">
 	import type { ModelMember } from '$lib/types';
 	import { request } from '$lib/request';
+	import { goto } from '$app/navigation';
 	import JsonView from '$lib/components/debug/JsonView.svelte';
 	import Modal from '$lib/components/Modal.svelte';
-	import { goto } from '$app/navigation';
+
 	export let id: string;
 	export let callback: () => void;
 
 	let showModal: boolean = false;
 	let form: HTMLFormElement;
-	let member: ModelMember = {
+	let member: ModelMember;
+	const emptyMember: ModelMember = {
 		id: 0,
+		user_id: 0,
+		staff_id: 0,
+		location_id: 0,
 		name: '',
 		email: '',
 		phone: '',
-		created_at: '',
-		updated_at: '',
-		deleted_at: '',
-		user_id: 0,
-		location_id: 0,
-		staff_id: 0,
 		jc_number: '',
 		max_booking: 0,
 		active: 0,
+		created_at: '',
+		updated_at: '',
+		deleted_at: '',
 		bookings: []
 	};
 
-	if (id) {
-		getMemberData().then(() => {
+	const getMemberData = async () => {
+		const { status, message, data } = await request('GET', 'member/' + id);
+		if (status === 200) {
+			setTimeout(() => {
+				showModal = true;
+			}, 0);
+			return data as ModelMember;
+		} else {
 			showModal = true;
-		});
-	}
-
-	async function getMemberData() {
-		try {
-			const { status, message, data } = await request('GET', 'member/' + id);
-			if (status === 200) {
-				member = data as ModelMember;
-			} else {
-				console.error('Member data loading failed', message);
-			}
-		} catch (error: any) {
-			console.error('Error:', error.message);
+			console.error('Member data loading failed', message);
+			return emptyMember as ModelMember;
 		}
-	}
+	};
 
 	async function storeMemberData() {
 		if (!form) return;
@@ -66,65 +63,71 @@
 
 	async function openBooking(id: number) {
 		showModal = false;
-		callback();
+		// callback();
 		await goto('/staff/?bid=' + id);
 	}
 
-	$: console.log('member', member, id);
+	// $: console.log('member', member, id);
+	// $: console.log('showModal', showModal);
 </script>
 
-<Modal isOpen={showModal} onClose={closeModal}>
-	<span slot="header">Member: {member.name}</span>
-	<form bind:this={form}>
-		<label>
-			Name:
-			<input type="text" name="name" value={member.name} />
-		</label>
-		<label>
-			Email:
-			<input type="text" name="email" value={member.email} />
-		</label>
-		<label>
-			Phone:
-			<input type="text" name="phone" value={member.phone} />
-		</label>
-		<label>
-			JC Number:
-			<input type="text" name="jc_number" value={member.jc_number} />
-		</label>
-		<label>
-			Max Booking:
-			<input type="text" name="max_booking" value={member.max_booking} />
-		</label>
-		<label>
-			Active:
-			<input type="text" name="active" value={member.active} />
-		</label>
-	</form>
-	<div slot="footer">
-		<button type="button" on:click={storeMemberData}>Save</button>
-	</div>
+{#await getMemberData()}
+	<p></p>
+{:then member}
+	<Modal isOpen={showModal} onClose={closeModal}>
+		<span slot="header">Member: {member.name}</span>
+		<form bind:this={form}>
+			<label>
+				Name:
+				<input type="text" name="name" value={member.name} />
+			</label>
+			<label>
+				Email:
+				<input type="text" name="email" value={member.email} />
+			</label>
+			<label>
+				Phone:
+				<input type="text" name="phone" value={member.phone} />
+			</label>
+			<label>
+				JC Number:
+				<input type="text" name="jc_number" value={member.jc_number} />
+			</label>
+			<label>
+				Max Booking:
+				<input type="text" name="max_booking" value={member.max_booking} />
+			</label>
+			<label>
+				Active:
+				<input type="text" name="active" value={member.active} />
+			</label>
+		</form>
+		<div slot="footer">
+			<button type="button" on:click={storeMemberData}>Save</button>
+		</div>
 
-	<details open>
-		<summary>Bookings </summary>
-		{#if member.bookings === undefined || member.bookings.length === 0}
-			<p>No bookings found</p>
-		{:else}
-			<ul>
-				{#each member.bookings as booking}
-					<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-					<li on:click={() => openBooking(booking.id)} on:keypress={() => openBooking(booking.id)}>
-						{booking.date} - {booking.time}
-					</li>
-				{/each}
-			</ul>
-		{/if}
-	</details>
+		<details open>
+			<summary>Bookings </summary>
+			{#if member.bookings === undefined || member.bookings.length === 0}
+				<p>No bookings found</p>
+			{:else}
+				<ul>
+					{#each member.bookings as booking}
+						<li>
+							<a href="/staff/?bid={booking.id}" on:click={() => (showModal = false)}>
+								{booking.date} - {booking.time} - {booking.id}
+							</a>
+						</li>
+					{/each}
+				</ul>
+			{/if}
+		</details>
 
-	<!-- <div class="jsonWrapper">
+		<!-- <div class="jsonWrapper">
 		<JsonView json={member} />
 	</div> -->
-</Modal>
+	</Modal>
+{/await}
 
 <style>
 	form {
@@ -143,18 +146,32 @@
 		margin-top: 1rem;
 	}
 	summary {
+		cursor: pointer;
+		color: var(--black);
 		margin-bottom: 1rem;
 		font-weight: bold;
 	}
+	summary:hover {
+		color: var(--blue);
+	}
+
 	ul {
 		padding-left: 0;
 		list-style: none;
-	}
-	li {
-		margin-bottom: 0.5rem;
-	}
-	.jsonWrapper {
 		max-height: 200px;
 		overflow-y: scroll;
+	}
+	li {
+		margin-bottom: 0.65rem;
+	}
+
+	a {
+		text-decoration: none;
+		color: var(--black);
+		/* letter-spacing: 0.01em; */
+		/* font-stretch: extra-condensed; */
+	}
+	a:hover {
+		text-decoration: underline;
 	}
 </style>

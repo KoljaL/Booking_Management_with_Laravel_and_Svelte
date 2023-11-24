@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { ModelBooking } from '$lib/types';
 	import { request } from '$lib/request';
-	import { getParamFromUrl, setParamToUrl } from '$lib/utils';
 	import JsonView from '$lib/components/debug/JsonView.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 

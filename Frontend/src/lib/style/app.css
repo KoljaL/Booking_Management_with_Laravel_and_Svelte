@@ -44,3 +44,8 @@ body {
 	font-family: 'Roboto', sans-serif;
 	background-color: #f5f5f5;
 }
+
+.jsonWrapper {
+	max-height: 200px;
+	overflow-y: scroll;
+}

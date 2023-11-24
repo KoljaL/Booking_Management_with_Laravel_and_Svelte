@@ -6,17 +6,67 @@
 	import { page } from '$app/stores';
 	import Modal from '$lib/components/Modal.svelte';
 	import EditLocation from '$lib/components/forms/EditLocation.svelte';
-	import MenuStaff from '$lib/components/MenuStaff.svelte';
+
 	let model: Endpoint = 'location';
 	let responseMessage: string = '';
 	let tableData: any = [];
 	let showModal = false;
 	let showTable = false;
 	let id: string = '';
-
+	const tableColumns = [
+		{
+			header: 'Id',
+			accessor: 'id',
+			width: '10%'
+		},
+		{
+			header: 'Address',
+			accessor: 'address',
+			width: '20%'
+		},
+		{
+			header: 'City',
+			accessor: 'city',
+			width: '20%'
+		},
+		{
+			header: 'Email',
+			accessor: 'email',
+			width: '20%'
+		},
+		{
+			header: 'Open from',
+			accessor: 'opening_hour_from',
+			width: '10%'
+		},
+		{
+			header: 'Opening Days',
+			accessor: 'opening_days',
+			width: '10%'
+		},
+		{
+			header: 'Open to',
+			accessor: 'opening_hour_to',
+			width: '10%'
+		},
+		{
+			header: 'Max Bookins',
+			accessor: 'max_booking',
+			width: '10%'
+		},
+		{
+			header: 'Slot duration',
+			accessor: 'slot_duration',
+			width: '10%'
+		},
+		{
+			header: 'Workspaces',
+			accessor: 'workspaces',
+			width: '10%'
+		}
+	];
 	onMount(() => {
 		loadData(model);
-		console.log('page', $page.url.searchParams.get('id'));
 		if ($page.url.searchParams.get('id')) {
 			id = $page.url.searchParams.get('id')!;
 			openModal(id);
@@ -55,20 +105,20 @@
 		showModal = false;
 		loadData(model);
 	}
-
-	// $: console.log('showModal', showModal);
-	// $: console.log('endpoint', endpoint);
-	// $: console.log('pageTitle', pageTitle);
-	// $: console.log('modelForm', modelForm);
 </script>
 
 <svelte:head>
 	<title>RB - Location</title>
 </svelte:head>
-<!-- <MenuStaff endpoint={'location'} /> -->
 
 {#if tableData.length > 0}
-	<DataTable {showTable} {model} {tableData} caption={responseMessage} getRowId={openModal} />
+	<DataTable
+		{showTable}
+		{tableData}
+		{tableColumns}
+		caption={responseMessage}
+		getRowId={openModal}
+	/>
 {/if}
 
 {#if showModal}

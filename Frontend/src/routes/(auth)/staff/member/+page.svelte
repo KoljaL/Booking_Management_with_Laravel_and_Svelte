@@ -6,7 +6,6 @@
 	import { page } from '$app/stores';
 	import Modal from '$lib/components/Modal.svelte';
 	import EditMember from '$lib/components/forms/EditMember.svelte';
-	import StaffMenu from '$lib/components/MenuStaff.svelte';
 
 	let model: Endpoint = 'member';
 	let responseMessage: string = '';
@@ -57,6 +56,38 @@
 		loadData(model);
 	}
 
+	const tableColumns = [
+		{
+			header: 'Id',
+			accessor: 'id',
+			width: '4ch'
+		},
+		{
+			header: 'Name',
+			accessor: 'name',
+			width: '25ch'
+		},
+		{
+			header: 'Email',
+			accessor: 'email',
+			width: '25ch'
+		},
+		{
+			header: 'Phone',
+			accessor: 'phone',
+			width: '20ch'
+		},
+		{
+			header: 'City',
+			accessor: 'location_city',
+			width: '20ch'
+		},
+		{
+			header: 'Created',
+			accessor: 'created_at',
+			width: '15ch'
+		}
+	];
 	// $: console.log('showModal', showModal);
 	// $: console.log('endpoint', endpoint);
 	// $: console.log('pageTitle', pageTitle);
@@ -70,11 +101,17 @@
 <!-- <StaffMenu endpoint={'member'} /> -->
 
 {#if tableData.length > 0}
-	<DataTable {showTable} {model} {tableData} caption={responseMessage} getRowId={openModal} />
+	<DataTable
+		{showTable}
+		{tableData}
+		{tableColumns}
+		caption={responseMessage}
+		getRowId={openModal}
+	/>
 {/if}
 
 {#if showModal}
-	<Modal {onClose} isOpen={true}>
-		<EditMember {id} {callback} />
-	</Modal>
+	<!-- <Modal {onClose} isOpen={true}> -->
+	<EditMember {id} {callback} />
+	<!-- </Modal> -->
 {/if}

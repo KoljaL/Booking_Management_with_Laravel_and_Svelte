@@ -1,235 +1,51 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
+	import ArrowUp from '$lib/icons/ArrowUp.svelte';
+	import type { TableData, TableColumns } from '$lib/types';
 
-	export let tableData: any;
+	export let tableData: TableData[];
+	export let tableColumns: TableColumns[] = [];
 	export let caption: string = '';
-	export let model: string;
-	export let getRowId: any = (rowId: string) => {};
 	export let showTable = false;
+	export let getRowId: (rowId: string) => void = (rowId: string) => {};
 
 	let table: HTMLTableElement;
 	let rowCount = tableData.length;
 
+	console.log('tableData', tableData);
 	//
 	// SORT TABLE
 	//
-	function sortTable(column: number) {
-		let rows,
-			switching,
-			i,
-			x,
-			y,
-			shouldSwitch,
-			dir,
-			switchcount = 0;
-		switching = true;
-		dir = 'asc';
-		while (switching) {
-			switching = false;
-			rows = table.rows;
-			for (i = 0; i < rows.length - 1; i++) {
-				shouldSwitch = false;
-				x = rows[i].querySelectorAll('td')[column];
-				y = rows[i + 1].querySelectorAll('td')[column];
-				if (dir === 'asc') {
-					if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-						shouldSwitch = true;
-						break;
-					}
-				} else if (dir === 'desc') {
-					if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-						shouldSwitch = true;
-						break;
-					}
-				}
-			}
-			if (shouldSwitch) {
-				rows[i].parentNode?.insertBefore(rows[i + 1], rows[i]);
-				switching = true;
-				switchcount++;
-			} else {
-				if (switchcount === 0 && dir === 'asc') {
-					dir = 'desc';
-					switching = true;
-				}
-			}
-		}
-	}
+	type SymbolMap = {
+		[key: string]: string;
+	};
+	let sortBy = { col: 'id', ascending: true };
+	let symbolMap: SymbolMap = tableData[0]
+		? Object.keys(tableData[0]).reduce((acc, cur) => ({ ...acc, [cur]: '' }), {})
+		: {};
 
-	const tableColumns = [
-		{
-			endpoint: 'member',
-			columns: [
-				{
-					header: 'Id',
-					accessor: 'id',
-					width: '4ch'
-				},
-				{
-					header: 'Name',
-					accessor: 'name',
-					width: '25ch'
-				},
-				{
-					header: 'Email',
-					accessor: 'email',
-					width: '25ch'
-				},
-				{
-					header: 'Phone',
-					accessor: 'phone',
-					width: '20ch'
-				},
-				{
-					header: 'City',
-					accessor: 'location_city',
-					width: '20ch'
-				},
-				{
-					header: 'Created',
-					accessor: 'created_at',
-					width: '15ch'
-				}
-			]
-		},
-		{
-			endpoint: 'location',
-			columns: [
-				{
-					header: 'Id',
-					accessor: 'id',
-					width: '10%'
-				},
-				{
-					header: 'Address',
-					accessor: 'address',
-					width: '20%'
-				},
-				{
-					header: 'City',
-					accessor: 'city',
-					width: '20%'
-				},
-				{
-					header: 'Email',
-					accessor: 'email',
-					width: '20%'
-				},
-				{
-					header: 'Open from',
-					accessor: 'opening_hour_from',
-					width: '10%'
-				},
-				{
-					header: 'Opening Days',
-					accessor: 'opening_days',
-					width: '10%'
-				},
-				{
-					header: 'Open to',
-					accessor: 'opening_hour_to',
-					width: '10%'
-				},
-				{
-					header: 'Max Bookins',
-					accessor: 'max_booking',
-					width: '10%'
-				},
-				{
-					header: 'Slot duration',
-					accessor: 'slot_duration',
-					width: '10%'
-				},
-				{
-					header: 'Workspaces',
-					accessor: 'workspaces',
-					width: '10%'
-				}
-			]
-		},
-		{
-			endpoint: 'staff',
-			columns: [
-				{
-					header: 'Id',
-					accessor: 'id',
-					width: '10%'
-				},
-				{
-					header: 'Name',
-					accessor: 'name',
-					width: '20%'
-				},
-				{
-					header: 'Email',
-					accessor: 'email',
-					width: '20%'
-				},
-				{
-					header: 'Phone',
-					accessor: 'phone',
-					width: '20%'
-				},
-				{
-					header: 'City',
-					accessor: 'location_city',
-					width: '20%'
-				},
-
-				{
-					header: 'Created',
-					accessor: 'created_at',
-					width: '10%'
-				}
-			]
-		},
-		{
-			endpoint: 'booking',
-			columns: [
-				{
-					header: 'Id',
-					accessor: 'id',
-					width: '4ch'
-				},
-				{
-					header: 'Member',
-					accessor: 'member_name',
-					width: '20%'
-				},
-				{
-					header: 'Date',
-					accessor: 'date',
-					width: '20%'
-				},
-				{
-					header: 'Location',
-					accessor: 'location_city',
-					width: '20%'
-				},
-				{
-					header: 'Time',
-					accessor: 'time',
-					width: '10%'
-				},
-				{
-					header: 'Slots',
-					accessor: 'slots',
-					width: '10%'
-				},
-				{
-					header: 'Created',
-					accessor: 'created_at',
-					width: '10%'
-				}
-			]
+	$: sort = (column: string) => {
+		if (sortBy.col == column) {
+			sortBy.ascending = !sortBy.ascending;
+			symbolMap[column] = symbolMap[column] === 'arrowUp' ? 'arrowDown' : 'arrowUp';
+		} else {
+			sortBy.col = column;
+			sortBy.ascending = true;
+			for (let s in symbolMap) {
+				symbolMap[s] = '';
+			}
+			symbolMap[column] = 'arrowUp';
 		}
-	];
-	// $: console.log('showTable', showTable);
+		let sortModifier = sortBy.ascending ? 1 : -1;
+		let sort = (a: SymbolMap, b: SymbolMap) =>
+			a[column] < b[column] ? -1 * sortModifier : a[column] > b[column] ? 1 * sortModifier : 0;
+		tableData = tableData.sort(sort);
+	};
 </script>
 
 {#if showTable}
 	<div class="tableWrapper" in:fade={{ duration: 200 }} out:fade={{ duration: 300 }}>
-		<table id="table_{model}" bind:this={table}>
+		<table bind:this={table}>
 			{#if caption}
 				<caption>
 					{caption}
@@ -237,27 +53,24 @@
 				</caption>
 			{/if}
 			<thead>
-				{#each tableColumns as tableColumn}
-					{#if tableColumn.endpoint === model}
-						{#each tableColumn.columns as column, index}
-							<th style="width: {column.width}" on:click={() => sortTable(index)}>
-								{column.header}
-							</th>
-						{/each}
-					{/if}
+				{#each tableColumns as column}
+					<th style="width: {column.width}" on:click={() => sort(column.accessor)}>
+						<nobr>
+							{column.header + ' '}
+							<i class={symbolMap[column.accessor]}>
+								<ArrowUp />
+							</i>
+						</nobr>
+					</th>
 				{/each}
 			</thead>
 			<tbody>
 				{#each tableData as row}
 					<tr on:click={(e) => getRowId(row.id)}>
-						{#each tableColumns as tableColumn}
-							{#if tableColumn.endpoint === model}
-								{#each tableColumn.columns as column}
-									<td class={column.accessor} style="width: {column.width}">
-										{row[column.accessor]}
-									</td>
-								{/each}
-							{/if}
+						{#each tableColumns as column}
+							<td class={column.accessor} style="width: {column.width}">
+								{row[column.accessor]}
+							</td>
 						{/each}
 					</tr>
 				{/each}
@@ -267,6 +80,25 @@
 {/if}
 
 <style>
+	i {
+		width: 10px;
+		height: 13px;
+		display: inline-block;
+		opacity: 0;
+		color: #000;
+		transition:
+			transform 0.2s,
+			opacity 0.4s;
+	}
+	i.arrowUp {
+		opacity: 1;
+		transform: rotateX(0deg);
+	}
+	i.arrowDown {
+		opacity: 1;
+		transform: rotateX(180deg);
+		transform-origin: center;
+	}
 	.tableWrapper {
 		overflow-y: auto;
 		max-height: calc(100vh - var(--header-height) - var(--footer-height) - var(--menu-height));
@@ -314,7 +146,6 @@
 	th {
 		display: inline-block;
 		padding: 0.5em;
-
 		background-color: #f5f5f5;
 		cursor: pointer;
 		text-align: left;
@@ -323,11 +154,18 @@
 	th:hover {
 		color: var(--blue);
 	}
+	tr {
+		transition: 0.3s;
+	}
+
 	tr:nth-child(even) {
 		background-color: #f2f2f2;
 	}
 
 	tr:hover {
+		transform: scale(1.001);
+		text-shadow: 0 0 0.1px #000050;
+		cursor: pointer;
 		background-color: #ddd;
 	}
 	td {

@@ -67,7 +67,8 @@
 ### Not used, but maybe useful in the future
 - [Laravel Active Trait](https://www.trovster.com/blog/2023/02/laravel-active-trait)
 - [bryanmylee/svelte-headless-table: Unopinionated and extensible data tables for Svelte](https://github.com/bryanmylee/svelte-headless-table)
-
+- [svelte-plugins/datepicker: A simple datepicker component designed for Svelte.](https://github.com/svelte-plugins/datepicker)
+- 
 ## Responses and Status Codes
 
 All requests and responses are of an application/json content type and follow typical HTTP response status codes for success and failure.

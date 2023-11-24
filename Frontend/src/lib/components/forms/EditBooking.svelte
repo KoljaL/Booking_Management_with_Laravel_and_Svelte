@@ -3,12 +3,13 @@
 	import { request } from '$lib/request';
 	import JsonView from '$lib/components/debug/JsonView.svelte';
 	import Modal from '$lib/components/Modal.svelte';
-	// import { urlST } from '$lib/store';
+
 	export let id = '';
-	export let callback: () => void;
+	export let closeModal: () => void;
 
 	let showModal: boolean = false;
 	let form: HTMLFormElement;
+	let formMessage: string = '';
 	let booking: ModelBooking = {
 		id: 0,
 		date: '',
@@ -30,6 +31,13 @@
 
 	getBookingData();
 
+	//
+	// Functions
+	//
+
+	/**
+	 * Get booking data from database.
+	 */
 	async function getBookingData() {
 		try {
 			const { status, message, data } = await request('GET', 'booking/' + id);
@@ -39,12 +47,17 @@
 				console.log('booking', booking);
 			} else {
 				console.error('Booking data loading failed', message);
+				formMessage = 'Error: ' + message;
+				showModal = true;
 			}
 		} catch (error: any) {
 			console.error('Error:', error.message);
 		}
 	}
 
+	/**
+	 * Store form data in database.
+	 */
 	async function storeBookingData() {
 		if (!form) return;
 		console.log('storeBookingData', booking);
@@ -52,21 +65,27 @@
 		const { status, message, data } = await request('PUT', 'booking/' + id, formData);
 		if (status === 201) {
 			booking = data as ModelBooking;
-			console.log('booking', data);
-			closeModal();
+			// console.log('booking', data);
+			onClose();
 		} else {
 			console.error('TableData loading failed', message);
 		}
 	}
 
-	function closeModal() {
+	/**
+	 * Close modal and call parent callback, which will close the modal there.
+	 */
+	function onClose() {
 		showModal = false;
-		callback();
+		closeModal();
 	}
 </script>
 
-<Modal isOpen={showModal} onClose={closeModal}>
+<Modal isOpen={showModal} {onClose}>
 	<span slot="header">Booking: {booking.id}</span>
+	{#if formMessage}
+		<p>{formMessage}</p>
+	{/if}
 	<form bind:this={form}></form>
 	<div slot="footer">
 		<button type="button" on:click={storeBookingData}>Save</button>
@@ -78,8 +97,4 @@
 </Modal>
 
 <style>
-	.jsonWrapper {
-		max-height: 200px;
-		overflow-y: scroll;
-	}
 </style>

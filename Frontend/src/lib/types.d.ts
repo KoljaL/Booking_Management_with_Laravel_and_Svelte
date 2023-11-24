@@ -94,3 +94,14 @@ export interface ModelStaff {
 	updated_at: string;
 	deleted_at: string;
 }
+
+export type TableData = {
+	id: string;
+	[key: string]: string;
+};
+
+export type TableColumns = {
+	header: string;
+	accessor: string;
+	width: string;
+};

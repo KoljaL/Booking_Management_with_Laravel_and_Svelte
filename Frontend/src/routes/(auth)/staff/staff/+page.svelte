@@ -15,6 +15,40 @@
 	let showTable = false;
 	let id: string = '';
 
+	const tableColumns = [
+		{
+			header: 'Id',
+			accessor: 'id',
+			width: '10%'
+		},
+		{
+			header: 'Name',
+			accessor: 'name',
+			width: '20%'
+		},
+		{
+			header: 'Email',
+			accessor: 'email',
+			width: '20%'
+		},
+		{
+			header: 'Phone',
+			accessor: 'phone',
+			width: '20%'
+		},
+		{
+			header: 'City',
+			accessor: 'location_city',
+			width: '20%'
+		},
+
+		{
+			header: 'Created',
+			accessor: 'created_at',
+			width: '10%'
+		}
+	];
+
 	onMount(() => {
 		loadData(model);
 		if ($page.url.searchParams.get('id')) {
@@ -68,7 +102,13 @@
 <!-- <MenuStaff endpoint={'staff'} /> -->
 
 {#if tableData.length > 0}
-	<DataTable {showTable} {model} {tableData} caption={responseMessage} getRowId={openModal} />
+	<DataTable
+		{showTable}
+		{tableData}
+		{tableColumns}
+		caption={responseMessage}
+		getRowId={openModal}
+	/>
 {/if}
 
 {#if showModal}

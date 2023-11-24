@@ -17,14 +17,50 @@
 	let showModal = false;
 	let showTable = false;
 	let id: string = '';
+
+	const tableColumns = [
+		{
+			header: 'Id',
+			accessor: 'id',
+			width: '4ch'
+		},
+		{
+			header: 'Member',
+			accessor: 'member_name',
+			width: '20%'
+		},
+		{
+			header: 'Date',
+			accessor: 'date',
+			width: '20%'
+		},
+		{
+			header: 'Location',
+			accessor: 'location_city',
+			width: '20%'
+		},
+		{
+			header: 'Time',
+			accessor: 'time',
+			width: '10%'
+		},
+		{
+			header: 'Slots',
+			accessor: 'slots',
+			width: '10%'
+		},
+		{
+			header: 'Created',
+			accessor: 'created_at',
+			width: '10%'
+		}
+	];
 	// const { getHash, setHash } = urlStore;
 	// console.log('hash', hash);
 	onMount(() => {
 		loadData(model);
-		// const hash = getHash();
 		urlHandler = new URLHandler();
-		const modelId = urlHandler.read('bind');
-		// console.log('modelId', modelId);
+		const modelId = urlHandler.read('bid');
 		if (modelId) {
 			id = modelId.slice(1);
 			openModal(id);
@@ -47,20 +83,14 @@
 
 	function openModal(rowId: string) {
 		id = rowId;
-		// console.log('openModal', id);
 		showModal = true;
-		urlHandler.add('bind', id);
-		// window.history.replaceState({}, '', '#' + id);
-		// setTimeout(() => {
-		// 	setHash(id);
-		// }, 1000);
-		// setHash(id);
+		urlHandler.add('bid', id);
 	}
 
-	function callback() {
-		// console.log('callback');
+	function closeModal() {
+		// console.log('closeModal');
 		showModal = false;
-		urlHandler.remove('bind');
+		urlHandler.remove('bid');
 	}
 
 	// $: console.log('showModal', showModal);
@@ -75,9 +105,16 @@
 <!-- <MenuStaff endpoint={'booking'} /> -->
 
 {#if tableData.length > 0}
-	<DataTable {showTable} {model} {tableData} caption={responseMessage} getRowId={openModal} />
+	<DataTable
+		{showTable}
+		{model}
+		{tableData}
+		{tableColumns}
+		caption={responseMessage}
+		getRowId={openModal}
+	/>
 {/if}
 
 {#if showModal}
-	<EditBooking {id} {callback} />
+	<EditBooking {id} {closeModal} />
 {/if}

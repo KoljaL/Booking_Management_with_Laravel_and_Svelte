@@ -58,13 +58,14 @@
 		background-color: rgba(0, 0, 0, 0.5);
 		display: flex;
 		justify-content: center;
-		align-items: center;
+		align-items: start;
 	}
 
 	.modalWrapper {
 		width: 80ch;
 		max-width: 95vw;
 		max-height: 95vh;
+		margin-top: var(--header-height);
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
