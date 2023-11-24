@@ -66,7 +66,7 @@
 - [A simple way to enable CORS on Laravel - DEV Community](https://dev.to/keikesu0122/a-simple-way-to-enable-cors-on-laravel-55i)
 ### Not used, but maybe useful in the future
 - [Laravel Active Trait](https://www.trovster.com/blog/2023/02/laravel-active-trait)
-
+- [bryanmylee/svelte-headless-table: Unopinionated and extensible data tables for Svelte](https://github.com/bryanmylee/svelte-headless-table)
 
 ## Responses and Status Codes
 

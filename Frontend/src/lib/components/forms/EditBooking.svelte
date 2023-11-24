@@ -1,10 +1,9 @@
 <script lang="ts">
 	import type { ModelBooking } from '$lib/types';
-	import { request, requestNEW } from '$lib/request';
-	import { getParamFromUrl, setParamToUrl } from '$lib/utils';
+	import { request } from '$lib/request';
 	import JsonView from '$lib/components/debug/JsonView.svelte';
 	import Modal from '$lib/components/Modal.svelte';
-
+	// import { urlST } from '$lib/store';
 	export let id = '';
 	export let callback: () => void;
 
@@ -33,10 +32,11 @@
 
 	async function getBookingData() {
 		try {
-			const { status, message, data } = await requestNEW('GET', 'booking/' + id);
+			const { status, message, data } = await request('GET', 'booking/' + id);
 			if (status === 200) {
 				booking = data as ModelBooking;
 				showModal = true;
+				console.log('booking', booking);
 			} else {
 				console.error('Booking data loading failed', message);
 			}
@@ -49,7 +49,7 @@
 		if (!form) return;
 		console.log('storeBookingData', booking);
 		const formData = new FormData(form)!;
-		const { status, message, data } = await requestNEW('PUT', 'booking/' + id, formData);
+		const { status, message, data } = await request('PUT', 'booking/' + id, formData);
 		if (status === 201) {
 			booking = data as ModelBooking;
 			console.log('booking', data);
@@ -60,17 +60,8 @@
 	}
 
 	function closeModal() {
-		// window.location.hash = 'booking';
-		setParamToUrl('id', '');
 		showModal = false;
 		callback();
-	}
-
-	async function openBooking(id: number) {
-		showModal = false;
-		callback();
-		// window.location.hash = 'booking/' + id;
-		setParamToUrl('id', id.toString());
 	}
 </script>
 

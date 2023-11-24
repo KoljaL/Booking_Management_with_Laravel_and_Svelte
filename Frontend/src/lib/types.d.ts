@@ -2,7 +2,7 @@ declare module '$env/static/public' {
 	export const PUBLIC_PATH: string;
 }
 
-export type Endpoint = 'location' | 'booking' | 'staff' | 'member';
+export type Endpoint = 'location' | 'booking' | 'staff' | 'member' | '';
 
 export type ModelMenu = {
 	name: string;

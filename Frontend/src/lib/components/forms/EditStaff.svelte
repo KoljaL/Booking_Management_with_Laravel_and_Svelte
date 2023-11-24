@@ -1,11 +1,86 @@
 <script lang="ts">
-	export let id = '';
+	import type { ModelBooking } from '$lib/types';
+	import { request } from '$lib/request';
+	import JsonView from '$lib/components/debug/JsonView.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 
-	console.log('id', id);
+	export let id = '';
+	export let callback: () => void;
+
+	let showModal: boolean = false;
+	let form: HTMLFormElement;
+	let model = 'staff';
+	let staff: ModelBooking = {
+		id: 0,
+		date: '',
+		time: '',
+		created_at: '',
+		updated_at: '',
+		deleted_at: '',
+		location_id: 0,
+		member_id: 0,
+		slots: 0,
+		comment_member: '',
+		comment_staff: '',
+		state: '',
+		started_at: '',
+		ended_at: '',
+		member_name: '',
+		location_city: ''
+	};
+
+	getBookingData();
+
+	async function getBookingData() {
+		try {
+			const { status, message, data } = await request('GET', model + '/' + id);
+			if (status === 200) {
+				staff = data as ModelBooking;
+				showModal = true;
+				console.log('staff', staff);
+			} else {
+				console.error('Booking data loading failed', message);
+			}
+		} catch (error: any) {
+			console.error('Error:', error.message);
+		}
+	}
+
+	async function storeBookingData() {
+		if (!form) return;
+		console.log('storeBookingData', staff);
+		const formData = new FormData(form)!;
+		const { status, message, data } = await request('PUT', model + '/' + id, formData);
+		if (status === 201) {
+			staff = data as ModelBooking;
+			console.log('staff', data);
+			closeModal();
+		} else {
+			console.error('TableData loading failed', message);
+		}
+	}
+
+	function closeModal() {
+		showModal = false;
+		callback();
+	}
 </script>
 
-<h2>Staff {id}</h2>
-<form action=""></form>
+<Modal isOpen={showModal} onClose={closeModal}>
+	<span slot="header">Booking: {staff.id}</span>
+	<form bind:this={form}></form>
+	<div slot="footer">
+		<button type="button" on:click={storeBookingData}>Save</button>
+	</div>
+
+	<div class="jsonWrapper">
+		<JsonView json={staff} />
+	</div>
+</Modal>
 
 <style>
+	.jsonWrapper {
+		max-height: 200px;
+		overflow-y: scroll;
+	}
 </style>

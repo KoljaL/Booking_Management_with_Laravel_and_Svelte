@@ -4,14 +4,14 @@
 	import HeaderStaff from '$lib/components/layout/HeaderStaff.svelte';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
+
 	if (!$tokenST && browser) {
 		console.log('no token');
 		// goto('./login?noToken=true');
 		// try to get token from local storage
 		const token = localStorage.getItem('RB_token');
 		const user = localStorage.getItem('RB_user');
-		// get hash
-		// const hash = window.location.hash.replace('#', '') || '';
+
 		if (token && user) {
 			const userObj = JSON.parse(user);
 			userST.set(userObj);

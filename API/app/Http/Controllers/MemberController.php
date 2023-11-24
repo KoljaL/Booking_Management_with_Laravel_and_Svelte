@@ -28,7 +28,7 @@ class MemberController extends Controller {
      * @return \Illuminate\Http\JsonResponse|mixed
      * @throws \Exception
      * @description Get all members by access level.
-     * @path GET api/members
+     * @path GET api/member
      */
     public function index(Request $request) {
         // dd($request->all());
@@ -51,7 +51,7 @@ class MemberController extends Controller {
      * @return \Illuminate\Http\JsonResponse|mixed
      * @throws \Exception
      * @description Get a member by access level.
-     * @path GET api/members/{id}
+     * @path GET api/member/{id}
      */
     public function show(Request $request, $id) {
         try {
@@ -73,7 +73,7 @@ class MemberController extends Controller {
      * @return \Illuminate\Http\JsonResponse|mixed
      * @throws \Exception
      * @description Create a new member by access level.
-     * @path POST api/members
+     * @path POST api/member
      */
     public function store(Request $request) {
         // get the logged in Staff
@@ -144,7 +144,7 @@ class MemberController extends Controller {
      * @return \Illuminate\Http\JsonResponse|mixed
      * @throws \Exception
      * @description Update a member by access level.
-     * @path PUT api/members/{id}
+     * @path PUT api/member/{id}
      */
     public function update(Request $request, $id) {
         $member = Member::withTrashed()->byAccessLevel()->findOrFail($id);
@@ -191,7 +191,7 @@ class MemberController extends Controller {
      * @return \Illuminate\Http\JsonResponse|mixed
      * @throws \Exception
      * @description Delete a member by access level.
-     * @path DELETE api/members/{id}
+     * @path DELETE api/member/{id}
      */
     public function destroy($id) {
         // get Member
@@ -241,7 +241,7 @@ class MemberController extends Controller {
 //      * @return \Illuminate\Http\JsonResponse|mixed
 //      * @throws \Exception
 //      * @description Send an invite email to a member.
-//      * @path POST api/members/{member}/invite
+//      * @path POST api/member/{member}/invite
 //      */
 //     public function invite(Member $member) {
 //         try {

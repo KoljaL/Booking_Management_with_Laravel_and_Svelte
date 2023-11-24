@@ -5,28 +5,20 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import Modal from '$lib/components/Modal.svelte';
-	import EditBooking from '$lib/components/forms/EditBooking.svelte';
+	import EditStaff from '$lib/components/forms/EditStaff.svelte';
 	import MenuStaff from '$lib/components/MenuStaff.svelte';
-	import URLHandler from '$lib/urlHandler';
 
-	let urlHandler: URLHandler;
-
-	let model: Endpoint = 'booking';
+	let model: Endpoint = 'staff';
 	let responseMessage: string = '';
 	let tableData: any = [];
 	let showModal = false;
 	let showTable = false;
 	let id: string = '';
-	// const { getHash, setHash } = urlStore;
-	// console.log('hash', hash);
+
 	onMount(() => {
 		loadData(model);
-		// const hash = getHash();
-		urlHandler = new URLHandler();
-		const modelId = urlHandler.read('bind');
-		// console.log('modelId', modelId);
-		if (modelId) {
-			id = modelId.slice(1);
+		if ($page.url.searchParams.get('id')) {
+			id = $page.url.searchParams.get('id')!;
 			openModal(id);
 		}
 	});
@@ -47,20 +39,21 @@
 
 	function openModal(rowId: string) {
 		id = rowId;
-		// console.log('openModal', id);
+		console.log('openModal', id);
 		showModal = true;
-		urlHandler.add('bind', id);
-		// window.history.replaceState({}, '', '#' + id);
-		// setTimeout(() => {
-		// 	setHash(id);
-		// }, 1000);
-		// setHash(id);
+	}
+
+	function onClose() {
+		showModal = false;
+		console.log('onClose');
+		$page.url.searchParams.delete('id');
+		// remove id from url params
+		window.history.replaceState({}, '', $page.url.toString());
 	}
 
 	function callback() {
-		// console.log('callback');
 		showModal = false;
-		urlHandler.remove('bind');
+		loadData(model);
 	}
 
 	// $: console.log('showModal', showModal);
@@ -70,14 +63,16 @@
 </script>
 
 <svelte:head>
-	<title>RB - Booking</title>
+	<title>RB - Staff</title>
 </svelte:head>
-<!-- <MenuStaff endpoint={'booking'} /> -->
+<!-- <MenuStaff endpoint={'staff'} /> -->
 
 {#if tableData.length > 0}
 	<DataTable {showTable} {model} {tableData} caption={responseMessage} getRowId={openModal} />
 {/if}
 
 {#if showModal}
-	<EditBooking {id} {callback} />
+	<Modal {onClose} isOpen={true}>
+		<EditStaff {id} {callback} />
+	</Modal>
 {/if}

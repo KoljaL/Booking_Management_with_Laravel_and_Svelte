@@ -4,7 +4,7 @@
 	export let tableData: any;
 	export let caption: string = '';
 	export let model: string;
-	export let getRowId: any = (id: string) => {};
+	export let getRowId: any = (rowId: string) => {};
 	export let showTable = false;
 
 	let table: HTMLTableElement;
@@ -270,6 +270,16 @@
 	.tableWrapper {
 		overflow-y: auto;
 		max-height: calc(100vh - var(--header-height) - var(--footer-height) - var(--menu-height));
+		animation: fade 0.3s;
+	}
+
+	@keyframes fade {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
 	}
 
 	table {

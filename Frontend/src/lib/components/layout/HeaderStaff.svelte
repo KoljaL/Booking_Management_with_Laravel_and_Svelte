@@ -17,13 +17,13 @@
 	</div>
 	<div class="center">
 		{#if browser}
-			<h3>{$userST.name}</h3>
-			<p>{$userST.role}</p>
-			<p>{$userST.is_admin}</p>
+			<!-- <p>{$userST.role}</p> -->
+			<!-- <p>{$userST.is_admin}</p> -->
 			<!-- <p>Location: {$userST.location.city}</p> -->
 		{/if}
 	</div>
 	<div class="right">
+		<h3>{$userST.name}</h3>
 		<button on:click={logout}>Logout</button>
 	</div>
 </header>

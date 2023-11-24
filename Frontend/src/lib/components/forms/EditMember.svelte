@@ -1,11 +1,10 @@
 <script lang="ts">
 	import type { ModelMember } from '$lib/types';
-	import { getParamFromUrl, setParamToUrl } from '$lib/utils';
-	import { request, requestNEW } from '$lib/request';
+	import { request } from '$lib/request';
 	import JsonView from '$lib/components/debug/JsonView.svelte';
 	import Modal from '$lib/components/Modal.svelte';
-
-	export let id = '';
+	import { goto } from '$app/navigation';
+	export let id: string;
 	export let callback: () => void;
 
 	let showModal: boolean = false;
@@ -27,14 +26,17 @@
 		bookings: []
 	};
 
-	getMemberData();
+	if (id) {
+		getMemberData().then(() => {
+			showModal = true;
+		});
+	}
 
 	async function getMemberData() {
 		try {
-			const { status, message, data } = await requestNEW('GET', 'member/' + id);
+			const { status, message, data } = await request('GET', 'member/' + id);
 			if (status === 200) {
 				member = data as ModelMember;
-				showModal = true;
 			} else {
 				console.error('Member data loading failed', message);
 			}
@@ -47,7 +49,7 @@
 		if (!form) return;
 		console.log('storeMemberData', member);
 		const formData = new FormData(form)!;
-		const { status, message, data } = await requestNEW('PUT', 'member/' + id, formData);
+		const { status, message, data } = await request('PUT', 'member/' + id, formData);
 		if (status === 201) {
 			member = data as ModelMember;
 			console.log('member', data);
@@ -58,8 +60,6 @@
 	}
 
 	function closeModal() {
-		// window.location.hash = 'member';
-		setParamToUrl('id', '');
 		showModal = false;
 		callback();
 	}
@@ -67,9 +67,10 @@
 	async function openBooking(id: number) {
 		showModal = false;
 		callback();
-		setParamToUrl('id', id.toString());
-		setParamToUrl('e', 'booking');
+		await goto('/staff/?bid=' + id);
 	}
+
+	$: console.log('member', member, id);
 </script>
 
 <Modal isOpen={showModal} onClose={closeModal}>
@@ -106,14 +107,18 @@
 
 	<details open>
 		<summary>Bookings </summary>
-		<ul>
-			{#each member.bookings as booking}
-				<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-				<li on:click={() => openBooking(booking.id)} on:keypress={() => openBooking(booking.id)}>
-					{booking.date} - {booking.time}
-				</li>
-			{/each}
-		</ul>
+		{#if member.bookings === undefined || member.bookings.length === 0}
+			<p>No bookings found</p>
+		{:else}
+			<ul>
+				{#each member.bookings as booking}
+					<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+					<li on:click={() => openBooking(booking.id)} on:keypress={() => openBooking(booking.id)}>
+						{booking.date} - {booking.time}
+					</li>
+				{/each}
+			</ul>
+		{/if}
 	</details>
 
 	<!-- <div class="jsonWrapper">

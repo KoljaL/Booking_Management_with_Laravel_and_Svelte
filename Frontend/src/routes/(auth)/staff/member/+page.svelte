@@ -5,28 +5,21 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import Modal from '$lib/components/Modal.svelte';
-	import EditBooking from '$lib/components/forms/EditBooking.svelte';
-	import MenuStaff from '$lib/components/MenuStaff.svelte';
-	import URLHandler from '$lib/urlHandler';
+	import EditMember from '$lib/components/forms/EditMember.svelte';
+	import StaffMenu from '$lib/components/MenuStaff.svelte';
 
-	let urlHandler: URLHandler;
-
-	let model: Endpoint = 'booking';
+	let model: Endpoint = 'member';
 	let responseMessage: string = '';
 	let tableData: any = [];
 	let showModal = false;
 	let showTable = false;
 	let id: string = '';
-	// const { getHash, setHash } = urlStore;
-	// console.log('hash', hash);
+
 	onMount(() => {
 		loadData(model);
-		// const hash = getHash();
-		urlHandler = new URLHandler();
-		const modelId = urlHandler.read('bind');
-		// console.log('modelId', modelId);
-		if (modelId) {
-			id = modelId.slice(1);
+		if ($page.url.searchParams.get('id')) {
+			console.log('page', $page.url.searchParams.get('id'));
+			id = $page.url.searchParams.get('id')!;
 			openModal(id);
 		}
 	});
@@ -46,38 +39,42 @@
 	}
 
 	function openModal(rowId: string) {
+		// console.log('openModal with Id', id);
 		id = rowId;
-		// console.log('openModal', id);
 		showModal = true;
-		urlHandler.add('bind', id);
-		// window.history.replaceState({}, '', '#' + id);
-		// setTimeout(() => {
-		// 	setHash(id);
-		// }, 1000);
-		// setHash(id);
+	}
+
+	function onClose() {
+		showModal = false;
+		console.log('onClose');
+		$page.url.searchParams.delete('id');
+		// remove id from url params
+		window.history.replaceState({}, '', $page.url.toString());
 	}
 
 	function callback() {
-		// console.log('callback');
 		showModal = false;
-		urlHandler.remove('bind');
+		loadData(model);
 	}
 
 	// $: console.log('showModal', showModal);
 	// $: console.log('endpoint', endpoint);
 	// $: console.log('pageTitle', pageTitle);
 	// $: console.log('modelForm', modelForm);
+	// $: console.log('id', id);
 </script>
 
 <svelte:head>
-	<title>RB - Booking</title>
+	<title>RB - Member</title>
 </svelte:head>
-<!-- <MenuStaff endpoint={'booking'} /> -->
+<!-- <StaffMenu endpoint={'member'} /> -->
 
 {#if tableData.length > 0}
 	<DataTable {showTable} {model} {tableData} caption={responseMessage} getRowId={openModal} />
 {/if}
 
 {#if showModal}
-	<EditBooking {id} {callback} />
+	<Modal {onClose} isOpen={true}>
+		<EditMember {id} {callback} />
+	</Modal>
 {/if}

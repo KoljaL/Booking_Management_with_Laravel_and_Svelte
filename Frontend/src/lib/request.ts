@@ -3,7 +3,7 @@ import { get } from 'svelte/store';
 const URL = 'https://public.test/api/';
 // const URL = 'https://dev.rasal.de/booking/API/public/login/';
 
-export async function request(method, url, body = null) {
+export async function requestOLD(method, url, body = null) {
 	return fetch(URL + url, {
 		method,
 		headers: {
@@ -24,7 +24,7 @@ export async function request(method, url, body = null) {
 		});
 }
 
-export const requestNEW = async (method, endpoint, body: unknown = null) => {
+export const request = async (method, endpoint, body: unknown = null) => {
 	const options = {
 		method,
 		headers: {
