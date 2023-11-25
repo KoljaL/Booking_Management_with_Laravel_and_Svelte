@@ -7,7 +7,7 @@
 	export let tableColumns: TableColumns[] = [];
 	export let caption: string = '';
 	export let showTable = false;
-	export let getRowId: (rowId: string) => void = (rowId: string) => {};
+	export let getRowId: (rowId: number) => void = (rowId: number) => {};
 
 	let table: HTMLTableElement;
 	let rowCount = tableData.length;
@@ -66,7 +66,7 @@
 			</thead>
 			<tbody>
 				{#each tableData as row}
-					<tr on:click={(e) => getRowId(row.id)}>
+					<tr on:click={(e) => getRowId(parseInt(row.id))}>
 						{#each tableColumns as column}
 							<td class={column.accessor} style="width: {column.width}">
 								{row[column.accessor]}

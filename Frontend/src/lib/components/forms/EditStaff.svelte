@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { ModelBooking } from '$lib/types';
 	import { request } from '$lib/request';
-	import JsonView from '$lib/components/debug/JsonView.svelte';
+	import JsonView from '$lib/components/debug/JsonHighlight.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 
-	export let id = '';
+	export let id: number;
 	export let callback: () => void;
 
 	let showModal: boolean = false;

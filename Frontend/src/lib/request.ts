@@ -25,13 +25,17 @@ export async function requestOLD(method, url, body = null) {
 }
 
 export const request = async (method, endpoint, body: unknown = null) => {
+	// strange bug where PATCH method doesn't work with FormData
+	if (method === 'PATCH') {
+		body = new URLSearchParams(body);
+	}
 	const options = {
 		method,
 		headers: {
 			Authorization: `Bearer ${get(tokenST)}`,
 			'Content-Type': 'application/json'
 		},
-		body: body ? JSON.stringify(body) : null
+		body
 	};
 
 	try {

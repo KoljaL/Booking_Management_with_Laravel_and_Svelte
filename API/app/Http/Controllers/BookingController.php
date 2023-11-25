@@ -132,6 +132,7 @@ class BookingController extends Controller {
      */
     public function update(Request $request, $id) {
 
+        // dd($request->all());
         // validate the request
         $request->validate([
             'member_id' => 'integer',
@@ -153,8 +154,8 @@ class BookingController extends Controller {
         DB::beginTransaction();
         try {
             $booking->update([
-                'member_id' => $request->member_id,
-                'location_id' => $request->location_id,
+                // 'member_id' => $request->member_id,
+                // 'location_id' => $request->location_id,
                 'date' => $request->date,
                 'time' => $request->time,
                 'slots' => $request->slots,

@@ -12,7 +12,7 @@
 	let tableData: any = [];
 	let showModal = false;
 	let showTable = false;
-	let id: string = '';
+	let id: number;
 	const tableColumns = [
 		{
 			header: 'Id',
@@ -67,10 +67,10 @@
 	];
 	onMount(() => {
 		loadData(model);
-		if ($page.url.searchParams.get('id')) {
-			id = $page.url.searchParams.get('id')!;
-			openModal(id);
-		}
+		// if ($page.url.searchParams.get('id')) {
+		// 	id = $page.url.searchParams.get('id')!;
+		// 	openModal(id);
+		// }
 	});
 
 	async function loadData(path: Endpoint) {
@@ -87,7 +87,7 @@
 		}
 	}
 
-	function openModal(rowId: string) {
+	function openModal(rowId: number) {
 		id = rowId;
 		console.log('openModal', id);
 		showModal = true;

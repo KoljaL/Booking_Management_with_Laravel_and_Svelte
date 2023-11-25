@@ -3,32 +3,34 @@
 
 	export let isOpen: boolean = false;
 	export let onClose: () => void;
-	// export let callback: () => void;
 
 	let backdrop: HTMLDivElement;
 
-	const handleClickOutside = (event: Event) => {
-		// // console.log('event', event.target);
-		// console.log('backdrop', backdrop);
-		// console.log('isOpen', isOpen);
+	function handleClickOutside(event: Event) {
 		if (event.target === backdrop) {
-			// console.log('click outside');
-			// onClose();
+			onClose();
 		}
-	};
+	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Escape') {
+			onClose();
+		}
+	}
 
 	// $: console.log('isOpen MODAL', isOpen);
 </script>
+
+<svelte:window on:keydown={handleKeydown} />
 
 {#if isOpen}
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<div
-		transition:fade={{ duration: 300 }}
+		transition:fade={{ duration: 200 }}
 		class="modalBackdrop"
 		bind:this={backdrop}
 		on:click={handleClickOutside}
-		on:keypress={handleClickOutside}
 	>
 		<div class="modalWrapper">
 			<div class="modalHeader">
@@ -41,7 +43,10 @@
 			</div>
 			<div class="modalFooter">
 				<slot name="footer" />
-				<button on:click={onClose}>Close Modal</button>
+				<button on:click={onClose}>Close</button>
+			</div>
+			<div class="modalBeyondFooter">
+				<slot name="beyondFooter" />
 			</div>
 		</div>
 	</div>
@@ -64,38 +69,38 @@
 	.modalWrapper {
 		width: 80ch;
 		max-width: 95vw;
-		max-height: 95vh;
+		max-height: 90vh;
 		margin-top: var(--header-height);
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
-		align-items: center;
+		border-radius: 10px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+		background-color: white;
 	}
 
 	.modalHeader {
 		width: 100%;
 		padding-inline: 1rem;
-		background-color: white;
-		border-radius: 10px 10px 0 0;
-		z-index: 1001;
 	}
 
 	.modalBody {
 		width: 100%;
 		height: 50%;
 		overflow: auto;
-		background-color: white;
 		padding: 1rem;
-		z-index: 1001;
+		padding-bottom: 0;
 	}
 
 	.modalFooter {
 		width: 100%;
 		padding: 1rem;
-		background-color: white;
-		border-radius: 0 0 10px 10px;
-		z-index: 1001;
+		padding-top: 0;
 		display: flex;
 		gap: 1rem;
+	}
+
+	.modalBeyondFooter {
+		width: 100%;
+		padding-inline: 1rem;
 	}
 </style>

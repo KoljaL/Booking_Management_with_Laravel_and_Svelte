@@ -77,6 +77,7 @@
 			showTable = true;
 		} else {
 			responseMessage = 'Error: ' + message;
+			showTable = true;
 			console.error('TableData loading failed', message);
 		}
 	}
@@ -102,7 +103,7 @@
 <svelte:head>
 	<title>RB - Booking</title>
 </svelte:head>
-<!-- <MenuStaff endpoint={'booking'} /> -->
+<button on:click={() => openModal(0)}>New Booking</button>
 
 {#if tableData.length > 0}
 	<DataTable

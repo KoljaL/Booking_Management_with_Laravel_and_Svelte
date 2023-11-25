@@ -82,3 +82,7 @@ export function getParamFromUrl(param: string) {
 	const urlParams = new URLSearchParams(window.location.search);
 	return urlParams.get(param);
 }
+
+export function delay(ms: number = 300) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}

@@ -6,14 +6,13 @@
 	import { page } from '$app/stores';
 	import Modal from '$lib/components/Modal.svelte';
 	import EditStaff from '$lib/components/forms/EditStaff.svelte';
-	import MenuStaff from '$lib/components/MenuStaff.svelte';
 
 	let model: Endpoint = 'staff';
 	let responseMessage: string = '';
 	let tableData: any = [];
 	let showModal = false;
 	let showTable = false;
-	let id: string = '';
+	let id: number;
 
 	const tableColumns = [
 		{
@@ -51,10 +50,10 @@
 
 	onMount(() => {
 		loadData(model);
-		if ($page.url.searchParams.get('id')) {
-			id = $page.url.searchParams.get('id')!;
-			openModal(id);
-		}
+		// if ($page.url.searchParams.get('id')) {
+		// 	id = $page.url.searchParams.get('id')!;
+		// 	openModal(id);
+		// }
 	});
 
 	async function loadData(path: Endpoint) {
@@ -71,7 +70,7 @@
 		}
 	}
 
-	function openModal(rowId: string) {
+	function openModal(rowId: number) {
 		id = rowId;
 		console.log('openModal', id);
 		showModal = true;

@@ -1,15 +1,19 @@
 <script lang="ts">
 	import type { ModelMember } from '$lib/types';
 	import { request } from '$lib/request';
-	import { goto } from '$app/navigation';
-	import JsonView from '$lib/components/debug/JsonView.svelte';
+	import { delay } from '$lib/utils';
+	import JsonView from '$lib/components/debug/JsonHighlight.svelte';
 	import Modal from '$lib/components/Modal.svelte';
+	import EditBooking from '$lib/components/forms/EditBooking.svelte';
 
-	export let id: string;
-	export let callback: () => void;
+	export let id: number = 0;
+	export let closeModal: () => void;
 
 	let showModal: boolean = false;
+	let showBookingModal: boolean = false;
+	let bookingId: number;
 	let form: HTMLFormElement;
+	let modalTitle: string = 'Add Member';
 	let member: ModelMember;
 	const emptyMember: ModelMember = {
 		id: 0,
@@ -28,12 +32,17 @@
 		bookings: []
 	};
 
-	const getMemberData = async () => {
+	const getMemberData = async (id: number) => {
+		if (id === 0) {
+			showModal = true;
+			return emptyMember as ModelMember;
+		}
 		const { status, message, data } = await request('GET', 'member/' + id);
 		if (status === 200) {
 			setTimeout(() => {
 				showModal = true;
 			}, 0);
+			modalTitle = 'Edit Member: ' + (data as ModelMember).name;
 			return data as ModelMember;
 		} else {
 			showModal = true;
@@ -43,9 +52,8 @@
 	};
 
 	async function storeMemberData() {
-		if (!form) return;
 		console.log('storeMemberData', member);
-		const formData = new FormData(form)!;
+		const formData = new FormData(form);
 		const { status, message, data } = await request('PUT', 'member/' + id, formData);
 		if (status === 201) {
 			member = data as ModelMember;
@@ -56,57 +64,60 @@
 		}
 	}
 
-	function closeModal() {
+	function onClose() {
 		showModal = false;
-		callback();
+		closeModal();
 	}
 
-	async function openBooking(id: number) {
-		showModal = false;
-		// callback();
-		await goto('/staff/?bid=' + id);
+	function closeBookingModal() {
+		delay(300);
+		showBookingModal = false;
 	}
 
+	async function openBookingModal(id: number) {
+		showBookingModal = true;
+		bookingId = id;
+	}
+
+	// $: console.log('id', id);
 	// $: console.log('member', member, id);
 	// $: console.log('showModal', showModal);
 </script>
 
-{#await getMemberData()}
-	<p></p>
-{:then member}
-	<Modal isOpen={showModal} onClose={closeModal}>
-		<span slot="header">Member: {member.name}</span>
+{#await getMemberData(id) then member}
+	<Modal isOpen={showModal} {onClose}>
+		<span slot="header">{modalTitle}</span>
 		<form bind:this={form}>
 			<label>
-				Name:
+				Name
 				<input type="text" name="name" value={member.name} />
 			</label>
 			<label>
-				Email:
+				Email
 				<input type="text" name="email" value={member.email} />
 			</label>
 			<label>
-				Phone:
+				Phone
 				<input type="text" name="phone" value={member.phone} />
 			</label>
 			<label>
-				JC Number:
+				JC Number
 				<input type="text" name="jc_number" value={member.jc_number} />
 			</label>
 			<label>
-				Max Booking:
+				Max Booking
 				<input type="text" name="max_booking" value={member.max_booking} />
 			</label>
 			<label>
-				Active:
+				Active
 				<input type="text" name="active" value={member.active} />
 			</label>
 		</form>
 		<div slot="footer">
-			<button type="button" on:click={storeMemberData}>Save</button>
+			<button type="button" on:click={storeMemberData}>Submit</button>
 		</div>
 
-		<details open>
+		<details open slot="beyondFooter">
 			<summary>Bookings </summary>
 			{#if member.bookings === undefined || member.bookings.length === 0}
 				<p>No bookings found</p>
@@ -114,9 +125,13 @@
 				<ul>
 					{#each member.bookings as booking}
 						<li>
-							<a href="/staff/?bid={booking.id}" on:click={() => (showModal = false)}>
+							<button
+								type="button"
+								class="openBooking"
+								on:click={() => openBookingModal(booking.id)}
+							>
 								{booking.date} - {booking.time} - {booking.id}
-							</a>
+							</button>
 						</li>
 					{/each}
 				</ul>
@@ -128,6 +143,12 @@
 	</div> -->
 	</Modal>
 {/await}
+
+{#if showBookingModal}
+	<Modal isOpen={showBookingModal} onClose={() => (showBookingModal = false)}>
+		<EditBooking id={bookingId} closeModal={closeBookingModal} />
+	</Modal>
+{/if}
 
 <style>
 	form {
@@ -165,13 +186,17 @@
 		margin-bottom: 0.65rem;
 	}
 
-	a {
-		text-decoration: none;
+	button.openBooking {
 		color: var(--black);
-		/* letter-spacing: 0.01em; */
-		/* font-stretch: extra-condensed; */
+		text-decoration: none;
+		font-size: 1rem;
+		cursor: pointer;
+		padding: 0;
+		transition: color 0.2s ease-in-out;
+		background-color: transparent;
+		border: none;
 	}
-	a:hover {
-		text-decoration: underline;
+	button.openBooking:hover {
+		color: var(--blue);
 	}
 </style>

@@ -1,170 +1,147 @@
-<script>
-	/** @type {*} - object or array to display */
-	export let json;
-	/** @type {number} - initial expansion depth */
-	export let depth = Infinity;
+<script lang="ts">
+	import JsonHighlight from './JsonHighlight.svelte';
+	import { cubicInOut } from 'svelte/easing';
+	import { fade, slide, scale } from 'svelte/transition';
+
+	function transitionIn(node: HTMLElement) {
+		return {
+			duration: 200,
+			delay: 0,
+			easing: cubicInOut,
+			css: (t: number) => `opacity: ${t}`
+		};
+	}
+
+	function transitionOut(node: HTMLElement) {
+		return {
+			duration: 200,
+			delay: 0,
+			easing: cubicInOut,
+			css: (t: number) => `opacity: ${t}`
+		};
+	}
+	export let json: any;
+	export let depth: number = Infinity;
 	export let _cur = 0;
 	export let _last = true;
 
-	/** @type {*[]} */
-	let items;
-	let isArray = false;
-	let brackets = ['', ''];
-	let collapsed = false;
-
-	/**
-	 * @param {*} i
-	 * @returns {string}
-	 */
-	function getType(i) {
-		if (i === null) return 'null';
-		return typeof i;
+	let open = false;
+	let height = 0;
+	let trigger: HTMLSpanElement;
+	let summary: HTMLDivElement;
+	function handleClick() {
+		// open = !open;
+		const parent = summary.parentElement;
+		if (!open) {
+			open = true;
+			if (parent) {
+				setTimeout(() => {
+					parent.scrollTop = parent.scrollHeight;
+					// trigger.scrollIntoView({ behavior: 'smooth' });
+				}, 100);
+			}
+		} else {
+			if (parent) {
+				parent.scrollTop = 0;
+			}
+			setTimeout(() => {
+				open = false;
+			}, 200);
+		}
 	}
-
-	/**
-	 * @param {*} i
-	 * @returns {string}
-	 */
-	function format(i) {
-		const t = getType(i);
-		if (t === 'string') return `"${i}"`;
-		if (t === 'function') return 'f () {...}';
-		if (t === 'symbol') return i.toString();
-		return i;
-	}
-
-	function clicked() {
-		collapsed = !collapsed;
-	}
-
-	/**
-	 * @param {Event} e
-	 */
-	function pressed(e) {
-		if (e instanceof KeyboardEvent && ['Enter', ' '].includes(e.key)) clicked();
-	}
-
-	$: {
-		items = getType(json) === 'object' ? Object.keys(json) : [];
-		isArray = Array.isArray(json);
-		brackets = isArray ? ['[', ']'] : ['{', '}'];
-	}
-
-	$: collapsed = depth < _cur;
+	$: console.log('json', height);
 </script>
 
-<div class="jsonView">
-	{#if !items.length}
-		<span class="_jsonBkt empty" class:isArray>{brackets[0]}{brackets[1]}</span>
-		{#if !_last}
-			<span class="_jsonSep">,</span>
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class="summary" bind:this={summary} class:open on:click={handleClick}>
+	<h3>
+		{#if open}
+			<span class="left"> &#65371; </span><span class="right"> &#65373; </span>
+		{:else}
+			<span class="left"> &#65371; </span><span class="right"> &#65373; </span>
 		{/if}
-	{:else if collapsed}
-		<span
-			class="_jsonBkt"
-			class:isArray
-			role="button"
-			tabindex="0"
-			on:click={clicked}
-			on:keydown={pressed}
-			>{brackets[0]}...{brackets[1]}
-		</span>
-		{#if !_last && collapsed}
-			<span class="_jsonSep">,</span>
-		{/if}
-	{:else}
-		<span
-			class="_jsonBkt"
-			class:isArray
-			role="button"
-			tabindex="0"
-			on:click={clicked}
-			on:keydown={pressed}
+	</h3>
+	{#if open}
+		<div
+			class="details"
+			bind:offsetHeight={height}
+			in:slide={{ duration: 200, delay: 0, easing: cubicInOut }}
+			out:slide={{ duration: 200, delay: 0, easing: cubicInOut }}
+			style="--height:var(--height);"
 		>
-			{brackets[0]}
-		</span>
-		<ul class="_jsonList">
-			{#each items as i, idx}
-				<li>
-					{#if !isArray}
-						<span class="_jsonKey">"{i}"</span><span class="_jsonSep">:</span>
-					{/if}
-					{#if getType(json[i]) === 'object'}
-						<svelte:self json={json[i]} {depth} _cur={_cur + 1} _last={idx === items.length - 1} />
-					{:else}
-						<span class="_jsonVal {getType(json[i])}">{format(json[i])}</span>
-						{#if idx < items.length - 1}
-							<span class="_jsonSep">,</span>
-						{/if}
-					{/if}
-				</li>
-			{/each}
-		</ul>
-		<span
-			class="_jsonBkt"
-			class:isArray
-			role="button"
-			tabindex="0"
-			on:click={clicked}
-			on:keydown={pressed}
-			>{brackets[1]}
-		</span>
-		{#if !_last}
-			<span class="_jsonSep">,</span>
-		{/if}
+			<JsonHighlight {json} {depth} {_cur} {_last} />
+			<span class="trigger" bind:this={trigger}></span>
+		</div>
 	{/if}
 </div>
 
 <style>
-	.jsonView {
-		background-color: #1d2128;
-		padding: 0.25rem;
-		font-family:
-			JetBrains Mono,
-			monospace;
-		line-height: 1.5;
-		font-weight: 200;
-		font-size: var(--jsonFontSize, 14px);
+	.summary {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		justify-content: end;
+		/* width: 100%; */
+		max-width: fit-content;
+		transition: height 1.2s ease-in-out;
 	}
-	:where(._jsonList) {
-		--yellow-dark: #e5c07b;
-		--darkyellow-dark: #d19a66;
-		--lightred-dark: #ef596f;
-		--red-dark: #f44747;
-		--darkred-dark: #be5046;
-		--lightblue-dark: #2bbac5;
-		--blue-dark: #61afef;
-		--lightgreen-dark: #89ca78;
-		--purple-dark: #d55fde;
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		padding-left: var(--jsonPaddingLeft, 1rem);
-		border-left: var(--jsonBorderLeft, 1px dotted);
-	}
-	:where(._jsonBkt) {
-		color: var(--jsonBracketColor, #808080);
-	}
-	:where(._jsonBkt):not(.empty):hover {
+	h3 {
 		cursor: pointer;
-		background: var(--jsonBracketHoverBackground, #393939);
+		padding: 0;
+		margin: 0;
+		display: flex;
+		font-size: 1.3rem;
+		color: #3366cc;
+		text-shadow: 0 0 0.5px #000;
+		max-width: fit-content;
 	}
-	:where(._jsonSep) {
-		color: var(--jsonSeparatorColor, #808080);
+	.left,
+	.right {
+		transition: transform 0.2s ease-in-out;
 	}
-	:where(._jsonKey) {
-		color: var(--jsonKeyColor, #ef596f);
+	h3:hover .left {
+		transition: transform 0.2s ease-in-out;
+		transform: translateX(-0.2em);
 	}
-	:where(._jsonVal) {
-		color: var(--jsonValColor, #61afef);
+	h3:hover .right {
+		transition: transform 0.2s ease-in-out;
+		transform: translateX(0.2em);
 	}
-	:where(._jsonVal).string {
-		color: var(--jsonValStringColor, #89ca78);
+
+	.open h3 .left {
+		transform: translateX(-0.4em) rotate(30deg);
+		transform-origin: 100% 50%;
 	}
-	:where(._jsonVal).number {
-		color: var(--jsonValNumberColor, #d19a66);
+	.open h3 .right {
+		transform: translateX(0.4em) rotate(-30deg);
+		transform-origin: 0% 50%;
 	}
-	:where(._jsonVal).boolean {
-		color: var(--jsonValBooleanColor, #e5c07b);
+
+	.open h3:hover .left {
+		transform: translateX(-0.3em) rotate(30deg);
+		transform-origin: 100% 50%;
+	}
+	.open h3:hover .right {
+		transform: translateX(0.3em) rotate(-30deg);
+		transform-origin: 0% 50%;
+	}
+	.summary .details {
+		height: 0;
+		overflow: hidden;
+		position: absolute;
+		top: 2rem;
+		left: 0;
+	}
+
+	.summary.open .details {
+		height: var(--height);
+	}
+	.trigger {
+		/* position: absolute; */
+		display: block;
+		height: 2rem;
+		bottom: 0;
+		left: 0;
 	}
 </style>
