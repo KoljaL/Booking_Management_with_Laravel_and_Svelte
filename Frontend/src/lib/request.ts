@@ -29,17 +29,27 @@ export const request = async (method, endpoint, body: unknown = null) => {
 	if (method === 'PATCH') {
 		body = new URLSearchParams(body);
 	}
+	console.log('body', body);
+	// const formData = JSON.stringify(body);
+	if (body) {
+		// body = JSON.stringify(body);
+		// body is formData, make json
+	}
+	const url = URL + endpoint;
 	const options = {
 		method,
 		headers: {
 			Authorization: `Bearer ${get(tokenST)}`,
-			'Content-Type': 'application/json'
+			Accept: 'application/json'
+			// 'Content-Type': 'application/json'
+			// 'Content-Type': 'multipart/form-data'
 		},
+		// credentials: 'include',
 		body
 	};
 
 	try {
-		const response = await fetch(URL + endpoint, options);
+		const response = await fetch(url, options);
 		const responseData = await response.json();
 
 		if (!response.ok) {
@@ -55,7 +65,7 @@ export const request = async (method, endpoint, body: unknown = null) => {
 		return {
 			status: 500,
 			message: error.message,
-			data: null,
+			data: { data: 'no data' },
 			error: error
 		};
 	}

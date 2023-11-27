@@ -163,7 +163,6 @@
 	}
 
 	tr:hover {
-		transform: scale(1.001);
 		text-shadow: 0 0 0.1px #000050;
 		cursor: pointer;
 		background-color: #ddd;

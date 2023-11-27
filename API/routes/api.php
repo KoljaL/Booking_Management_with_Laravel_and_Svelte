@@ -1,4 +1,7 @@
 <?php
+// header('Access-Control-Allow-Origin: *');
+// header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+// header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, X-Token-Auth, Authorization');
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,15 +40,18 @@ use App\Http\Middleware\LogRequests;
 
 
 // Unprotected routes (no authentication required)
-Route::middleware(['cors'])->group(function () {
-    Route::post('/login', [UserController::class, 'login']); // ✅
-    Route::post('/register', [UserController::class, 'register']); // ✅
-    Route::post('/logout', [UserController::class, 'logout']); // ❓
-});
+// Route::group(function () {
+
+// Route::middleware(['cors'])->group(function () {
+Route::post('/login', [UserController::class, 'login']); // ✅
+Route::post('/register', [UserController::class, 'register']); // ✅
+Route::post('/logout', [UserController::class, 'logout']); // ❓
+// });
 
 // Routes for Staff and Member
+// Route::middleware(['cors'])->group(function () {
 Route::middleware(['auth:sanctum', LogRequests::class, 'access_control:staff,member'])->group(function () {
-    Route::resource('booking', BookingController::class);
+    Route::resource('/booking', BookingController::class);
 });
 
 // Routes for Staff only

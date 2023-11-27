@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Booking;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Booking;
+use App\Models\Member;
 
 class BookingController extends Controller {
 
@@ -76,6 +77,7 @@ class BookingController extends Controller {
      * @path POST api/bookings
      */
     public function store(Request $request) {
+        // dd($request->all());
         // get the logged in Staff
         $authUser = Auth::user();
         $userRole = $authUser->role;
@@ -93,23 +95,22 @@ class BookingController extends Controller {
         // validate the request
         $request->validate([
             'member_id' => 'required|integer',
-            'location_id' => 'required|integer',
             'date' => 'required|date',
             'time' => 'required|date_format:H:i',
             'slots' => 'required|integer',
         ]);
         DB::beginTransaction();
         // dd($request->all());
+        $location_id = Member::findOrFail($request->member_id)->location_id;
         try {
             // dd($authUser->staff->id);
             $booking = Booking::create([
                 'member_id' => $request->member_id,
-                'location_id' => $request->location_id,
+                'location_id' => $location_id,
                 'date' => $request->date,
                 'time' => $request->time,
                 'slots' => $request->slots,
                 'state' => 'created by ' . $userRole,
-                // 'staff_id' => $authUser->staff->id ?? 999,
             ]);
             DB::commit();
             return response()->json(['message' => 'Booking created', 'data' => $booking], 201);

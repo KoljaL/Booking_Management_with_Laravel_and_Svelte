@@ -1,1262 +1,1254 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Booking Manager Test</title>
-    <link
-      rel="shortcut icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cg fill='none' stroke='%23f9322c' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5'%3E%3Cpath d='m4.25 9.75l-2-.5s0-1.5.5-3s4-1.5 4-1.5m-.5 7l.5 2s1.5 0 3-.5s1.5-4 1.5-4m-7 .5l2 2s5-2 6.5-4.5s1.5-5.5 1.5-5.5s-3 0-5.5 1.5s-4.5 6.5-4.5 6.5z'%2F%3E%3Cpath fill='%23f9322c' d='m1.75 14.25l2-1l-1-1z'%2F%3E%3Ccircle cx='10.25' cy='5.75' r='.5' fill='currentColor'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"
-      type="image/x-icon"
-    />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Booking Manager Test</title>
+  <link rel="shortcut icon" href="data:image/svg+xml,%3Csvg xmlns='http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cg fill='none' stroke='%23f9322c' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5'%3E%3Cpath d='m4.25 9.75l-2-.5s0-1.5.5-3s4-1.5 4-1.5m-.5 7l.5 2s1.5 0 3-.5s1.5-4 1.5-4m-7 .5l2 2s5-2 6.5-4.5s1.5-5.5 1.5-5.5s-3 0-5.5 1.5s-4.5 6.5-4.5 6.5z'%2F%3E%3Cpath fill='%23f9322c' d='m1.75 14.25l2-1l-1-1z'%2F%3E%3Ccircle cx='10.25' cy='5.75' r='.5' fill='currentColor'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E" type="image/x-icon" />
 
-    <style>
-      * {
-        box-sizing: border-box;
-        scroll-behavior: smooth;
-      }
+  <style>
+    * {
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
 
-      *::-webkit-scrollbar {
-        display: none;
-      }
+    *::-webkit-scrollbar {
+      display: none;
+    }
 
-      * {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-      }
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
 
-      :root {
-        --colors-gray1: hsl(0, 0%, 8.5%);
-        --colors-gray2: hsl(0, 0%, 11%);
-        --colors-gray3: hsl(0, 0%, 13.6%);
-        --colors-gray4: hsl(0, 0%, 15.8%);
-        --colors-gray5: hsl(0, 0%, 17.9%);
-        --colors-gray6: hsl(0, 0%, 20.5%);
-        --colors-gray7: hsl(0, 0%, 24.3%);
-        --colors-gray8: hsl(0, 0%, 31.2%);
-        --colors-gray9: hsl(0, 0%, 43.9%);
-        --colors-gray10: hsl(0, 0%, 49.4%);
-        --colors-gray11: hsl(0, 0%, 62.8%);
-        --colors-gray12: hsl(0, 0%, 93%);
-        --colors-gray13: hsl(0, 0%, 97%);
-        --php: #4f5b93;
-        --svelte: hsl(15, 100%, 50%);
-        --laravel: rgb(249, 50, 44);
-        --javascript: #f0db4f;
-        --tailwind: rgb(14 165 233);
-        --vue: #42b883;
-        --red: rgb(239, 89, 111);
-        --yellow: hsl(39.1, 67.1%, 69%);
-        --green: hsl(107.6, 43.6%, 63.1%);
-        --blue: rgb(97, 175, 239);
-        --purple: rgb(213, 95, 222);
-      }
+    :root {
+      --colors-gray1: hsl(0, 0%, 8.5%);
+      --colors-gray2: hsl(0, 0%, 11%);
+      --colors-gray3: hsl(0, 0%, 13.6%);
+      --colors-gray4: hsl(0, 0%, 15.8%);
+      --colors-gray5: hsl(0, 0%, 17.9%);
+      --colors-gray6: hsl(0, 0%, 20.5%);
+      --colors-gray7: hsl(0, 0%, 24.3%);
+      --colors-gray8: hsl(0, 0%, 31.2%);
+      --colors-gray9: hsl(0, 0%, 43.9%);
+      --colors-gray10: hsl(0, 0%, 49.4%);
+      --colors-gray11: hsl(0, 0%, 62.8%);
+      --colors-gray12: hsl(0, 0%, 93%);
+      --colors-gray13: hsl(0, 0%, 97%);
+      --php: #4f5b93;
+      --svelte: hsl(15, 100%, 50%);
+      --laravel: rgb(249, 50, 44);
+      --javascript: #f0db4f;
+      --tailwind: rgb(14 165 233);
+      --vue: #42b883;
+      --red: rgb(239, 89, 111);
+      --yellow: hsl(39.1, 67.1%, 69%);
+      --green: hsl(107.6, 43.6%, 63.1%);
+      --blue: rgb(97, 175, 239);
+      --purple: rgb(213, 95, 222);
+    }
 
-      @font-face {
-        font-family: "Geist";
-        font-style: normal;
-        font-weight: 400;
-        font-display: swap;
-        src: url("./fonts/Geist/Geist-Light.woff2") format("woff2");
-      }
+    @font-face {
+      font-family: "Geist";
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url("./fonts/Geist/Geist-Light.woff2") format("woff2");
+    }
 
-      @font-face {
-        font-family: "Geist Mono";
-        font-style: normal;
-        font-weight: 400;
-        font-display: swap;
-        src: url("./fonts/GeistMono/GeistMono-Light.woff2") format("woff2");
-      }
+    @font-face {
+      font-family: "Geist Mono";
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url("./fonts/GeistMono/GeistMono-Light.woff2") format("woff2");
+    }
 
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: "Geist", sans-serif;
-        background-color: var(--colors-gray1);
-        background-color: black;
-        color: var(--colors-gray11);
-      }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Geist", sans-serif;
+      background-color: var(--colors-gray1);
+      background-color: black;
+      color: var(--colors-gray11);
+    }
 
-      main {
-        display: grid;
-        grid-template-columns: 250px 1fr;
-        grid-template-rows: 1fr;
-        height: 100vh;
-        /* width: 100vw; */
-        max-width: 120rem;
-        margin: 0 auto;
-      }
+    main {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      grid-template-rows: 1fr;
+      height: 100vh;
+      /* width: 100vw; */
+      max-width: 120rem;
+      margin: 0 auto;
+    }
 
-      h2 {
-        margin: 0;
-        padding: 0;
-        font-size: 1.5rem;
-        font-weight: normal;
-        color: var(--colors-gray11);
-        display: flex;
-        gap: 1rem;
-        height: 2rem;
-      }
+    h2 {
+      margin: 0;
+      padding: 0;
+      font-size: 1.5rem;
+      font-weight: normal;
+      color: var(--colors-gray11);
+      display: flex;
+      gap: 1rem;
+      height: 2rem;
+    }
 
-      input,
-      button {
-        font-size: 15px;
-        margin: 0.5rem 0;
-        padding: 0.15rem 0.5rem;
-        border-radius: 0.25rem;
-        border: 1px solid var(--colors-gray8);
-        background-color: var(--colors-gray5);
-        color: var(--colors-gray11);
-        transition: all 0.2s ease-in-out;
-        font-family: "Geist", sans-serif;
-      }
+    input,
+    button {
+      font-size: 15px;
+      margin: 0.5rem 0;
+      padding: 0.15rem 0.5rem;
+      border-radius: 0.25rem;
+      border: 1px solid var(--colors-gray8);
+      background-color: var(--colors-gray5);
+      color: var(--colors-gray11);
+      transition: all 0.2s ease-in-out;
+      font-family: "Geist", sans-serif;
+    }
 
-      button {
-        cursor: pointer;
-      }
+    button {
+      cursor: pointer;
+    }
 
-      button:hover {
-        border: 1px solid #4f5b93;
-      }
+    button:hover {
+      border: 1px solid #4f5b93;
+    }
 
-      input:focus,
-      button:focus {
-        outline: none;
-        border: 1px solid #4f5b93;
-      }
+    input:focus,
+    button:focus {
+      outline: none;
+      border: 1px solid #4f5b93;
+    }
 
-      form {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0;
-      }
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
 
-      .left {
-        background-color: var(--colors-gray3);
-        padding: 1rem;
-        overflow: scroll;
-      }
+    .left {
+      background-color: var(--colors-gray3);
+      padding: 1rem;
+      overflow: scroll;
+    }
 
-      .left header {
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-      }
+    .left header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
 
-      .left header button {
-        border: 1px solid transparent;
-        background-color: transparent;
-      }
+    .left header button {
+      border: 1px solid transparent;
+      background-color: transparent;
+    }
 
-      .left header button.active {
-        border: 1px solid #4f5b93;
-        background-color: var(--colors-gray5);
-      }
+    .left header button.active {
+      border: 1px solid #4f5b93;
+      background-color: var(--colors-gray5);
+    }
 
-      .left h3 {
-        margin-top: 5px;
-        margin-bottom: 0;
-        color: #4f5b93;
-      }
+    .left h3 {
+      margin-top: 5px;
+      margin-bottom: 0;
+      color: #4f5b93;
+    }
 
-      .left section {
-        /* display: none; */
-        margin: 1rem 0;
-        flex-direction: column;
-        align-items: flex-start;
-        overflow: scroll;
-        /* height: calc(100vh - 10rem); */
-      }
+    .left section {
+      /* display: none; */
+      margin: 1rem 0;
+      flex-direction: column;
+      align-items: flex-start;
+      overflow: scroll;
+      /* height: calc(100vh - 10rem); */
+    }
 
-      details {
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        background-color: var(--colors-gray4);
-        border-radius: 0.5rem;
-        border: 1px solid var(--colors-gray8);
-        margin-bottom: 1rem;
-      }
+    details {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: var(--colors-gray4);
+      border-radius: 0.5rem;
+      border: 1px solid var(--colors-gray8);
+      margin-bottom: 1rem;
+    }
 
-      details summary {
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        cursor: pointer;
-        font-size: 1.2rem;
-        background-color: var(--colors-gray5);
-        color: var(--colors-gray11);
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.5rem;
-      }
+    details summary {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      cursor: pointer;
+      font-size: 1.2rem;
+      background-color: var(--colors-gray5);
+      color: var(--colors-gray11);
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.5rem;
+    }
 
-      details[open] {
-        border: 1px solid var(--colors-gray8);
-      }
+    details[open] {
+      border: 1px solid var(--colors-gray8);
+    }
 
-      details[open] summary {
-        border-radius: 0.5rem 0.5rem 0 0;
-        border: 0px solid transparent;
-      }
+    details[open] summary {
+      border-radius: 0.5rem 0.5rem 0 0;
+      border: 0px solid transparent;
+    }
 
-      label {
-        display: flex;
-        flex-direction: row;
-        align-items: baseline;
-        gap: 0.5rem;
-      }
+    label {
+      display: flex;
+      flex-direction: row;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
 
-      label input {
-        width: 100%;
-        margin-top: 0.5rem;
-      }
+    label input {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
 
-      .left article {
-        max-width: 100%;
-        margin-inline: 0.5rem;
-        padding-block: 5px;
-        border-bottom: 1px solid #4f5b9355;
-      }
+    .left article {
+      max-width: 100%;
+      margin-inline: 0.5rem;
+      padding-block: 5px;
+      border-bottom: 1px solid #4f5b9355;
+    }
 
-      .left article:last-child {
-        border-bottom: none;
-      }
+    .left article:last-child {
+      border-bottom: none;
+    }
 
-      .right {
-        /* width: 100%; */
-        /* height: 100%; */
-        overflow: hidden;
-        background-color: var(--colors-gray2);
-        /* background-color: antiquewhite; */
-        padding: 1rem;
-      }
-      .right .columns {
-        display: flex;
-        flex-direction: column;
-      }
-      .right #tablesContainer,
-      .right pre {
-        height: calc(100vh - 5rem);
-        width: 100%;
-        overflow: scroll;
-        margin: 1rem;
-        color: var(--colors-gray10);
-        font-family: "Geist Mono";
-        font-size: 14px;
-        line-height: 1.7;
-      }
-      .right #tablesContainer {
-        display: flex;
-        flex-direction: column;
-        justify-content: start;
-        overflow-x: auto;
-      }
+    .right {
+      /* width: 100%; */
+      /* height: 100%; */
+      overflow: hidden;
+      background-color: var(--colors-gray2);
+      /* background-color: antiquewhite; */
+      padding: 1rem;
+    }
 
-      .right #resultUrl {
-        color: var(--colors-gray10);
-        font-weight: normal;
-        padding-left: 1rem;
-      }
+    .right .columns {
+      display: flex;
+      flex-direction: column;
+    }
 
-      .right .method {
-        color: #4f5b93;
-        display: inline-block;
-        width: 100px;
-      }
+    .right #tablesContainer,
+    .right pre {
+      height: calc(100vh - 5rem);
+      width: 100%;
+      overflow: scroll;
+      margin: 1rem;
+      color: var(--colors-gray10);
+      font-family: "Geist Mono";
+      font-size: 14px;
+      line-height: 1.7;
+    }
 
-      .right .status {
-        font-weight: normal;
-        margin-left: 0.5rem;
-        font-size: 0.8rem;
-      }
+    .right #tablesContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      overflow-x: auto;
+    }
 
-      .newFormFieldButton {
-        color: var(--colors-gray10);
-        font-weight: bold;
-        padding: 0.05rem 0.25rem 0.125rem 0.25rem;
-        margin: 0;
-        line-height: 1;
-        margin-left: 0.5rem;
-        position: relative;
-        top: -3px;
-      }
+    .right #resultUrl {
+      color: var(--colors-gray10);
+      font-weight: normal;
+      padding-left: 1rem;
+    }
 
-      .newFormFieldOverlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1000;
-        background-color: var(--colors-gray3);
-        padding: 0.75rem 1rem;
-        border-radius: 0.25rem;
-        border: 1px solid var(--colors-gray8);
-      }
+    .right .method {
+      color: #4f5b93;
+      display: inline-block;
+      width: 100px;
+    }
 
-      .newFormFieldOverlay form {
-        display: block;
-      }
+    .right .status {
+      font-weight: normal;
+      margin-left: 0.5rem;
+      font-size: 0.8rem;
+    }
 
-      .newFormFieldOverlay input {
-        width: 122px;
-        display: block;
-      }
+    .newFormFieldButton {
+      color: var(--colors-gray10);
+      font-weight: bold;
+      padding: 0.05rem 0.25rem 0.125rem 0.25rem;
+      margin: 0;
+      line-height: 1;
+      margin-left: 0.5rem;
+      position: relative;
+      top: -3px;
+    }
 
-      .newFormFieldOverlay button:first-of-type {
-        margin-right: 1rem;
-      }
-      table {
-        border-collapse: collapse;
-        /* max-width: 100%; */
-        /* width: max-content; */
-        table-layout: fixed;
-        margin-bottom: 1rem;
-        border-spacing: 30px;
-      }
+    .newFormFieldOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      background-color: var(--colors-gray3);
+      padding: 0.75rem 1rem;
+      border-radius: 0.25rem;
+      border: 1px solid var(--colors-gray8);
+    }
 
-      table caption {
-        margin: 0;
-        padding: 0;
-        padding-left: 0.15rem;
-        text-align: left;
-        font-size: 1.5rem;
-        font-weight: normal;
-        color: var(--blue);
-        position: sticky;
-        z-index: 99;
-        top: 0;
-        background: var(--colors-gray2);
-      }
-      table caption .rowCount {
-        font-size: 0.8rem;
-        color: var(--colors-gray10);
-        margin-left: 0.5rem;
-      }
-      th,
-      td {
-        border: 1px solid var(--colors-gray5);
+    .newFormFieldOverlay form {
+      display: block;
+    }
 
-        border: 1px solid transparent;
-        border-bottom: 1px solid var(--colors-gray5);
-        padding: 2px 5px;
-        text-align: left;
-        /* width: max-content; */
-        /* max-width: 200px; */
-        width: 10px;
-        max-width: 300px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: var(--colors-gray10);
-      }
-      th {
-        color: var(--colors-gray11);
-        border: 1px solid transparent;
-        border-bottom: 1px solid var(--colors-gray5);
-        background: var(--colors-gray5);
-        position: sticky;
-        top: 40px;
-        cursor: pointer;
-      }
-      th:hover {
-        color: var(--blue);
-      }
+    .newFormFieldOverlay input {
+      width: 122px;
+      display: block;
+    }
 
-      td {
-        padding-right: 20px;
-        /* border-right: 5px solid var(--colors-gray2); */
-      }
+    .newFormFieldOverlay button:first-of-type {
+      margin-right: 1rem;
+    }
 
-      a {
-        color: var(--blue);
-        text-decoration: none;
-      }
-      a:hover {
-        filter: brightness(1.2);
-      }
+    table {
+      border-collapse: collapse;
+      /* max-width: 100%; */
+      /* width: max-content; */
+      table-layout: fixed;
+      margin-bottom: 1rem;
+      border-spacing: 30px;
+    }
 
-      .icon {
-        width: 2rem;
-        height: 2rem;
-        margin: 0;
-        padding: 0;
-        fill: var(--blue);
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 1.5rem;
-        background-color: transparent;
-        border: 1px solid transparent;
-      }
-      .icon:hover,
-      .icon:focus {
-        border: 1px solid transparent;
-        filter: brightness(1.3);
-      }
+    table caption {
+      margin: 0;
+      padding: 0;
+      padding-left: 0.15rem;
+      text-align: left;
+      font-size: 1.5rem;
+      font-weight: normal;
+      color: var(--blue);
+      position: sticky;
+      z-index: 99;
+      top: 0;
+      background: var(--colors-gray2);
+    }
 
-      .icon-json {
-        fill: var(--blue);
-        background-image: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cpath fill="%234f5b93" d="M5 3h2v2H5v5a2 2 0 0 1-2 2a2 2 0 0 1 2 2v5h2v2H5c-1.07-.27-2-.9-2-2v-4a2 2 0 0 0-2-2H0v-2h1a2 2 0 0 0 2-2V5a2 2 0 0 1 2-2m14 0a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1v2h-1a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-2v-2h2v-5a2 2 0 0 1 2-2a2 2 0 0 1-2-2V5h-2V3h2m-7 12a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1m-4 0a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1m8 0a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1Z"%2F%3E%3C%2Fsvg%3E');
-        background-size: 1.5rem;
-      }
-      .icon-table {
-        background-image: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="256" height="256" viewBox="0 0 256 256"%3E%3Cpath fill="%234f5b93" d="M224 50H32a6 6 0 0 0-6 6v136a14 14 0 0 0 14 14h176a14 14 0 0 0 14-14V56a6 6 0 0 0-6-6ZM38 110h44v36H38Zm56 0h124v36H94Zm124-48v36H38V62ZM38 192v-34h44v36H40a2 2 0 0 1-2-2Zm178 2H94v-36h124v34a2 2 0 0 1-2 2Z"%2F%3E%3C%2Fsvg%3E');
-        background-size: 1.8rem;
-      }
+    table caption .rowCount {
+      font-size: 0.8rem;
+      color: var(--colors-gray10);
+      margin-left: 0.5rem;
+    }
 
-      pre.sf-dump,
-      pre.sf-dump .sf-dump-default {
-        background-color: transparent !important;
-        color: var(--colors-gray11) !important;
-        font: 15px "Geist Mono" !important;
-        line-height: 1.7em !important;
-        font-weight: normal !important;
-        /* font-size: 16px !important; */
-      }
-      pre.sf-dump .sf-dump-str {
-        font-weight: normal !important;
-        color: var(--green) !important;
-      }
-      pre.sf-dump .sf-dump-key {
-        color: var(--red) !important;
-      }
-      pre.sf-dump .sf-dump-note {
-        color: var(--blue) !important;
-      }
-    </style>
-  </head>
+    th,
+    td {
+      border: 1px solid var(--colors-gray5);
 
-  <body>
-    <main>
-      <div class="left">
-        <h2>
-          API Tester
-          <button id="showTables" class="icon icon-table"></button>
-        </h2>
-        <header>
-          <form id="adminLoginForm" enctype="multipart/form-data">
-            <input type="hidden" name="email" value="admin@example.com" />
-            <input type="hidden" name="password" value="password" />
-            <button type="submit" data-section="staff" id="adminLoginButton" data-url="login">Admin</button>
-          </form>
-          <form id="staffLoginForm" enctype="multipart/form-data">
-            <input type="hidden" name="email" value="staff@example.com" />
-            <input type="hidden" name="password" value="password" />
-            <button type="submit" data-section="staff" id="staffLoginButton" data-url="login">Staff</button>
-          </form>
-          <form id="memberLoginForm" enctype="multipart/form-data">
-            <input type="hidden" name="email" value="member@example.com" />
-            <input type="hidden" name="password" value="password" />
-            <button type="submit" data-section="staff" id="memberLoginButton" data-url="login">Member</button>
-          </form>
-        </header>
+      border: 1px solid transparent;
+      border-bottom: 1px solid var(--colors-gray5);
+      padding: 2px 5px;
+      text-align: left;
+      /* width: max-content; */
+      /* max-width: 200px; */
+      width: 10px;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--colors-gray10);
+    }
+
+    th {
+      color: var(--colors-gray11);
+      border: 1px solid transparent;
+      border-bottom: 1px solid var(--colors-gray5);
+      background: var(--colors-gray5);
+      position: sticky;
+      top: 40px;
+      cursor: pointer;
+    }
+
+    th:hover {
+      color: var(--blue);
+    }
+
+    td {
+      padding-right: 20px;
+      /* border-right: 5px solid var(--colors-gray2); */
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      filter: brightness(1.2);
+    }
+
+    .icon {
+      width: 2rem;
+      height: 2rem;
+      margin: 0;
+      padding: 0;
+      fill: var(--blue);
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 1.5rem;
+      background-color: transparent;
+      border: 1px solid transparent;
+    }
+
+    .icon:hover,
+    .icon:focus {
+      border: 1px solid transparent;
+      filter: brightness(1.3);
+    }
+
+    .icon-json {
+      fill: var(--blue);
+      background-image: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cpath fill="%234f5b93" d="M5 3h2v2H5v5a2 2 0 0 1-2 2a2 2 0 0 1 2 2v5h2v2H5c-1.07-.27-2-.9-2-2v-4a2 2 0 0 0-2-2H0v-2h1a2 2 0 0 0 2-2V5a2 2 0 0 1 2-2m14 0a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1v2h-1a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-2v-2h2v-5a2 2 0 0 1 2-2a2 2 0 0 1-2-2V5h-2V3h2m-7 12a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1m-4 0a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1m8 0a1 1 0 0 1 1 1a1 1 0 0 1-1 1a1 1 0 0 1-1-1a1 1 0 0 1 1-1Z"%2F%3E%3C%2Fsvg%3E');
+      background-size: 1.5rem;
+    }
+
+    .icon-table {
+      background-image: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="256" height="256" viewBox="0 0 256 256"%3E%3Cpath fill="%234f5b93" d="M224 50H32a6 6 0 0 0-6 6v136a14 14 0 0 0 14 14h176a14 14 0 0 0 14-14V56a6 6 0 0 0-6-6ZM38 110h44v36H38Zm56 0h124v36H94Zm124-48v36H38V62ZM38 192v-34h44v36H40a2 2 0 0 1-2-2Zm178 2H94v-36h124v34a2 2 0 0 1-2 2Z"%2F%3E%3C%2Fsvg%3E');
+      background-size: 1.8rem;
+    }
+
+    pre.sf-dump,
+    pre.sf-dump .sf-dump-default {
+      background-color: transparent !important;
+      color: var(--colors-gray11) !important;
+      font: 15px "Geist Mono" !important;
+      line-height: 1.7em !important;
+      font-weight: normal !important;
+      /* font-size: 16px !important; */
+    }
+
+    pre.sf-dump .sf-dump-str {
+      font-weight: normal !important;
+      color: var(--green) !important;
+    }
+
+    pre.sf-dump .sf-dump-key {
+      color: var(--red) !important;
+    }
+
+    pre.sf-dump .sf-dump-note {
+      color: var(--blue) !important;
+    }
+
+  </style>
+</head>
+
+<body>
+  <main>
+    <div class="left">
+      <h2>
+        API Tester
+        <button id="showTables" class="icon icon-table"></button>
+      </h2>
+      <header>
+        <form id="adminLoginForm" enctype="multipart/form-data">
+          <input type="hidden" name="email" value="admin@example.com" />
+          <input type="hidden" name="password" value="password" />
+          <button type="submit" data-section="staff" id="adminLoginButton" data-url="login">Admin</button>
+        </form>
+        <form id="staffLoginForm" enctype="multipart/form-data">
+          <input type="hidden" name="email" value="staff@example.com" />
+          <input type="hidden" name="password" value="password" />
+          <button type="submit" data-section="staff" id="staffLoginButton" data-url="login">Staff</button>
+        </form>
+        <form id="memberLoginForm" enctype="multipart/form-data">
+          <input type="hidden" name="email" value="member@example.com" />
+          <input type="hidden" name="password" value="password" />
+          <button type="submit" data-section="staff" id="memberLoginButton" data-url="login">Member</button>
+        </form>
+      </header>
+    </div>
+    <div class="right">
+      <h2>
+        <span id="resultUrl"></span>
+      </h2>
+      <div id="code-mirror-container"></div>
+      <div class="columns">
+        <pre id="result"></pre>
+        <div id="tablesContainer"></div>
       </div>
-      <div class="right">
-        <h2>
-          <span id="resultUrl"></span>
-        </h2>
-        <div id="code-mirror-container"></div>
-        <div class="columns">
-          <pre id="result"></pre>
-          <div id="tablesContainer"></div>
-        </div>
-      </div>
-    </main>
+    </div>
+  </main>
 
-    <script>
-      // const URL = "http://127.0.0.1:8000/api/";
-      const URL = "https://public.test/api/";
-      // const URL = "https://dev.rasal.de/booking/API/public/api/";
-      let token = null;
-      let responseData = null;
+  <script>
+    // const URL = "http://127.0.0.1:8000/api/";
+    const URL = "https://public.test/api/";
+    // const URL = "https://dev.rasal.de/booking/API/public/api/";
+    let token = null;
+    let responseData = null;
 
-      // LOGIN
-      const adminLoginButton = document.getElementById("adminLoginButton");
-      const staffLoginButton = document.getElementById("staffLoginButton");
-      const memberLoginButton = document.getElementById("memberLoginButton");
-      // BUTTONS
-      const showTablesButton = document.getElementById("showTables");
-      // RESULT
-      const result = document.getElementById("result");
-      const resultUrl = document.getElementById("resultUrl");
-      const tablesContainer = document.getElementById("tablesContainer");
+    // LOGIN
+    const adminLoginButton = document.getElementById("adminLoginButton");
+    const staffLoginButton = document.getElementById("staffLoginButton");
+    const memberLoginButton = document.getElementById("memberLoginButton");
+    // BUTTONS
+    const showTablesButton = document.getElementById("showTables");
+    // RESULT
+    const result = document.getElementById("result");
+    const resultUrl = document.getElementById("resultUrl");
+    const tablesContainer = document.getElementById("tablesContainer");
 
-      // SWITCHES
-      let showTables = true;
-      let noJson = "";
+    // SWITCHES
+    let showTables = true;
+    let noJson = "";
 
-      showTablesButton.addEventListener("click", async (e) => {
-        if (!showTables) {
-          showTables = true;
-          resultAsTable();
-        } else {
-          showTables = false;
-          resultAsJSON();
-        }
-      });
-
-      function resultAsJSON() {
-        result.style.display = "block";
-        tablesContainer.style.display = "none";
-        showTablesButton.classList.remove("icon-json");
-        showTablesButton.classList.add("icon-table");
-        result.innerHTML = jsonFormatHighlight(responseData);
-      }
-
-      function resultAsTable() {
+    showTablesButton.addEventListener("click", async (e) => {
+      if (!showTables) {
         showTables = true;
-        result.style.display = "none";
-        tablesContainer.style.display = "flex";
-        tablesContainer.innerHTML = "";
-        showTablesButton.classList.remove("icon-table");
-        showTablesButton.classList.add("icon-json");
-        createTable(responseData);
+        resultAsTable();
+      } else {
+        showTables = false;
+        resultAsJSON();
       }
-      window.onload = () => {
-        createDocument().then(() => {
-          adminLoginButton.click();
-          addNewFormFields();
-          increaseId();
-        });
-      };
+    });
 
-      const apiArray = [
-        {
-          user: "staff",
-          cat: [
-            {
-              name: "Member",
-              state: "open",
-              requests: [
-                {
-                  method: "GET",
-                  url: "member?show=all",
-                  description: "All",
-                  fields: [],
-                },
-                {
-                  method: "GET",
-                  url: "member",
-                  description: "Active",
-                  fields: [],
-                },
-                {
-                  method: "GET",
-                  url: "member?show=inactive",
-                  description: "Inactive",
-                  fields: [],
-                },
-                {
-                  method: "GET",
-                  url: "member?show=deleted",
-                  description: "Deleted",
-                  fields: [],
-                },
-                {
-                  method: "GET",
-                  url: "member/{id}",
-                  description: "Get one Member",
-                  callback: function () {
-                    updateIds("member");
-                  },
-                  fields: [
-                    {
-                      name: "id",
-                      value: 1,
-                    },
-                  ],
-                },
-                {
-                  method: "GET",
-                  url: "member/{id}?show=allBookings",
-                  description: "Get one M w all B.",
-                  callback: function () {
-                    updateIds("member");
-                  },
-                  fields: [
-                    {
-                      name: "id",
-                      value: 1,
-                    },
-                  ],
-                },
-                {
-                  method: "POST",
-                  url: "member",
-                  description: "Create a Member",
-                  newFields: true,
-                  callback: function () {
-                    updateIds("member");
-                  },
-                  fields: [
-                    {
-                      name: "name",
-                      value: "John Doe",
-                    },
-                    {
-                      name: "email",
-                      value: "John@Doe.com",
-                    },
-                  ],
-                },
-                {
-                  method: "GET",
-                  url: "invite/member/{id}",
-                  description: "Invite Member",
-                  callback: function () {
-                    updateIds("member");
-                  },
-                  fields: [
-                    {
-                      name: "id",
-                      value: 1,
-                    },
-                  ],
-                },
-                {
-                  method: "POST",
-                  url: "register",
-                  description: "Register as Member",
-                  fields: [
-                    {
-                      name: "invite_token",
-                      value: "",
-                    },
-                    {
-                      name: "password",
-                      value: "password",
-                    },
-                  ],
-                },
-                {
-                  method: "PATCH",
-                  url: "member/{id}",
-                  description: "Edit a Member",
-                  newFields: true,
-                  fields: [
-                    {
-                      name: "id",
-                      value: 1,
-                    },
-                    {
-                      name: "name",
-                      value: "John Doe",
-                    },
-                    {
-                      name: "email",
-                      value: "John@Doe.com",
-                    },
-                  ],
-                },
-                {
-                  method: "DELETE",
-                  url: "member/{id}",
-                  description: "Delete a Member",
-                  fields: [
-                    {
-                      name: "id",
-                      value: 1,
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              name: "Booking",
-              state: "open",
-              requests: [
-                {
-                  method: "GET",
-                  url: "booking?show=all",
-                  description: "All",
-                  fields: [],
-                },
-                {
-                  method: "GET",
-                  url: "booking?date=today",
-                  description: "Today",
-                  fields: [],
-                },
-                {
-                  method: "GET",
-                  url: "booking?date=2023-11-11",
-                  description: "Date",
-                  fields: [],
-                },
-                {
-                  method: "GET",
-                  url: "booking?show=deleted",
-                  description: "Deleted",
-                  fields: [],
-                },
-                {
-                  method: "GET",
-                  url: "booking/{id}",
-                  description: "Get one Booking",
-                  callback: function () {
-                    updateIds("booking");
-                  },
-                  fields: [
-                    {
-                      name: "id",
-                      value: 1,
-                    },
-                  ],
-                },
-                {
-                  method: "POST",
-                  url: "booking",
-                  description: "Create a booking",
-                  newFields: true,
-                  callback: function () {
-                    updateIds("booking");
-                  },
-                  fields: [
-                    {
-                      name: "member_id",
-                      value: "1",
-                    },
-                    {
-                      name: "location_id",
-                      value: "1",
-                    },
-                    {
-                      name: "date",
-                      value: "2023-11-15",
-                    },
-                    {
-                      name: "time",
-                      value: "12:00",
-                    },
-                    {
-                      name: "slots",
-                      value: "1",
-                    },
-                  ],
-                },
-                {
-                  method: "PATCH",
-                  url: "booking/{id}",
-                  description: "Edit a booking",
-                  newFields: true,
-                  fields: [
-                    {
-                      name: "id",
-                      value: 1,
-                    },
-                    {
-                      name: "member_id",
-                      value: "1",
-                    },
-                    {
-                      name: "location_id",
-                      value: "1",
-                    },
-                    {
-                      name: "date",
-                      value: "2023-11-15",
-                    },
-                    {
-                      name: "time",
-                      value: "12:00",
-                    },
-                    {
-                      name: "slots",
-                      value: "1",
-                    },
-                    {
-                      name: "comment_staff",
-                      value: "just a comment",
-                    },
-                  ],
-                },
-                {
-                  method: "DELETE",
-                  url: "booking/{id}",
-                  description: "Delete a booking",
-                  fields: [
-                    {
-                      name: "id",
-                      value: 1,
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          user: "member",
-          cat: [
-            {
-              name: "Booking",
-              requests: [],
-            },
-          ],
-        },
-      ];
+    function resultAsJSON() {
+      result.style.display = "block";
+      tablesContainer.style.display = "none";
+      showTablesButton.classList.remove("icon-json");
+      showTablesButton.classList.add("icon-table");
+      result.innerHTML = jsonFormatHighlight(responseData);
+    }
 
-      //
-      // CREATE DOCUMENT from apiArray
-      //
-      async function createDocument() {
-        for (let api of apiArray) {
-          const leftSide = document.querySelector(".left");
-          const section = document.createElement("section");
-          if (!api.cat) continue;
-          section.id = api.user + "Section";
-          for (let cat of api.cat) {
-            // console.log(cat);
-            const details = document.createElement("details");
-            const summary = document.createElement("summary");
-            summary.innerHTML = cat.name;
-            details.open = cat.state === "open" ? true : false;
-            details.appendChild(summary);
-            section.appendChild(details);
+    function resultAsTable() {
+      showTables = true;
+      result.style.display = "none";
+      tablesContainer.style.display = "flex";
+      tablesContainer.innerHTML = "";
+      showTablesButton.classList.remove("icon-table");
+      showTablesButton.classList.add("icon-json");
+      createTable(responseData);
+    }
+    window.onload = () => {
+      createDocument().then(() => {
+        adminLoginButton.click();
+        addNewFormFields();
+        increaseId();
+      });
+    };
 
-            for (let req of cat.requests) {
-              const hasFields = req.fields.length > 0 ? true : false;
-
-              //
-              // has form fields
-              if (hasFields) {
-                const article = document.createElement("article");
-                const h3 = document.createElement("h3");
-                h3.innerHTML = req.description;
-                if (req.newFields) {
-                  const button = document.createElement("button");
-                  button.classList.add("newFormFieldButton");
-                  button.dataset.form = req.description.replace(/\s/g, "");
-                  button.innerHTML = "+";
-                  h3.appendChild(button);
+    const apiArray = [{
+        user: "staff"
+        , cat: [{
+            name: "Member"
+            , state: "open"
+            , requests: [{
+                method: "GET"
+                , url: "member?show=all"
+                , description: "All"
+                , fields: []
+              , }
+              , {
+                method: "GET"
+                , url: "member"
+                , description: "Active"
+                , fields: []
+              , }
+              , {
+                method: "GET"
+                , url: "member?show=inactive"
+                , description: "Inactive"
+                , fields: []
+              , }
+              , {
+                method: "GET"
+                , url: "member?show=deleted"
+                , description: "Deleted"
+                , fields: []
+              , }
+              , {
+                method: "GET"
+                , url: "member/{id}"
+                , description: "Get one Member"
+                , callback: function() {
+                  updateIds("member");
                 }
-                article.appendChild(h3);
-                const form = document.createElement("form");
-                form.id = req.description.replace(/\s/g, "");
-                article.appendChild(form);
-                details.appendChild(article);
-                for (let param of req.fields) {
-                  const label = document.createElement("label");
-                  // label first letter uppercase
-                  const labelName = param.name.charAt(0).toUpperCase() + param.name.slice(1);
-                  const value = param.value ? param.value : "";
-                  label.innerHTML = /*html*/ `${labelName}: <input type="text" name="${param.name}" value="${value}" />`;
-                  form.appendChild(label);
+                , fields: [{
+                  name: "id"
+                  , value: 1
+                , }, ]
+              , }
+              , {
+                method: "GET"
+                , url: "member/{id}?show=allBookings"
+                , description: "Get one M w all B."
+                , callback: function() {
+                  updateIds("member");
                 }
-                const button = document.createElement("button");
-                button.type = "submit";
-                button.innerHTML = req.method;
-                button.dataset.url = req.url;
-                button.dataset.method = req.method;
-                button.addEventListener("click", (e) => {
-                  e.preventDefault();
-                  const url = e.target.dataset.url;
-                  const method = e.target.dataset.method;
-                  postData(method, url, form);
+                , fields: [{
+                  name: "id"
+                  , value: 1
+                , }, ]
+              , }
+              , {
+                method: "POST"
+                , url: "member"
+                , description: "Create a Member"
+                , newFields: true
+                , callback: function() {
+                  updateIds("member");
+                }
+                , fields: [{
+                    name: "name"
+                    , value: "John Doe"
+                  , }
+                  , {
+                    name: "email"
+                    , value: "John@Doe.com"
+                  , }
+                , ]
+              , }
+              , {
+                method: "GET"
+                , url: "invite/member/{id}"
+                , description: "Invite Member"
+                , callback: function() {
+                  updateIds("member");
+                }
+                , fields: [{
+                  name: "id"
+                  , value: 1
+                , }, ]
+              , }
+              , {
+                method: "POST"
+                , url: "register"
+                , description: "Register as Member"
+                , fields: [{
+                    name: "invite_token"
+                    , value: ""
+                  , }
+                  , {
+                    name: "password"
+                    , value: "password"
+                  , }
+                , ]
+              , }
+              , {
+                method: "PATCH"
+                , url: "member/{id}"
+                , description: "Edit a Member"
+                , newFields: true
+                , fields: [{
+                    name: "id"
+                    , value: 1
+                  , }
+                  , {
+                    name: "name"
+                    , value: "John Doe"
+                  , }
+                  , {
+                    name: "email"
+                    , value: "John@Doe.com"
+                  , }
+                , ]
+              , }
+              , {
+                method: "DELETE"
+                , url: "member/{id}"
+                , description: "Delete a Member"
+                , fields: [{
+                  name: "id"
+                  , value: 1
+                , }, ]
+              , }
+            , ]
+          , }
+          , {
+            name: "Booking"
+            , state: "open"
+            , requests: [{
+                method: "GET"
+                , url: "booking?show=all"
+                , description: "All"
+                , fields: []
+              , }
+              , {
+                method: "GET"
+                , url: "booking?date=today"
+                , description: "Today"
+                , fields: []
+              , }
+              , {
+                method: "GET"
+                , url: "booking?date=2023-11-11"
+                , description: "Date"
+                , fields: []
+              , }
+              , {
+                method: "GET"
+                , url: "booking?show=deleted"
+                , description: "Deleted"
+                , fields: []
+              , }
+              , {
+                method: "GET"
+                , url: "booking/{id}"
+                , description: "Get one Booking"
+                , callback: function() {
+                  updateIds("booking");
+                }
+                , fields: [{
+                  name: "id"
+                  , value: 1
+                , }, ]
+              , }
+              , {
+                method: "POST"
+                , url: "booking"
+                , description: "Create a booking"
+                , newFields: true
+                , callback: function() {
+                  updateIds("booking");
+                }
+                , fields: [{
+                    name: "member_id"
+                    , value: "1"
+                  , }
+                  , {
+                    name: "location_id"
+                    , value: "1"
+                  , }
+                  , {
+                    name: "date"
+                    , value: "2023-11-15"
+                  , }
+                  , {
+                    name: "time"
+                    , value: "12:00"
+                  , }
+                  , {
+                    name: "slots"
+                    , value: "1"
+                  , }
+                , ]
+              , }
+              , {
+                method: "PATCH"
+                , url: "booking/{id}"
+                , description: "Edit a booking"
+                , newFields: true
+                , fields: [{
+                    name: "id"
+                    , value: 1
+                  , }
+                  , {
+                    name: "member_id"
+                    , value: "1"
+                  , }
+                  , {
+                    name: "location_id"
+                    , value: "1"
+                  , }
+                  , {
+                    name: "date"
+                    , value: "2023-11-15"
+                  , }
+                  , {
+                    name: "time"
+                    , value: "12:00"
+                  , }
+                  , {
+                    name: "slots"
+                    , value: "1"
+                  , }
+                  , {
+                    name: "comment_staff"
+                    , value: "just a comment"
+                  , }
+                , ]
+              , }
+              , {
+                method: "DELETE"
+                , url: "booking/{id}"
+                , description: "Delete a booking"
+                , fields: [{
+                  name: "id"
+                  , value: 1
+                , }, ]
+              , }
+            , ]
+          , }
+        , ]
+      , }
+      , {
+        user: "member"
+        , cat: [{
+          name: "Booking"
+          , requests: []
+        , }, ]
+      , }
+    , ];
 
-                  setTimeout(() => {
-                    if (req.callback) {
-                      req.callback();
-                    }
-                  }, 100);
-                });
-                form.appendChild(button);
-              }
-              //
-              // no form fields
-              else {
+    //
+    // CREATE DOCUMENT from apiArray
+    //
+    async function createDocument() {
+      for (let api of apiArray) {
+        const leftSide = document.querySelector(".left");
+        const section = document.createElement("section");
+        if (!api.cat) continue;
+        section.id = api.user + "Section";
+        for (let cat of api.cat) {
+          // console.log(cat);
+          const details = document.createElement("details");
+          const summary = document.createElement("summary");
+          summary.innerHTML = cat.name;
+          details.open = cat.state === "open" ? true : false;
+          details.appendChild(summary);
+          section.appendChild(details);
+
+          for (let req of cat.requests) {
+            const hasFields = req.fields.length > 0 ? true : false;
+
+            //
+            // has form fields
+            if (hasFields) {
+              const article = document.createElement("article");
+              const h3 = document.createElement("h3");
+              h3.innerHTML = req.description;
+              if (req.newFields) {
                 const button = document.createElement("button");
-                button.type = "submit";
-                button.innerHTML = req.description;
-                button.style.marginTop = "0.75rem";
-                button.style.marginLeft = "0.5rem";
-                button.dataset.url = req.url;
-                button.dataset.method = req.method;
-                button.addEventListener("click", (e) => {
-                  e.preventDefault();
-                  const url = e.target.dataset.url;
-                  const method = e.target.dataset.method;
-                  postData(method, url);
-                });
-                details.appendChild(button);
+                button.classList.add("newFormFieldButton");
+                button.dataset.form = req.description.replace(/\s/g, "");
+                button.innerHTML = "+";
+                h3.appendChild(button);
               }
+              article.appendChild(h3);
+              const form = document.createElement("form");
+              form.id = req.description.replace(/\s/g, "");
+              article.appendChild(form);
+              details.appendChild(article);
+              for (let param of req.fields) {
+                const label = document.createElement("label");
+                // label first letter uppercase
+                const labelName = param.name.charAt(0).toUpperCase() + param.name.slice(1);
+                const value = param.value ? param.value : "";
+                label.innerHTML = /*html*/ `${labelName}: <input type="text" name="${param.name}" value="${value}" />`;
+                form.appendChild(label);
+              }
+              const button = document.createElement("button");
+              button.type = "submit";
+              button.innerHTML = req.method;
+              button.dataset.url = req.url;
+              button.dataset.method = req.method;
+              button.addEventListener("click", (e) => {
+                e.preventDefault();
+                const url = e.target.dataset.url;
+                const method = e.target.dataset.method;
+                postData(method, url, form);
+
+                setTimeout(() => {
+                  if (req.callback) {
+                    req.callback();
+                  }
+                }, 100);
+              });
+              form.appendChild(button);
+            }
+            //
+            // no form fields
+            else {
+              const button = document.createElement("button");
+              button.type = "submit";
+              button.innerHTML = req.description;
+              button.style.marginTop = "0.75rem";
+              button.style.marginLeft = "0.5rem";
+              button.dataset.url = req.url;
+              button.dataset.method = req.method;
+              button.addEventListener("click", (e) => {
+                e.preventDefault();
+                const url = e.target.dataset.url;
+                const method = e.target.dataset.method;
+                postData(method, url);
+              });
+              details.appendChild(button);
             }
           }
-          leftSide.appendChild(section);
+        }
+        leftSide.appendChild(section);
+      }
+    }
+
+    function updateIds(section) {
+      // console.log("updateIds", section);
+      // console.log(responseData);
+      // console.log(responseData[section]);
+      if (!responseData[section]) return;
+      const allIds = document.querySelectorAll("input[name=id]");
+      for (let id of allIds) {
+        id.value = responseData[section].id;
+      }
+    }
+    //
+    // POST function
+    //
+    async function postData(method, url, form = null) {
+      console.time("fetch");
+      // get time in ms
+      const fetchTime = Date.now();
+
+      // console.log("postData", method, url, form);
+      responseData = null;
+      tablesContainer.innerHTML = "";
+      result.innerHTML = "";
+      // if form has only one input field with name id, replace {id} in url with the value of that field
+      if (form) {
+        const idField = form.querySelector("input[name=id]");
+        if (idField) {
+          url = url.replace("{id}", idField.value);
+        }
+        if (form.children.length === 2) {
+          form = null;
         }
       }
 
-      function updateIds(section) {
-        // console.log("updateIds", section);
-        // console.log(responseData);
-        // console.log(responseData[section]);
-        if (!responseData[section]) return;
-        const allIds = document.querySelectorAll("input[name=id]");
-        for (let id of allIds) {
-          id.value = responseData[section].id;
+      let formData = null;
+      if (form) {
+        formData = new FormData(form);
+        // remove all Id fields
+        for (let key of formData.keys()) {
+          if (key.endsWith("Id")) formData.delete(key);
         }
       }
-      //
-      // POST function
-      //
-      async function postData(method, url, form = null) {
-        console.time("fetch");
-        // get time in ms
-        const fetchTime = Date.now();
+      // strange bug where PATCH method doesn't work with FormData
+      if (method === "PATCH") {
+        formData = new URLSearchParams(formData);
+      }
+      console.log("formData", formData);
+      fetch(URL + url, {
+          method: method
+          , headers: {
+            Authorization: "Bearer " + token
+            , Accept: "application/json"
+          , }
+          , body: formData
+        , })
+        .then((response) => {
+          console.timeEnd("fetch");
+          const status = response.status;
+          let color = "var(--green)";
+          if (status >= 400) color = "var(--yellow)";
+          if (status >= 500) color = "var(--red)";
+          resultUrl.innerHTML = `<span class="method">${method}</span> api/${url} <span class=status style="color: ${color};">${status}</span>`;
+          const contentType = response.headers.get("Content-Type");
 
-        // console.log("postData", method, url, form);
-        responseData = null;
-        tablesContainer.innerHTML = "";
-        result.innerHTML = "";
-        // if form has only one input field with name id, replace {id} in url with the value of that field
-        if (form) {
-          const idField = form.querySelector("input[name=id]");
-          if (idField) {
-            url = url.replace("{id}", idField.value);
+          if (contentType && contentType.includes("application/json")) {
+            return response.json();
+          } else {
+            return response.text();
           }
-          if (form.children.length === 2) {
-            form = null;
-          }
-        }
-
-        let formData = null;
-        if (form) {
-          formData = new FormData(form);
-          // remove all Id fields
-          for (let key of formData.keys()) {
-            if (key.endsWith("Id")) formData.delete(key);
-          }
-        }
-        // strange bug where PATCH method doesn't work with FormData
-        if (method === "PATCH") {
-          formData = new URLSearchParams(formData);
-        }
-        // console.log("formData", formData);
-        fetch(URL + url, {
-          method: method,
-          headers: {
-            Authorization: "Bearer " + token,
-            Accept: "application/json",
-          },
-          body: formData,
         })
-          .then((response) => {
-            console.timeEnd("fetch");
-            const status = response.status;
-            let color = "var(--green)";
-            if (status >= 400) color = "var(--yellow)";
-            if (status >= 500) color = "var(--red)";
-            resultUrl.innerHTML = `<span class="method">${method}</span> api/${url} <span class=status style="color: ${color};">${status}</span>`;
-            const contentType = response.headers.get("Content-Type");
+        .then((data) => {
+          console.log(fetchTime);
 
-            if (contentType && contentType.includes("application/json")) {
-              return response.json();
-            } else {
-              return response.text();
+          if (typeof data === "object") {
+            if (data.debug) {
+              data.debug = {
+                fetchTime: Date.now() - fetchTime + " ms"
+                , ...data.debug
+              };
             }
-          })
-          .then((data) => {
-            console.log(fetchTime);
-
-            if (typeof data === "object") {
-              if (data.debug) {
-                data.debug = { fetchTime: Date.now() - fetchTime + " ms", ...data.debug };
-              }
-              responseData = data;
-              if (showTables) {
-                resultAsTable();
-              } else {
-                resultAsJSON();
-              }
-              if (data.token) token = data.token;
-              console.log(data);
+            responseData = data;
+            if (showTables) {
+              resultAsTable();
             } else {
-              // console.log("Text response:", data);
-              tablesContainer.innerHTML = data;
-              result.innerHTML = data;
+              resultAsJSON();
             }
-          })
-          .catch((error) => {
-            responseData = null;
-            console.error("Error:", error);
-            tablesContainer.innerHTML = error;
-            result.innerHTML = error;
-          });
-      }
+            if (data.token) token = data.token;
+            console.log(data);
+          } else {
+            // console.log("Text response:", data);
+            tablesContainer.innerHTML = data;
+            result.innerHTML = data;
+          }
+        })
+        .catch((error) => {
+          responseData = null;
+          console.error("Error:", error);
+          tablesContainer.innerHTML = error;
+          result.innerHTML = error;
+        });
+    }
 
-      //
-      // LOGIN
-      //
-      for (let button of [adminLoginButton, staffLoginButton, memberLoginButton]) {
+    //
+    // LOGIN
+    //
+    for (let button of [adminLoginButton, staffLoginButton, memberLoginButton]) {
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        token = null;
+        result.innerHTML = "";
+        resultUrl.innerHTML = "";
+        const url = button.dataset.url;
+        const form = e.target.parentElement;
+        postData("POST", url, form);
+        document.getElementById("staffSection").style.display = "none";
+        document.getElementById("memberSection").style.display = "none";
+        document.getElementById(button.dataset.section + "Section").style.display = "flex";
+        adminLoginButton.classList.remove("active");
+        staffLoginButton.classList.remove("active");
+        memberLoginButton.classList.remove("active");
+        button.classList.add("active");
+      });
+    }
+
+    //
+    // ADD NEW FORM FIELDS
+    //
+    function addNewFormFields() {
+      const newFormFieldButtons = document.querySelectorAll(".newFormFieldButton");
+      for (let button of newFormFieldButtons) {
+        // console.log(button);
         button.addEventListener("click", (e) => {
           e.preventDefault();
-          token = null;
-          result.innerHTML = "";
-          resultUrl.innerHTML = "";
-          const url = button.dataset.url;
-          const form = e.target.parentElement;
-          postData("POST", url, form);
-          document.getElementById("staffSection").style.display = "none";
-          document.getElementById("memberSection").style.display = "none";
-          document.getElementById(button.dataset.section + "Section").style.display = "flex";
-          adminLoginButton.classList.remove("active");
-          staffLoginButton.classList.remove("active");
-          memberLoginButton.classList.remove("active");
-          button.classList.add("active");
-        });
-      }
-
-      //
-      // ADD NEW FORM FIELDS
-      //
-      function addNewFormFields() {
-        const newFormFieldButtons = document.querySelectorAll(".newFormFieldButton");
-        for (let button of newFormFieldButtons) {
-          // console.log(button);
-          button.addEventListener("click", (e) => {
-            e.preventDefault();
-            const x = e.clientX;
-            const y = e.clientY;
-            const formElement = e.target.parentElement.nextElementSibling.id;
-            // console.log(formElement);
-            // crteate a small overlay with two inputs
-            const overlay = document.createElement("div");
-            overlay.classList.add("newFormFieldOverlay");
-            overlay.style.top = y + "px";
-            overlay.style.left = x + "px";
-            overlay.innerHTML = /*html*/ `
+          const x = e.clientX;
+          const y = e.clientY;
+          const formElement = e.target.parentElement.nextElementSibling.id;
+          // console.log(formElement);
+          // crteate a small overlay with two inputs
+          const overlay = document.createElement("div");
+          overlay.classList.add("newFormFieldOverlay");
+          overlay.style.top = y + "px";
+          overlay.style.left = x + "px";
+          overlay.innerHTML = /*html*/ `
           <form>
             <input type="text" name="newFormField" value="new field" />
             <button class="addNewFormField" data-form=${formElement}>Add</button>
             <button class="addNewFormFieldClose" >Close</button>
             </form>`;
-            document.body.appendChild(overlay);
+          document.body.appendChild(overlay);
 
-            overlay.getElementsByClassName("addNewFormFieldClose")[0].addEventListener("click", (e) => {
-              e.preventDefault();
-              overlay.remove();
-            });
-
-            overlay.getElementsByClassName("addNewFormField")[0].addEventListener("click", (e) => {
-              e.preventDefault();
-              const formElement = document.getElementById(e.target.dataset.form);
-              const name = e.target.parentElement.querySelector("input").value;
-              const label = document.createElement("label");
-              label.innerHTML = /*html*/ `${name}: <input type="text" name="${name}" value="" />`;
-              formElement.insertBefore(label, formElement.querySelector("button"));
-              overlay.remove();
-            });
+          overlay.getElementsByClassName("addNewFormFieldClose")[0].addEventListener("click", (e) => {
+            e.preventDefault();
+            overlay.remove();
           });
-        }
-      }
 
-      //
-      // ENTER key submits form
-      //
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && e.target.tagName === "INPUT") {
-          e.preventDefault();
-          const button = e.target.parentElement.nextElementSibling;
-          button.click();
-        }
+          overlay.getElementsByClassName("addNewFormField")[0].addEventListener("click", (e) => {
+            e.preventDefault();
+            const formElement = document.getElementById(e.target.dataset.form);
+            const name = e.target.parentElement.querySelector("input").value;
+            const label = document.createElement("label");
+            label.innerHTML = /*html*/ `${name}: <input type="text" name="${name}" value="" />`;
+            formElement.insertBefore(label, formElement.querySelector("button"));
+            overlay.remove();
+          });
+        });
+      }
+    }
+
+    //
+    // ENTER key submits form
+    //
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && e.target.tagName === "INPUT") {
+        e.preventDefault();
+        const button = e.target.parentElement.nextElementSibling;
+        button.click();
+      }
+    });
+
+    //
+    // increase id with arrow keys
+    //
+    function increaseId() {
+      const allIds = document.querySelectorAll("input[name=id]");
+
+      allIds.forEach((id) => {
+        // console.log(id);
+        id.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowUp") {
+            e.preventDefault();
+            id.value = parseInt(id.value) + 1;
+          }
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            id.value = parseInt(id.value) - 1;
+          }
+        });
       });
+    }
 
-      //
-      // increase id with arrow keys
-      //
-      function increaseId() {
-        const allIds = document.querySelectorAll("input[name=id]");
+    const defaultColors = {
+      keyColor: "rgb(239, 89, 111)"
+      , numberColor: "hsl(39.1, 67.1%, 69%)"
+      , stringColor: "hsl(107.6, 43.6%, 63.1%)"
+      , trueColor: "rgb(97, 175, 239)"
+      , falseColor: "rgb(213, 95, 222)"
+      , nullColor: "hsl(39.1, 67.1%, 69%)"
+    , };
 
-        allIds.forEach((id) => {
-          // console.log(id);
-          id.addEventListener("keydown", (e) => {
-            if (e.key === "ArrowUp") {
-              e.preventDefault();
-              id.value = parseInt(id.value) + 1;
-            }
-            if (e.key === "ArrowDown") {
-              e.preventDefault();
-              id.value = parseInt(id.value) - 1;
-            }
-          });
-        });
+    const entityMap = {
+      "&": "&amp;"
+      , "<": "&lt;"
+      , ">": "&gt;"
+      , '"': "&quot;"
+      , "'": "&#39;"
+      , "`": "&#x60;"
+      , "=": "&#x3D;"
+    , };
+
+    function escapeHtml(html) {
+      return String(html).replace(/[&<>"'`=]/g, function(s) {
+        return entityMap[s];
+      });
+    }
+
+    function jsonFormatHighlight(json, colorOptions = {}) {
+      const valueType = typeof json;
+      if (valueType !== "string") {
+        json = JSON.stringify(json, null, 2) || valueType;
       }
-
-      const defaultColors = {
-        keyColor: "rgb(239, 89, 111)",
-        numberColor: "hsl(39.1, 67.1%, 69%)",
-        stringColor: "hsl(107.6, 43.6%, 63.1%)",
-        trueColor: "rgb(97, 175, 239)",
-        falseColor: "rgb(213, 95, 222)",
-        nullColor: "hsl(39.1, 67.1%, 69%)",
-      };
-
-      const entityMap = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-        "`": "&#x60;",
-        "=": "&#x3D;",
-      };
-
-      function escapeHtml(html) {
-        return String(html).replace(/[&<>"'`=]/g, function (s) {
-          return entityMap[s];
-        });
-      }
-
-      function jsonFormatHighlight(json, colorOptions = {}) {
-        const valueType = typeof json;
-        if (valueType !== "string") {
-          json = JSON.stringify(json, null, 2) || valueType;
-        }
-        let colors = Object.assign({}, defaultColors, colorOptions);
-        json = json.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
-        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+]?\d+)?)/g, (match) => {
-          let color = colors.numberColor;
-          let style = "";
-          if (/^"/.test(match)) {
-            if (/:$/.test(match)) {
-              color = colors.keyColor;
-            } else {
-              color = colors.stringColor;
-              match = '"' + escapeHtml(match.substr(1, match.length - 2)) + '"';
-              style = "word-wrap:break-word;";
-              // style = "word-wrap:break-word;white-space:pre-wrap;";
-            }
+      let colors = Object.assign({}, defaultColors, colorOptions);
+      json = json.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+]?\d+)?)/g, (match) => {
+        let color = colors.numberColor;
+        let style = "";
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            color = colors.keyColor;
           } else {
-            color = /true/.test(match) ? colors.trueColor : /false/.test(match) ? colors.falseColor : /null/.test(match) ? colors.nullColor : color;
+            color = colors.stringColor;
+            match = '"' + escapeHtml(match.substr(1, match.length - 2)) + '"';
+            style = "word-wrap:break-word;";
+            // style = "word-wrap:break-word;white-space:pre-wrap;";
           }
-          match = match.replace(/"/g, "");
-          match = match.replace(/\\&quot;/g, "&quot;");
-          return `<span style="${style}color:${color}">${match}</span>`;
-        });
-      }
-
-      // Function to create tables recursively
-      function createTable(data, name = "Root") {
-        // console.info("\n\n\n\n\n\ncreateTable " + name, typeof data, data);
-        const isArray = Array.isArray(data) ? true : false;
-        const columns = Object.keys(data);
-        const columnsHeadings = isArray ? Object.keys(data[0]) : Object.keys(data);
-        const table = document.createElement("table");
-        const caption = document.createElement("caption");
-        const rowCount = isArray ? data.length : "";
-        const captionName = name.charAt(0).toUpperCase() + name.slice(1);
-        caption.id = "table_" + name;
-        caption.innerHTML = `${captionName}<span class=rowCount>${rowCount}</span>`;
-
-        var tableHtml = "<tr>";
-        let colomnCount = 0;
-        columnsHeadings.forEach(function (columnHead) {
-          // console.log(data[columnHead]);
-          colomnCount++;
-          tableHtml += `<th onclick="sortTable(${colomnCount},'table_${name}')">${columnHead}</th>`;
-        });
-        tableHtml += "</tr>";
-
-        if (isArray) {
-          data.forEach((arrayColumn) => {
-            tableHtml += "<tr>";
-            Object.keys(arrayColumn).forEach((arrayColumnKey) => {
-              let style = "";
-              if (typeof arrayColumn[arrayColumnKey] === "string") {
-                style = "color:var(--green);";
-              }
-              if (typeof arrayColumn[arrayColumnKey] === "number" || arrayColumn[arrayColumnKey] === null) {
-                style = "color:var(--yellow);";
-              }
-              if (typeof arrayColumn[arrayColumnKey] === "boolean" && arrayColumn[arrayColumnKey] === true) {
-                style = "color:var(--blue);";
-              }
-              if (typeof arrayColumn[arrayColumnKey] === "boolean" && arrayColumn[arrayColumnKey] === false) {
-                style = "color:var(--purple);";
-              }
-              tableHtml += `<td style="${style}">` + arrayColumn[arrayColumnKey] + "</td>";
-              // tableHtml += "<td>" + arrayColumn[arrayColumnKey] + "</td>";
-            });
-            tableHtml += "</tr>";
-          });
         } else {
-          columns.forEach(function (column) {
-            if (data[column] === null) {
-              tableHtml += "<td style='color:var(--orange)'>null</td>";
-            } else if (typeof data[column] === "object" && Object.keys(data[column]).length > 0 && !isArray) {
-              createTable(data[column], column);
-              tableHtml += `<td>-> <a href="#table_${column}">${column}</a></td>`;
-            } else {
-              let style = "";
-              if (typeof data[column] === "string") {
-                style = "color:var(--green);";
-              }
-              if (typeof data[column] === "number") {
-                style = "color:var(--yellow);";
-              }
-              if (typeof data[column] === "boolean" && data[column] === true) {
-                style = "color:var(--blue);";
-              }
-              if (typeof data[column] === "boolean" && data[column] === false) {
-                style = "color:var(--purple);";
-              }
-              tableHtml += `<td style="${style}">` + data[column] + "</td>";
+          color = /true/.test(match) ? colors.trueColor : /false/.test(match) ? colors.falseColor : /null/.test(match) ? colors.nullColor : color;
+        }
+        match = match.replace(/"/g, "");
+        match = match.replace(/\\&quot;/g, "&quot;");
+        return `<span style="${style}color:${color}">${match}</span>`;
+      });
+    }
+
+    // Function to create tables recursively
+    function createTable(data, name = "Root") {
+      // console.info("\n\n\n\n\n\ncreateTable " + name, typeof data, data);
+      const isArray = Array.isArray(data) ? true : false;
+      const columns = Object.keys(data);
+      const columnsHeadings = isArray ? Object.keys(data[0]) : Object.keys(data);
+      const table = document.createElement("table");
+      const caption = document.createElement("caption");
+      const rowCount = isArray ? data.length : "";
+      const captionName = name.charAt(0).toUpperCase() + name.slice(1);
+      caption.id = "table_" + name;
+      caption.innerHTML = `${captionName}<span class=rowCount>${rowCount}</span>`;
+
+      var tableHtml = "<tr>";
+      let colomnCount = 0;
+      columnsHeadings.forEach(function(columnHead) {
+        // console.log(data[columnHead]);
+        colomnCount++;
+        tableHtml += `<th onclick="sortTable(${colomnCount},'table_${name}')">${columnHead}</th>`;
+      });
+      tableHtml += "</tr>";
+
+      if (isArray) {
+        data.forEach((arrayColumn) => {
+          tableHtml += "<tr>";
+          Object.keys(arrayColumn).forEach((arrayColumnKey) => {
+            let style = "";
+            if (typeof arrayColumn[arrayColumnKey] === "string") {
+              style = "color:var(--green);";
             }
+            if (typeof arrayColumn[arrayColumnKey] === "number" || arrayColumn[arrayColumnKey] === null) {
+              style = "color:var(--yellow);";
+            }
+            if (typeof arrayColumn[arrayColumnKey] === "boolean" && arrayColumn[arrayColumnKey] === true) {
+              style = "color:var(--blue);";
+            }
+            if (typeof arrayColumn[arrayColumnKey] === "boolean" && arrayColumn[arrayColumnKey] === false) {
+              style = "color:var(--purple);";
+            }
+            tableHtml += `<td style="${style}">` + arrayColumn[arrayColumnKey] + "</td>";
+            // tableHtml += "<td>" + arrayColumn[arrayColumnKey] + "</td>";
           });
-        }
-
-        tableHtml += "</table>";
-        table.innerHTML = tableHtml;
-        table.prepend(caption);
-        tablesContainer.prepend(table);
-      }
-
-      //
-      // SORT TABLE
-      //
-      function sortTable(column, tableId) {
-        var table,
-          rows,
-          switching,
-          i,
-          x,
-          y,
-          shouldSwitch,
-          dir,
-          switchcount = 0;
-        table = document.getElementById(tableId).parentElement;
-        switching = true;
-        dir = "asc";
-        while (switching) {
-          switching = false;
-          rows = table.rows;
-          for (i = 1; i < rows.length - 1; i++) {
-            shouldSwitch = false;
-            x = rows[i].getElementsByTagName("TD")[column - 1];
-            y = rows[i + 1].getElementsByTagName("TD")[column - 1];
-            if (dir == "asc") {
-              if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                shouldSwitch = true;
-                break;
-              }
-            } else if (dir == "desc") {
-              if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                shouldSwitch = true;
-                break;
-              }
-            }
-          }
-          if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-            switchcount++;
+          tableHtml += "</tr>";
+        });
+      } else {
+        columns.forEach(function(column) {
+          if (data[column] === null) {
+            tableHtml += "<td style='color:var(--orange)'>null</td>";
+          } else if (typeof data[column] === "object" && Object.keys(data[column]).length > 0 && !isArray) {
+            createTable(data[column], column);
+            tableHtml += `<td>-> <a href="#table_${column}">${column}</a></td>`;
           } else {
-            if (switchcount == 0 && dir == "asc") {
-              dir = "desc";
-              switching = true;
+            let style = "";
+            if (typeof data[column] === "string") {
+              style = "color:var(--green);";
+            }
+            if (typeof data[column] === "number") {
+              style = "color:var(--yellow);";
+            }
+            if (typeof data[column] === "boolean" && data[column] === true) {
+              style = "color:var(--blue);";
+            }
+            if (typeof data[column] === "boolean" && data[column] === false) {
+              style = "color:var(--purple);";
+            }
+            tableHtml += `<td style="${style}">` + data[column] + "</td>";
+          }
+        });
+      }
+
+      tableHtml += "</table>";
+      table.innerHTML = tableHtml;
+      table.prepend(caption);
+      tablesContainer.prepend(table);
+    }
+
+    //
+    // SORT TABLE
+    //
+    function sortTable(column, tableId) {
+      var table
+        , rows
+        , switching
+        , i
+        , x
+        , y
+        , shouldSwitch
+        , dir
+        , switchcount = 0;
+      table = document.getElementById(tableId).parentElement;
+      switching = true;
+      dir = "asc";
+      while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < rows.length - 1; i++) {
+          shouldSwitch = false;
+          x = rows[i].getElementsByTagName("TD")[column - 1];
+          y = rows[i + 1].getElementsByTagName("TD")[column - 1];
+          if (dir == "asc") {
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+              break;
+            }
+          } else if (dir == "desc") {
+            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+              break;
             }
           }
         }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount++;
+        } else {
+          if (switchcount == 0 && dir == "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
       }
-    </script>
-  </body>
+    }
+
+  </script>
+</body>
 </html>

@@ -13,16 +13,18 @@ class Kernel extends HttpKernel {
      * @var array<int, class-string|string>
      */
     protected $middleware = [
-            // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-            // \App\Http\Middleware\LogRequests::class,
         \App\Http\Middleware\QueryLogMiddleware::class,
+        // \App\Http\Middleware\Cors::class,
     ];
+
+    // \App\Http\Middleware\TrustHosts::class,
+    // \App\Http\Middleware\LogRequests::class,
 
     /**
      * The application's route middleware groups.
@@ -66,6 +68,9 @@ class Kernel extends HttpKernel {
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'access_control' => \App\Http\Middleware\AccessControlMiddleware::class,
-        'cors' => \App\Http\Middleware\Cors::class,
+        // 'cors' => \App\Http\Middleware\Cors::class,
     ];
+    // protected $routeMiddleware = [
+    //     'cors' => \App\Http\Middleware\Cors::class,
+    // ];
 }

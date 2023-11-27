@@ -5,10 +5,13 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import EditMember from '$lib/components/forms/EditMember.svelte';
 	import { delay } from '$lib/utils';
+	import { userST } from '$lib/store';
+	$: console.log('$userST', $userST.is_admin);
+
 	export let id: number;
 	export let closeModal: () => void;
 
-	$: console.log('EditBooking', id);
+	// $: console.log('EditBooking', id);
 	let showModal: boolean = false;
 	let showMemberModal: boolean = false;
 	let memberId: number;
@@ -18,8 +21,8 @@
 	let booking: ModelBooking;
 	const emptyBooking: ModelBooking = {
 		id: 0,
-		date: '',
-		time: '',
+		date: new Date().toISOString().slice(0, 10),
+		time: new Date().toISOString().slice(11, 16),
 		created_at: '',
 		updated_at: '',
 		deleted_at: '',
@@ -78,10 +81,12 @@
 		const { status, message, data } = await request(method, url, formData);
 		if (status === 201) {
 			booking = data as ModelBooking;
+			formMessage = message;
 			// console.log('booking', data);
-			onClose();
+			// onClose();
 		} else {
-			console.error('TableData loading failed', message);
+			formMessage = 'Error: ' + message;
+			console.error('TableData loading failed', message, data);
 		}
 	}
 
@@ -118,18 +123,72 @@
 		showMemberModal = true;
 		memberId = id;
 	}
+
+	const members = [
+		{
+			id: 1,
+			name: 'John Doe'
+		},
+		{
+			id: 2,
+			name: 'Jane Doe'
+		}
+	];
+
+	const locations = [
+		{
+			id: 1,
+			name: 'Location 1'
+		},
+		{
+			id: 2,
+			name: 'Location 2'
+		}
+	];
 </script>
 
 {#await getBookingData(id) then booking}
 	<Modal isOpen={showModal} {onClose}>
 		<span slot="header">{modalTitle}</span>
-		<label class="memberLabel">
-			Member
-			<button type="button" class="openMember" on:click={() => openMemberModal(booking.member_id)}>
-				{booking.member_name}
-			</button>
-		</label>
+
+		{#if booking.member_id !== 0}
+			<label class="memberLabel">
+				Member
+				<button
+					type="button"
+					class="openMember"
+					on:click={() => openMemberModal(booking.member_id)}
+				>
+					{booking.member_name}
+				</button>
+			</label>
+		{/if}
+
 		<form bind:this={form}>
+			{#if booking.member_id === 0}
+				<label class="memberLabel">
+					Member
+					<select name="member_id">
+						<option value="0">Select member</option>
+						{#each members as member}
+							<option value={member.id}>{member.name}</option>
+						{/each}
+					</select>
+				</label>
+			{/if}
+
+			{#if $userST.is_admin}
+				<label class="locationLabel">
+					Location
+					<select name="location_id">
+						<option value="0">Select location</option>
+						{#each locations as location}
+							<option value={location.id}>{location.name}</option>
+						{/each}
+					</select>
+				</label>
+			{/if}
+
 			<label>
 				Date
 				<input type="text" name="date" value={booking.date} />
