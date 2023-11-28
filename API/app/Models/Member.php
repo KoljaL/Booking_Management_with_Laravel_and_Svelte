@@ -19,6 +19,7 @@ class Member extends Model {
         'name',
         'user_id',
         'location_id',
+        'email',
         'staff_id',
         'phone',
         'jc_number',
@@ -46,8 +47,20 @@ class Member extends Model {
         if ($this->user) {
             $member['email'] = $this->user->email;
             $member['role'] = $this->user->role;
+        }
+        if ($this->location) {
             $member['location_city'] = $this->location->city;
         }
+        // Check if the 'user' relationship is loaded
+        // if ($this->relationLoaded('user')) {
+        //     $member['email'] = $this->user->email;
+        //     $member['role'] = $this->user->role;
+        // }
+
+        // // Check if the 'location' relationship is loaded
+        // if ($this->relationLoaded('location')) {
+        //     $member['location_city'] = $this->location->city;
+        // }
         return $member;
     }
 
@@ -58,8 +71,9 @@ class Member extends Model {
 
     // A Member belongs to one User
     public function user() {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
+    // return $this->belongsTo(User::class);
 
     // A Member belongs to one Location
     public function location() {
@@ -106,6 +120,67 @@ class Member extends Model {
                 $query->where('date', '>=', date('Y-m-d'));
             }]);
         }
+    }
+
+    public function scopeShowMembersList($query) {
+        // get mane from Member and email from user 
+        return $query->where('active', true)->with('user:id,email')->get(['id', 'name', 'location_id']);
+
+        // return $query->whereHas('user', function ($query) {
+        //     $query->select('id', 'email');
+        // })->get(['id', 'name', 'location_id']);
+
+        // $result = $query->where('active', true)->get();
+
+        // \DB::enableQueryLog();
+        // $members = $query->where('active', true)->get(['id', 'name', 'location_id']);
+        // $members->load('user:id,email');
+        // dd(\DB::getQueryLog());
+
+        // \DB::enableQueryLog();
+        // $result = $query->with('user:id,email')->get(['id', 'name', 'location_id']);
+        // dd(\DB::getQueryLog());
+
+        // the query log shows this:
+        // "query" => "select "id", "name", "location_id" from "members" where "members"."deleted_at" is null"
+
+        // so the with('user:id,email') is not working
+
+
+        // $member = Member::find(1);  
+        // dd($member->toArray());
+
+        // $members = $query->where('active', true)->get(['id', 'name', 'location_id']);
+        // $members->load('user:id,email');
+        // return $members;
+
+
+        // return $query->where('active', true)
+        //     ->with(['user' => function ($query) {
+        //         $query->select('id', 'email');
+        //     }])
+        //     ->get(['id', 'name', 'location_id']);
+
+
+        // return $query->where('active', true)
+        //     ->with(['user:id,email'])  
+        //     ->get(['id', 'name', 'location_id']);
+
+        // \DB::enableQueryLog();
+        // $result = $query->where('active', true)
+        //     ->with('user:email')
+        //     ->get(['id', 'name', 'location_id']);
+        // dd(\DB::getQueryLog());
+
+
+        // show only active members with id, name and location_id and email from user model 
+        // show only active members with id, name, location_id and email from user model
+        // return $query->where('active', true)->with('user')->get(['id', 'name', 'location_id']);
+
+
+
+        // return $query->where('active', true)->get(['id', 'name', 'location_id']);
+        // return $query->where('active', true)->get(['id', 'email', 'name', 'location_id']);
     }
 
 

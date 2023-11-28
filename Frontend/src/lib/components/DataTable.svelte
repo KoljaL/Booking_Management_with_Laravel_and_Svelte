@@ -9,10 +9,11 @@
 	export let showTable = false;
 	export let getRowId: (rowId: number) => void = (rowId: number) => {};
 
+	$: showTable = showTable;
 	let table: HTMLTableElement;
 	let rowCount = tableData.length;
 
-	console.log('tableData', tableData);
+	// console.log('tableData', tableData);
 	//
 	// SORT TABLE
 	//
@@ -41,6 +42,7 @@
 			a[column] < b[column] ? -1 * sortModifier : a[column] > b[column] ? 1 * sortModifier : 0;
 		tableData = tableData.sort(sort);
 	};
+	$: console.log('showTable', showTable);
 </script>
 
 {#if showTable}

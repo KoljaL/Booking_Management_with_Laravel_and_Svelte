@@ -1,4 +1,7 @@
 <script lang="ts">
+	// original source:
+	// https://github.com/zerodevx/svelte-json-view
+	// License: ISC
 	export let json: any;
 	export let depth: number = Infinity;
 	export let _cur = 0;

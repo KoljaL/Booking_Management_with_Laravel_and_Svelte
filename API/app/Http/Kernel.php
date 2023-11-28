@@ -20,7 +20,6 @@ class Kernel extends HttpKernel {
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\QueryLogMiddleware::class,
-        // \App\Http\Middleware\Cors::class,
     ];
 
     // \App\Http\Middleware\TrustHosts::class,
@@ -68,9 +67,5 @@ class Kernel extends HttpKernel {
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'access_control' => \App\Http\Middleware\AccessControlMiddleware::class,
-        // 'cors' => \App\Http\Middleware\Cors::class,
     ];
-    // protected $routeMiddleware = [
-    //     'cors' => \App\Http\Middleware\Cors::class,
-    // ];
 }

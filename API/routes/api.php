@@ -40,22 +40,21 @@ use App\Http\Middleware\LogRequests;
 
 
 // Unprotected routes (no authentication required)
-// Route::group(function () {
 
-// Route::middleware(['cors'])->group(function () {
 Route::post('/login', [UserController::class, 'login']); // ✅
 Route::post('/register', [UserController::class, 'register']); // ✅
 Route::post('/logout', [UserController::class, 'logout']); // ❓
-// });
 
 // Routes for Staff and Member
-// Route::middleware(['cors'])->group(function () {
 Route::middleware(['auth:sanctum', LogRequests::class, 'access_control:staff,member'])->group(function () {
-    Route::resource('/booking', BookingController::class);
+    // CRUD bookings
+    Route::resource('booking', BookingController::class);
 });
 
 // Routes for Staff only
 Route::middleware(['auth:sanctum', LogRequests::class, 'access_control:staff'])->group(function () {
+    // List all members with id, name, email and location
+    Route::get('member/list', [MemberController::class, 'list']); // ✅
     // CRUD members
     Route::resource('member', MemberController::class);
     // Send invite mail to member
@@ -66,6 +65,8 @@ Route::middleware(['auth:sanctum', LogRequests::class, 'access_control:staff'])-
 Route::middleware(['auth:sanctum', LogRequests::class, 'access_control:staff'])->group(function () {
     // CRUD staff
     Route::resource('staff', StaffController::class);
+    // List all locations with id and city
+    Route::get('location/list', [LocationController::class, 'list']); // ✅
     // CRUD locations
     Route::resource('location', LocationController::class);
     // Send invite mail to staff

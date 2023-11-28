@@ -11,6 +11,16 @@ use App\Models\User;
 
 class LocationController extends Controller {
 
+    public function list(Request $request) {
+        isAdmin($request->role_isAdmin);
+        try {
+            $locations = Location::select('id', 'city')->get();
+            return response()->json(['message' => 'All Locations', 'data' => $locations], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Locations not found', 'error' => $th->getMessage()], 404);
+        }
+    }
+
     /**
      * Location INDEX
      * 

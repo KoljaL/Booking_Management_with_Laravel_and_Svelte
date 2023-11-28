@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Rocket from '$lib/icons/Rocket.svelte';
+	import Rocket from '$lib/icons/AnimatedRocket.svelte';
 	import { tokenST, userST } from '$lib/store';
 	import { browser } from '$app/environment';
 
@@ -13,7 +13,7 @@
 <header>
 	<div class="left">
 		<Rocket />
-		<h2>Rocket Booking</h2>
+		<!-- <h2>Rocket Booking</h2> -->
 	</div>
 	<div class="center">
 		{#if browser}
@@ -41,13 +41,7 @@
 		flex-direction: row;
 		gap: 0.5rem;
 	}
-	.left h2 {
-		margin: 0;
-	}
-	.left :global(svg) {
-		width: 2rem;
-		height: 2rem;
-	}
+
 	.center {
 		display: flex;
 		align-items: center;
