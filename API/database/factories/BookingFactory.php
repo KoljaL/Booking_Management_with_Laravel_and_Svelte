@@ -28,7 +28,7 @@ class BookingFactory extends Factory {
             // },
             'comment_staff' => fake()->colorName(),
             'comment_member' => fake()->emoji() . fake()->emoji() . fake()->emoji(),
-            'date' => fake()->dateTimeBetween('-5 days', '+5 days')->format('Y-m-d'),
+            'date' => fake()->dateTimeBetween('-5 days', '+5 days')->format('d.m.Y'),
             'time' => fake()->dateTimeBetween('09:00', '18:00')->format('H:00'),
             'slots' => fake()->numberBetween(1, 4),
             'state' => fake()->numberBetween(1, 3),

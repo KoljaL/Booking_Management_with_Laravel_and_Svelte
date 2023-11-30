@@ -26,7 +26,6 @@ class MemberFactory extends Factory {
             'location_id' => function () {
                 return \App\Models\Location::inRandomOrder()->first()->id;
             },
-
             'jc_number' => $this->faker->unique()->numberBetween(1000000000, 9999999999),
             'max_booking' => $this->faker->numberBetween(1, 10),
             'active' => $this->faker->boolean,

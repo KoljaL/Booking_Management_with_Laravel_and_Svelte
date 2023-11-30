@@ -24,22 +24,22 @@ export async function requestOLD(method, url, body = null) {
 		});
 }
 
-export const request = async (method, endpoint, body: unknown = null) => {
+export const request = async (method, endpoint, body: unknown = null, externalToken = '') => {
 	// strange bug where PATCH method doesn't work with FormData
 	if (method === 'PATCH') {
 		body = new URLSearchParams(body);
 	}
-	console.log('body', body);
-	// const formData = JSON.stringify(body);
-	if (body) {
-		// body = JSON.stringify(body);
-		// body is formData, make json
-	}
+
+	const token = externalToken ? externalToken : get(tokenST);
+	// show token
+	console.log('endpoint', endpoint);
+	console.log('get(tokenST)', token);
+
 	const url = URL + endpoint;
 	const options = {
 		method,
 		headers: {
-			Authorization: `Bearer ${get(tokenST)}`,
+			Authorization: `Bearer ${token}`,
 			Accept: 'application/json'
 			// 'Content-Type': 'application/json'
 			// 'Content-Type': 'multipart/form-data'
@@ -49,9 +49,11 @@ export const request = async (method, endpoint, body: unknown = null) => {
 	};
 
 	try {
+		// console.info('\nurl', url);
+		// console.time('request');
 		const response = await fetch(url, options);
+		// console.timeEnd('request');
 		const responseData = await response.json();
-
 		if (!response.ok) {
 			throw new Error(responseData.message || 'Something went wrong');
 		}

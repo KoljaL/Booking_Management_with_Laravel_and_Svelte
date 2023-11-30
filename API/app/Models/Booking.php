@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\AccessControlTrait;
-
+use DateTimeInterface;
 
 class Booking extends Model {
     use HasFactory, SoftDeletes, AccessControlTrait;
@@ -28,7 +28,7 @@ class Booking extends Model {
     ];
 
     // $dates is used to specify which attributes are dates
-    protected $dates = ['created_at', 'updated_at'];
+    protected $dates = ['created_at', 'updated_at', 'deleted_at', 'date', 'started_at', 'ended_at'];
 
     // $with is used to specify which relationships to eager load by default
     // https://laravel.com/docs/10.x/eloquent-relationships#eager-loading-specific-columns
@@ -92,6 +92,12 @@ class Booking extends Model {
             default:
                 return $query->whereDate('date', $date)->get();
         }
+    }
+
+    protected $dateFormat = 'd.m.Y H:i:s';
+
+    protected function serializeDate(DateTimeInterface $date): string {
+        return $date->format('d.m.Y H:i:s');
     }
 
 }

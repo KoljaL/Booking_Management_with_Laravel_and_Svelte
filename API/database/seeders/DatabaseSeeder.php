@@ -171,9 +171,9 @@ class DatabaseSeeder extends Seeder {
         ]);
 
         // now create 5 more member users
-        Member::factory(2)->create();
+        Member::factory(23)->create();
 
         // at last, create 5 bookings
-        Booking::factory(15)->create();
+        Booking::factory(1500)->create();
     }
 }

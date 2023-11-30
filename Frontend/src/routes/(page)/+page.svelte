@@ -2,7 +2,7 @@
 	import { tokenST, userST } from '$lib/store';
 	import { goto } from '$app/navigation';
 
-	let store = false;
+	let store = true;
 	/**
 	 * Login with the selected user
 	 */
@@ -21,7 +21,7 @@
 			body: formData
 		});
 		const data = await response.json();
-		console.log(data);
+		// console.log(data);
 		if (data.token) {
 			tokenST.set(data.token);
 			userST.set(data.user);

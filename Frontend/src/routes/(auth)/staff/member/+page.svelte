@@ -5,16 +5,39 @@
 	import { userST } from '$lib/store';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import JsonView from '$lib/components/debug/JsonView.svelte';
 	import EditMember from '$lib/components/forms/EditMember.svelte';
 	import { delay } from '$lib/utils';
-	console.log('userST', $userST);
+	// console.log('userST', $userST);
+
 	let model: Endpoint = 'member';
 	let responseMessage: string = '';
 	let tableData: any = [];
 	let showModal = false;
 	let showTable = false;
 	let id: number = 0;
-	let locations: any = [];
+	let locationList: any = [{ id: 0, city: 'All' }];
+	let parameterLocation: number = 0;
+	let parameterShow: string = 'active';
+
+	const showParameter = [
+		{
+			key: 'Active',
+			value: 'active'
+		},
+		{
+			key: 'Inactive',
+			value: 'inactive'
+		},
+		{
+			key: 'Deleted',
+			value: 'deleted'
+		},
+		{
+			key: 'All',
+			value: 'all'
+		}
+	];
 
 	const tableColumns = [
 		{
@@ -25,7 +48,7 @@
 		{
 			header: 'Name',
 			accessor: 'name',
-			width: '25ch'
+			width: '20ch'
 		},
 		{
 			header: 'Email',
@@ -40,48 +63,55 @@
 		{
 			header: 'City',
 			accessor: 'location_city',
-			width: '20ch'
+			width: '10ch'
 		},
 		{
 			header: 'Created',
 			accessor: 'created_at',
 			width: '15ch'
+		},
+		{
+			header: 'Deleted',
+			accessor: 'deleted_at',
+			width: '5ch'
+		},
+		{
+			header: 'Active',
+			accessor: 'active',
+			width: '7ch'
 		}
 	];
 
 	onMount(() => {
 		loadData(model);
-		getLocationList().then((data) => {
-			console.log('data', JSON.stringify(data, null, 2));
-		});
+		setTimeout(() => {
+			getLocationList();
+		}, 200);
 	});
+
 	async function getLocationList() {
 		const { status, message, data } = await request('GET', 'location/list');
 		if (status === 200) {
-			locations = data;
+			locationList = [...locationList, ...data];
 		} else {
 			console.error('Location list loading failed', message);
 			return [];
 		}
 	}
 
-	async function getMemberList() {
-		const { status, message, data } = await request('GET', 'member/list');
-		if (status === 200) {
-			return data;
-		} else {
-			console.error('Member list loading failed', message);
-			return [];
-		}
-	}
-	getMemberList().then((data) => {
-		console.log('data', JSON.stringify(data, null, 2));
-	});
-
 	async function loadData(path: string) {
+		if (parameterLocation !== 0) {
+			path += '?location=' + parameterLocation;
+		}
+		if (parameterShow !== 'all') {
+			path += parameterLocation !== 0 ? '&show=' + parameterShow : '?show=' + parameterShow;
+		}
+		// console.log('path', path);
 		showTable = false;
+		console.time('loadData');
 
 		const { status, message, data } = await request('GET', path);
+		console.timeEnd('loadData');
 		if (status === 200) {
 			tableData = data;
 			responseMessage = message;
@@ -102,67 +132,52 @@
 		await delay(300);
 		showModal = false;
 	}
-
-	const showParameter = [
-		{
-			key: 'Active',
-			value: 'active'
-		},
-		{
-			key: 'Inactive',
-			value: 'inactive'
-		},
-		{
-			key: 'Deleted',
-			value: 'deleted'
-		},
-		{
-			key: 'All',
-			value: 'all'
-		}
-	];
-	let parameterLocation: number = 0; // $userST.is_admin ? 0 : $userST.location.id;
-	let parameterShow: string = 'active';
-	let test = () => loadData(model + '/?location=' + parameterLocation);
 </script>
 
 <svelte:head>
 	<title>RB - Member</title>
 </svelte:head>
 
-<!-- <label>
+<label>
 	Show
-	<select bind:value={parameterShow} on:change={() => loadData(model + '/?show=' + parameterShow)}>
-		{#each showParameter as show}
-			<option value={show.value}>{show.key}</option>
-		{/each}
-	</select>
-</label> -->
+	<div class="shadowWrapper">
+		<select bind:value={parameterShow} on:change={() => loadData(model)}>
+			{#each showParameter as show}
+				<option value={show.value}>{show.key}</option>
+			{/each}
+		</select>
+	</div>
+</label>
 
 {#if $userST.is_admin}
 	<label>
 		Location
-		<select
-			bind:value={parameterLocation}
-			on:change={() => loadData(model + '/?location' + parameterLocation)}
-		>
-			{#each locations as location}
-				<option value={location.id}>{location.city}</option>
-			{/each}
-		</select>
+		<div class="shadowWrapper">
+			<select bind:value={parameterLocation} on:change={() => loadData(model)}>
+				{#each locationList as location}
+					<option value={location.id}>{location.city}</option>
+				{/each}
+			</select>
+		</div>
 	</label>
 {/if}
 
 <button on:click={() => openModal(0)}>Add member</button>
 
+<!-- <JsonView json={tableData} open={true} /> -->
+
 {#if tableData.length > 0}
-	<DataTable
-		{showTable}
-		{tableData}
-		{tableColumns}
-		caption={responseMessage}
-		getRowId={openModal}
-	/>
+	<!-- {JSON.stringify(tableData)} -->
+
+	{#key tableData}
+		<DataTable
+			{showTable}
+			{tableData}
+			{tableColumns}
+			caption={responseMessage}
+			getRowId={openModal}
+		/>
+	{/key}
 {/if}
 
 {#if showModal}

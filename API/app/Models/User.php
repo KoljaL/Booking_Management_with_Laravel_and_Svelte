@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use DateTimeInterface;
 
 class User extends Authenticatable {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
@@ -63,4 +63,10 @@ class User extends Authenticatable {
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    protected $dateFormat = 'd.m.Y H:i';
+
+    protected function serializeDate(DateTimeInterface $date): string {
+        return $date->format('d.m.Y H:i');
+    }
 }

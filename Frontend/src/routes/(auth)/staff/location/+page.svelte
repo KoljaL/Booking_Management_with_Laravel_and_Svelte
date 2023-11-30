@@ -17,52 +17,52 @@
 		{
 			header: 'Id',
 			accessor: 'id',
-			width: '10%'
+			width: '4ch'
 		},
 		{
 			header: 'Address',
 			accessor: 'address',
-			width: '20%'
+			width: '22ch'
 		},
 		{
 			header: 'City',
 			accessor: 'city',
-			width: '20%'
+			width: '25ch'
 		},
 		{
 			header: 'Email',
 			accessor: 'email',
-			width: '20%'
+			width: '22ch'
 		},
-		{
-			header: 'Open from',
-			accessor: 'opening_hour_from',
-			width: '10%'
-		},
-		{
-			header: 'Opening Days',
-			accessor: 'opening_days',
-			width: '10%'
-		},
-		{
-			header: 'Open to',
-			accessor: 'opening_hour_to',
-			width: '10%'
-		},
+		// {
+		// 	header: 'Open from',
+		// 	accessor: 'opening_hour_from',
+		// 	width: '4ch'
+		// },
+		// {
+		// 	header: 'Opening Days',
+		// 	accessor: 'opening_days',
+		// 	width: '5ch'
+		// },
+		// {
+		// 	header: 'Open to',
+		// 	accessor: 'opening_hour_to',
+		// 	width: '4ch'
+		// },
 		{
 			header: 'Max Bookins',
 			accessor: 'max_booking',
-			width: '10%'
+			width: '12ch'
 		},
-		{
-			header: 'Slot duration',
-			accessor: 'slot_duration',
-			width: '10%'
-		},
+		// {
+		// 	header: 'Slot duration',
+		// 	accessor: 'slot_duration',
+		// 	width: '4ch'
+		// },
 		{
 			header: 'Workspaces',
 			accessor: 'workspaces',
-			width: '10%'
+			width: '10ch'
 		}
 	];
 	onMount(() => {

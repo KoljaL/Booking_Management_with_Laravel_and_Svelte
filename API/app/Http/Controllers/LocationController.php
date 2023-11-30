@@ -11,15 +11,27 @@ use App\Models\User;
 
 class LocationController extends Controller {
 
+
+    /**
+     * Location LIST
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * 
+     * @description Get id and city of all locations by access level.
+     * @path GET api/location/list
+     */
     public function list(Request $request) {
         isAdmin($request->role_isAdmin);
         try {
-            $locations = Location::select('id', 'city')->get();
-            return response()->json(['message' => 'All Locations', 'data' => $locations], 200);
+            $locations = Location::byAccessLevel()->showLocationsList();
+            $count_locations = $locations->count();
+            return response()->json(['message' => 'List of ' . $count_locations . ' Members', 'data' => $locations], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Locations not found', 'error' => $th->getMessage()], 404);
         }
     }
+
 
     /**
      * Location INDEX
@@ -31,8 +43,6 @@ class LocationController extends Controller {
      * @path GET api/location
      */
     public function index(Request $request) {
-        // dd($request->all());
-        // if (!$request->role_isAdmin) { return response()->json(['message' => 'Only Admin can see Location.'], 404); }
         isAdmin($request->role_isAdmin);
         try {
             $location = Location::all();

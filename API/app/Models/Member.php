@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\AccessControlTrait;
+use DateTimeInterface;
 
 // use Illuminate\Support\Facades\DB;
 
 class Member extends Model {
     use HasFactory, SoftDeletes, AccessControlTrait;
-
 
     // $fillable is used to specify which attributes can be mass-assigned 
     // that is, which attributes can be passed into the create() method
@@ -32,10 +32,20 @@ class Member extends Model {
         'active' => 'boolean',
     ];
 
+    // $dateFormat is used to specify the format of the date attributes
+    protected $dateFormat = 'd.m.Y H:i:s';
+
+    // serializeDate() is used to specify the format of the date attributes
+    protected function serializeDate(DateTimeInterface $date): string {
+        return $date->format('d.m.Y H:i:s');
+    }
+
     // $dates is used to specify which attributes are dates
     // so that when you retrieve the attributes, they will be Carbon objects
     // A carbon object is a wrapper around the PHP DateTime class
     protected $dates = ['created_at', 'updated_at'];
+
+
 
     // $with is used to specify which relationships to eager load by default
     // https://laravel.com/docs/10.x/eloquent-relationships#eager-loading-specific-columns
@@ -97,95 +107,130 @@ class Member extends Model {
     //
     // SCOPES
     //
-    public function scopeShowMembers($query, $show) {
-        switch ($show) {
-            case 'all':
-                return $query->withTrashed()->get();
-            case 'inactive':
-                return $query->where('active', false)->get();
-            case 'deleted':
-                return $query->onlyTrashed()->get();
-            default:
-                return $query->where('active', true)->get();
+    public function scopeShowMembers($query, $request) {
+        $show = $request->show ?? 'active';
+        $location_id = $request->location;
+
+        if ($show) {
+            switch ($show) {
+                case 'active':
+                    $query->where('active', true);
+                    break;
+                case 'inactive':
+                    $query->where('active', false);
+                    break;
+                case 'all':
+                    $query->withTrashed();
+                    break;
+                case 'deleted':
+                    $query->onlyTrashed();
+                    break;
+            }
         }
+
+        // Apply 'location_id' filter
+        if ($location_id) {
+            // dd($location_id);
+            $query->where('location_id', $location_id);
+        }
+
+        // Retrieve the results
+        return $query->get();
     }
 
 
+
+    /**
+     * Scope a query to only include members with bookings.
+     * @param mixed $query
+     * @param mixed $all
+     * @return mixed
+     * @description This scope is used for the details page (form) 
+     */
     public function scopeWithBookings($query, $all = false) {
         // dd($all);
         if ($all === "allBookings") {
             return $query->with('bookings')->withTrashed();
         } else {
             return $query->with(['bookings' => function ($query) {
-                $query->where('date', '>=', date('Y-m-d'));
+                // $query->whereRaw("strftime('%Y-%m-%d', substr(date, 7, 4) || '-' || substr(date, 4, 2) || '-' || substr(date, 1, 2)) >= ?", [now()->format('Y-m-d')])->orderBy('date', 'asc');
+                // $query->where('date', '>=', date('d.m.Y'))->orderBy('date', 'asc');
+                // $query->whereRaw('strftime("%d.%m.%Y", date) >= ?', [now()->format('Y-m-d')])->orderBy('date', 'asc');
+                // $query->where('date', '>=', now()->format('d.m.Y'))->orderBy('date', 'asc');
+                // $query->whereDate('date', '>=', date('d.m.Y'))->orderBy('date', 'asc');
+                $query->where('date', '>=', date('d.m.Y'))->orderBy('date', 'asc');
             }]);
         }
     }
 
+    /**
+     * Scope a query to only include active locations.
+     * @param mixed $query
+     * @return mixed
+     * @description This scope is used for the Dropdown 
+     */
     public function scopeShowMembersList($query) {
-        // get mane from Member and email from user 
-        return $query->where('active', true)->with('user:id,email')->get(['id', 'name', 'location_id']);
-
-        // return $query->whereHas('user', function ($query) {
-        //     $query->select('id', 'email');
-        // })->get(['id', 'name', 'location_id']);
-
-        // $result = $query->where('active', true)->get();
-
-        // \DB::enableQueryLog();
-        // $members = $query->where('active', true)->get(['id', 'name', 'location_id']);
-        // $members->load('user:id,email');
-        // dd(\DB::getQueryLog());
-
-        // \DB::enableQueryLog();
-        // $result = $query->with('user:id,email')->get(['id', 'name', 'location_id']);
-        // dd(\DB::getQueryLog());
-
-        // the query log shows this:
-        // "query" => "select "id", "name", "location_id" from "members" where "members"."deleted_at" is null"
-
-        // so the with('user:id,email') is not working
-
-
-        // $member = Member::find(1);  
-        // dd($member->toArray());
-
-        // $members = $query->where('active', true)->get(['id', 'name', 'location_id']);
-        // $members->load('user:id,email');
-        // return $members;
-
-
-        // return $query->where('active', true)
-        //     ->with(['user' => function ($query) {
-        //         $query->select('id', 'email');
-        //     }])
-        //     ->get(['id', 'name', 'location_id']);
-
-
-        // return $query->where('active', true)
-        //     ->with(['user:id,email'])  
-        //     ->get(['id', 'name', 'location_id']);
-
-        // \DB::enableQueryLog();
-        // $result = $query->where('active', true)
-        //     ->with('user:email')
-        //     ->get(['id', 'name', 'location_id']);
-        // dd(\DB::getQueryLog());
-
-
-        // show only active members with id, name and location_id and email from user model 
-        // show only active members with id, name, location_id and email from user model
-        // return $query->where('active', true)->with('user')->get(['id', 'name', 'location_id']);
-
-
-
-        // return $query->where('active', true)->get(['id', 'name', 'location_id']);
-        // return $query->where('active', true)->get(['id', 'email', 'name', 'location_id']);
+        return $query->where('active', true)->get(['id', 'name']);
     }
 
 
 }
 
+
+
+// return $query->where('active', true)->with('user:id,email')->get(['id', 'name', 'location_id']);
+
+// return $query->whereHas('user', function ($query) {
+//     $query->select('id', 'email');
+// })->get(['id', 'name', 'location_id']);
+
+// $result = $query->where('active', true)->get();
+
+// \DB::enableQueryLog();
+// $members = $query->where('active', true)->get(['id', 'name', 'location_id']);
+// $members->load('user:id,email');
+// dd(\DB::getQueryLog());
+
+// \DB::enableQueryLog();
+// $result = $query->with('user:id,email')->get(['id', 'name', 'location_id']);
+// dd(\DB::getQueryLog());
+
+// the query log shows this:
+// "query" => "select "id", "name", "location_id" from "members" where "members"."deleted_at" is null"
+
+// so the with('user:id,email') is not working
+
+
+// $member = Member::find(1);  
+// dd($member->toArray());
+
+// $members = $query->where('active', true)->get(['id', 'name', 'location_id']);
+// $members->load('user:id,email');
+// return $members;
+
+
+// return $query->where('active', true)
+//     ->with(['user' => function ($query) {
+//         $query->select('id', 'email');
+//     }])
+//     ->get(['id', 'name', 'location_id']);
+
+
+// return $query->where('active', true)
+//     ->with(['user:id,email'])  
+//     ->get(['id', 'name', 'location_id']);
+
+// \DB::enableQueryLog();
+// $result = $query->where('active', true)
+//     ->with('user:email')
+//     ->get(['id', 'name', 'location_id']);
+// dd(\DB::getQueryLog());
+
+// show only active members with id, name, location_id and email from user model
+// return $query->where('active', true)->with('user')->get(['id', 'name', 'location_id']);
+
+// return $query->where('active', true)->get(['id', 'name', 'location_id']);
+// return $query->where('active', true)->get(['id', 'email', 'name', 'location_id']);
 
 // public function allBookings() {
 //     return $this->hasMany(Booking::class);

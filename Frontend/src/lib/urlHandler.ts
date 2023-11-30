@@ -5,12 +5,12 @@ export default class URLHandler {
 		this.url = new URL(window.location.href);
 	}
 
-	add(name: string, value: string): void {
+	add(name: string, value: string | number): void {
 		this.url.searchParams.set(name, value);
 		this.updateUrl();
 	}
 
-	read(name: string): string | null {
+	read(name: string): string | number | null {
 		return this.url.searchParams.get(name);
 	}
 

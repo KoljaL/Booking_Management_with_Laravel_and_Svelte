@@ -22,8 +22,9 @@
 	// });
 
 	onNavigate((navigation) => {
-		const route = navigation.to?.route.id;
 		// remove /auth/staff/ from route
+		// and set endpoint for menu
+		const route = navigation.to?.route.id;
 		endpoint = route?.slice(14) as Endpoint;
 		// @ts-ignore
 		// if (!document.startViewTransition) {

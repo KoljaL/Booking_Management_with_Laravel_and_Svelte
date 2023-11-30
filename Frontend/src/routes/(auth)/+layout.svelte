@@ -4,9 +4,14 @@
 	import HeaderStaff from '$lib/components/layout/HeaderStaff.svelte';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
+	import { page } from '$app/stores';
+
+	// get url from page store
+	const pathname = $page.url.pathname;
+	// console.log('pathname', pathname);
 
 	if (!$tokenST && browser) {
-		console.log('no token');
+		// console.log('no token');
 		// goto('./login?noToken=true');
 		// try to get token from local storage
 		const token = localStorage.getItem('RB_token');
@@ -19,7 +24,8 @@
 			if (userObj.role === 'member') {
 				goto('/member');
 			} else if (userObj.role === 'staff') {
-				goto('/staff');
+				// goto('/staff');
+				goto(pathname);
 			}
 		} else {
 			goto('./login?noToken=true');

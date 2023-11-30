@@ -19,20 +19,10 @@ use Illuminate\Support\Facades\Log;
 class MemberController extends Controller {
 
     public function list(Request $request) {
-        // dd($request->all());
         try {
-            // $members = Member::byAccessLevel()->showMembers($request->show);
-            // get all members, but only name and id, and email fron user model dont use showMembers() here
-            // $members = Member::with('user:id,email')->get(['id', 'name']);
-            $members = Member::all()->reject(function (Member $user) {
-                return $user->active === false;
-            })->map(function (Member $user) {
-                return $user->email;
-            });
-            // $members = App\Models\Member::with('bookings:id')->get(['id', 'name']);
+            $members = Member::byAccessLevel()->showMembersList();
             $count_members = $members->count();
-            // dd($members);
-            return response()->json(['message' => 'All ' . $request->show . ' Members', 'count_members' => $count_members, 'data' => $members], 200);
+            return response()->json(['message' => 'List of ' . $count_members . ' Members', 'data' => $members], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Members not found or no Members associated staff.', 'error' => $th->getMessage()], 404);
         }
@@ -51,7 +41,7 @@ class MemberController extends Controller {
     public function index(Request $request) {
         // dd($request->all());
         try {
-            $members = Member::byAccessLevel()->showMembers($request->show);
+            $members = Member::byAccessLevel()->showMembers($request);
             $count_members = $members->count();
             // dd($members);
             return response()->json(['message' => 'All ' . $request->show . ' Members', 'count_members' => $count_members, 'data' => $members], 200);

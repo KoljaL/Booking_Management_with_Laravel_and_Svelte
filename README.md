@@ -68,7 +68,13 @@
 - [Laravel Active Trait](https://www.trovster.com/blog/2023/02/laravel-active-trait)
 - [bryanmylee/svelte-headless-table: Unopinionated and extensible data tables for Svelte](https://github.com/bryanmylee/svelte-headless-table)
 - [svelte-plugins/datepicker: A simple datepicker component designed for Svelte.](https://github.com/svelte-plugins/datepicker)
-- 
+- [Use events • REPL • Svelte](https://svelte.dev/repl/dbeabf42636545b3a8dc6ebe84c2d98c?version=3.17.3)
+
+
+[Eloquent question, get relationship from collection](https://laracasts.com/discuss/channels/eloquent/eloquent-question-get-relationship-from-collection)
+
+[php - Laravel get a collection of relationship items - Stack Overflow](https://stackoverflow.com/questions/43909607/laravel-get-a-collection-of-relationship-items)
+
 ## Responses and Status Codes
 
 All requests and responses are of an application/json content type and follow typical HTTP response status codes for success and failure.

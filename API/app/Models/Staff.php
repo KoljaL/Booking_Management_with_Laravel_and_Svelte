@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use DateTimeInterface;
 
 class Staff extends Model {
     use HasFactory, SoftDeletes;
@@ -34,6 +34,13 @@ class Staff extends Model {
         }
         return $staff;
     }
+
+    protected $dateFormat = 'd.m.Y H:i:s';
+
+    protected function serializeDate(DateTimeInterface $date): string {
+        return $date->format('d.m.Y H:i:s');
+    }
+
     // public function members() {
     //     return $this->hasMany(Member::class, 'staff_id');
     // }

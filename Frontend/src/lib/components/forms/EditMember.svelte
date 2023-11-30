@@ -118,7 +118,10 @@
 		</div>
 
 		<details open slot="beyondFooter">
+			<!-- {#if id !== 0} -->
 			<summary>Bookings </summary>
+			<!-- {/if} -->
+
 			{#if member.bookings === undefined || member.bookings.length === 0}
 				<p>No bookings found</p>
 			{:else}
@@ -130,7 +133,8 @@
 								class="openBooking"
 								on:click={() => openBookingModal(booking.id)}
 							>
-								{booking.date} - {booking.time} - {booking.id}
+								{booking.date}
+								{booking.time}
 							</button>
 						</li>
 					{/each}
@@ -164,16 +168,8 @@
 	}
 
 	details {
-		margin-top: 1rem;
-	}
-	summary {
-		cursor: pointer;
-		color: var(--black);
 		margin-bottom: 1rem;
-		font-weight: bold;
-	}
-	summary:hover {
-		color: var(--blue);
+		margin-top: 1rem;
 	}
 
 	ul {
@@ -181,12 +177,20 @@
 		list-style: none;
 		max-height: 200px;
 		overflow-y: scroll;
+		display: flex;
+		flex-wrap: wrap;
 	}
 	li {
 		margin-bottom: 0.65rem;
 	}
 
-	button.openBooking {
+	.openBooking {
+		font-feature-settings: 'tnum';
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+	}
+
+	/* button.openBooking {
 		color: var(--black);
 		text-decoration: none;
 		font-size: 1rem;
@@ -198,5 +202,5 @@
 	}
 	button.openBooking:hover {
 		color: var(--blue);
-	}
+	} */
 </style>

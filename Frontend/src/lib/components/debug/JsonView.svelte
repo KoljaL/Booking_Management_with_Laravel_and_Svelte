@@ -24,8 +24,8 @@
 	export let depth: number = Infinity;
 	export let _cur = 0;
 	export let _last = true;
+	export let open = false;
 
-	let open = false;
 	let height = 0;
 	let trigger: HTMLSpanElement;
 	let summary: HTMLDivElement;
@@ -49,7 +49,7 @@
 			}, 200);
 		}
 	}
-	$: console.log('json', height);
+	// $: console.log('json', height);
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->

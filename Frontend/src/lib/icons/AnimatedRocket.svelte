@@ -49,33 +49,33 @@
 		isAnimating = true;
 	}
 
-	onMount(() => {
-		setTimeout(function () {
-			startAnimation();
-			setTimeout(function () {
-				isAnimating = false;
-				clearInterval(animationInterval);
-				floatFlame = 0.0;
-				floatFlame2 = 0.0;
-				floatRocket = 0.0;
-				floatRocket2 = 0.0;
-				random = Math.floor(Math.random() * 50) + 10;
-			}, 10000);
-		}, random * 1000);
+	// onMount(() => {
+	// 	setTimeout(function () {
+	// 		startAnimation();
+	// 		setTimeout(function () {
+	// 			isAnimating = false;
+	// 			clearInterval(animationInterval);
+	// 			floatFlame = 0.0;
+	// 			floatFlame2 = 0.0;
+	// 			floatRocket = 0.0;
+	// 			floatRocket2 = 0.0;
+	// 			random = Math.floor(Math.random() * 50) + 10;
+	// 		}, 10000);
+	// 	}, random * 1000);
 
-		rocketSVG.addEventListener('mouseover', function () {
-			startAnimation();
-		});
-		rocketSVG.addEventListener('mouseout', function () {
-			isAnimating = false;
-			clearInterval(animationInterval);
-			floatFlame = 0.0;
-			floatFlame2 = 0.0;
-			floatRocket = 0.0;
-			floatRocket2 = 0.0;
-			color = 'rgb(0, 0, 0)';
-		});
-	});
+	// 	rocketSVG.addEventListener('mouseover', function () {
+	// 		startAnimation();
+	// 	});
+	// 	rocketSVG.addEventListener('mouseout', function () {
+	// 		isAnimating = false;
+	// 		clearInterval(animationInterval);
+	// 		floatFlame = 0.0;
+	// 		floatFlame2 = 0.0;
+	// 		floatRocket = 0.0;
+	// 		floatRocket2 = 0.0;
+	// 		color = 'rgb(0, 0, 0)';
+	// 	});
+	// });
 </script>
 
 <a href="/staff" class="rockedBooking" bind:this={rocketSVG} style="--color:{color}">

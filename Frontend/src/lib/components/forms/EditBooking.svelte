@@ -1,15 +1,27 @@
 <script lang="ts">
-	import type { ModelBooking } from '$lib/types';
+	import type { ModelBooking, ModelMember } from '$lib/types';
 	import { request } from '$lib/request';
 	import JsonView from '$lib/components/debug/JsonView.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import EditMember from '$lib/components/forms/EditMember.svelte';
 	import { delay } from '$lib/utils';
 	import { userST } from '$lib/store';
-	$: console.log('$userST', $userST.is_admin);
-
 	export let id: number;
 	export let closeModal: () => void;
+
+	let memberList: ModelMember[] = [];
+
+	// $: console.log('locationList', $locationList);
+
+	async function getMemberList() {
+		const { status, message, data } = await request('GET', 'member/list');
+		if (status === 200) {
+			return data;
+		} else {
+			console.error('Member list loading failed', message);
+			return [];
+		}
+	}
 
 	// $: console.log('EditBooking', id);
 	let showModal: boolean = false;
@@ -48,6 +60,8 @@
 	const getBookingData = async (id: number) => {
 		if (id === 0) {
 			showModal = true;
+			memberList = await getMemberList();
+			console.log('memberList', memberList);
 			return emptyBooking as ModelBooking;
 		}
 		const { status, message, data } = await request('GET', 'booking/' + id);
@@ -55,7 +69,7 @@
 			setTimeout(() => {
 				showModal = true;
 			}, 0);
-			console.log('data', data);
+			// console.log('data', data);
 			modalTitle = 'Edit Booking: ' + (data as ModelBooking).date;
 			return data as ModelBooking;
 		} else {
@@ -170,7 +184,7 @@
 					Member
 					<select name="member_id">
 						<option value="0">Select member</option>
-						{#each members as member}
+						{#each memberList as member}
 							<option value={member.id}>{member.name}</option>
 						{/each}
 					</select>
@@ -246,7 +260,7 @@
 {/if}
 
 <style>
-	button.openMember {
+	/* button.openMember {
 		color: var(--black);
 		text-decoration: none;
 		font-size: 1rem;
@@ -258,7 +272,7 @@
 	}
 	button.openMember:hover {
 		color: var(--blue);
-	}
+	} */
 
 	form {
 		display: flex;

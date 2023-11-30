@@ -8,6 +8,7 @@ export type ModelMenu = {
 	name: string;
 	slug: Endpoint;
 	is_admin: boolean;
+	element: HTMLElement | null;
 };
 
 export interface Response {

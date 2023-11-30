@@ -42,7 +42,7 @@
 	$: collapsed = depth < _cur;
 </script>
 
-<div class="jsonView">
+<div class="jsonHighlight">
 	{#if !items.length}
 		<span class="_jsonBkt empty" class:isArray>{brackets[0]}{brackets[1]}</span>
 		{#if !_last}
@@ -105,7 +105,7 @@
 </div>
 
 <style>
-	.jsonView {
+	.jsonHighlight {
 		--fontSize: 14px;
 		--paddingLeft: 1rem;
 		--yellow: #e5c07b;
@@ -126,6 +126,7 @@
 		background-color: var(--background);
 		color: var(--font);
 		padding: 0.25rem;
+		padding-right: 0.75rem;
 		font-family:
 			JetBrains Mono,
 			monospace;
@@ -133,7 +134,7 @@
 		font-weight: 200;
 		font-size: var(--fontSize);
 		border-radius: 0.4rem;
-		border: 1px solid #000;
+		/* border: 1px solid #000; */
 	}
 	li {
 		transition: 0.3s;

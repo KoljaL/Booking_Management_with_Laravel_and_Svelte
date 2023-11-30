@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { Endpoint } from '../../../../lib/types';
+	import type { Endpoint } from '$lib/types';
+	// import type { Endpoint } from '../../../../lib/types';
 	import { request } from '$lib/request';
 	import DataTable from '$lib/components/DataTable.svelte';
 	import { onMount } from 'svelte';
@@ -16,7 +17,7 @@
 	let tableData: any = [];
 	let showModal = false;
 	let showTable = false;
-	let id: string = '';
+	let id: number;
 
 	const tableColumns = [
 		{
@@ -27,32 +28,33 @@
 		{
 			header: 'Member',
 			accessor: 'member_name',
-			width: '20%'
+			width: '20ch'
 		},
 		{
 			header: 'Date',
 			accessor: 'date',
-			width: '20%'
-		},
-		{
-			header: 'Location',
-			accessor: 'location_city',
-			width: '20%'
+			width: '11ch'
 		},
 		{
 			header: 'Time',
 			accessor: 'time',
-			width: '10%'
+			width: '7ch'
 		},
 		{
 			header: 'Slots',
 			accessor: 'slots',
-			width: '10%'
+			width: '5ch'
 		},
+		{
+			header: 'Location',
+			accessor: 'location_city',
+			width: '16ch'
+		},
+
 		{
 			header: 'Created',
 			accessor: 'created_at',
-			width: '10%'
+			width: '20ch'
 		}
 	];
 	// const { getHash, setHash } = urlStore;
@@ -62,17 +64,19 @@
 		urlHandler = new URLHandler();
 		const modelId = urlHandler.read('bid');
 		if (modelId) {
-			id = modelId.slice(1);
+			id = typeof modelId === 'string' ? parseInt(modelId.slice(1)) : modelId;
 			openModal(id);
 		}
 	});
 
 	async function loadData(path: Endpoint) {
 		tableData = [];
+		console.time('loadData Bookings');
 		const { status, message, data } = await request('GET', path);
+		console.timeEnd('loadData Bookings');
 		if (status === 200) {
 			tableData = data;
-			console.log('tableData', tableData);
+			// console.log('tableData', tableData);
 			responseMessage = message;
 			showTable = true;
 		} else {
@@ -82,7 +86,7 @@
 		}
 	}
 
-	function openModal(rowId: string) {
+	function openModal(rowId: number) {
 		id = rowId;
 		showModal = true;
 		urlHandler.add('bid', id);
@@ -105,15 +109,18 @@
 </svelte:head>
 <button on:click={() => openModal(0)}>New Booking</button>
 
+<!-- {model} -->
 {#if tableData.length > 0}
-	<DataTable
-		{showTable}
-		{model}
-		{tableData}
-		{tableColumns}
-		caption={responseMessage}
-		getRowId={openModal}
-	/>
+	<!-- {JSON.stringify(tableData)} -->
+	{#key tableData}
+		<DataTable
+			{showTable}
+			{tableData}
+			{tableColumns}
+			caption={responseMessage}
+			getRowId={openModal}
+		/>
+	{/key}
 {/if}
 
 {#if showModal}

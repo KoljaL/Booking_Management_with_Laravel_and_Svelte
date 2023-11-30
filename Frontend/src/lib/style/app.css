@@ -22,7 +22,21 @@
 	--yellow: hsl(39.1, 67.1%, 69%);
 	--green: hsl(107.6, 43.6%, 63.1%);
 	--blue: rgb(97, 175, 239);
+	--blue: rgba(97, 175, 239, 0.4);
 	--purple: rgb(213, 95, 222);
+	--border-radius-s: 0.125rem;
+	--border-radius-m: 0.25rem;
+	--border-radius-l: 0.5rem;
+	--border-radius-xl: 1rem;
+	--box-shadow: 0 0 0 1px hsla(0, 0%, 0%, 0.4), 0px 4px 3px -2px hsla(0, 0%, 0%, 0.25),
+		0px 0px 0px 1px hsla(0, 0%, 0%, 0.08), inset 0 1px 1px hsla(0, 0%, 100%, 0.1);
+	--box-shadow-after: inset 0 1px 1px hsla(0, 0%, 100%, 0.7);
+
+	/* --box-shadow-light: 0px 4px 8px -2px hsla(218, 76%, 15%, 0.25),
+		0px 0px 0px 1px hsla(218, 76%, 15%, 0.08);
+	--box-shadow-dark: 0 0 0 1px hsla(0, 0%, 0%, 0.4), 0px 4px 8px -2px hsla(0, 0%, 0%, 0.25),
+		0px 0px 0px 1px hsla(0, 0%, 0%, 0.08);
+	--box-shadow-after-dark: inset 0 1px 1px hsla(0, 0%, 100%, 0.1); */
 }
 
 * {
@@ -48,4 +62,117 @@ body {
 .jsonWrapper {
 	max-height: 200px;
 	overflow-y: scroll;
+}
+select,
+button {
+	position: relative;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 0.25rem 0.5rem;
+	font-size: 1rem;
+	border-radius: var(--border-radius-m);
+	background-color: var(--blue);
+	color: var(--colors-gray1);
+	box-shadow: var(--box-shadow);
+	transition: all 0.3s ease-in-out;
+	margin: 0.25rem;
+}
+select {
+	margin: 0;
+	box-shadow: none;
+}
+summary:hover,
+select:hover,
+button:hover {
+	box-shadow:
+		var(--box-shadow),
+		2px 2px 2px rgba(0, 0, 0, 0.5);
+	filter: brightness(1.1);
+}
+summary:active,
+select:active,
+button:active {
+	box-shadow:
+		var(--box-shadow),
+		0px 0px 0px rgba(0, 0, 0, 0.5);
+	filter: brightness(0.9);
+}
+select:after,
+button:after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	content: '';
+	border-radius: inherit;
+	box-shadow: var(--box-shadow-after);
+}
+
+.shadow {
+	box-shadow: var(--box-shadow);
+	position: relative;
+	margin-inline: 2px;
+}
+.shadow:after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	content: '';
+	border-radius: inherit;
+	box-shadow: var(--box-shadow-after);
+}
+
+.shadowWrapper {
+	position: relative;
+	display: inline-block;
+	box-shadow: var(--box-shadow);
+	border-radius: var(--border-radius-m);
+}
+.shadowWrapper:after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	content: '';
+	border-radius: inherit;
+	box-shadow: var(--box-shadow-after);
+}
+
+summary {
+	position: relative;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 0.25rem 0.5rem;
+	font-size: 1rem;
+	background-color: var(--blue);
+	color: var(--colors-gray1);
+	transition: all 0.3s ease-in-out;
+	display: inline-block;
+	box-shadow: var(--box-shadow);
+	border-radius: var(--border-radius-m);
+	padding-top: 0.45rem;
+}
+summary:after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: inline-block;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	content: '';
+	border-radius: inherit;
+	box-shadow: var(--box-shadow-after);
 }
