@@ -29,11 +29,11 @@ class Location extends Model {
         return $this->hasMany(Booking::class);
     }
 
-    protected $dateFormat = 'd.m.Y H:i:s';
+    // protected $dateFormat = 'd.m.Y H:i:s';
 
-    protected function serializeDate(DateTimeInterface $date): string {
-        return $date->format('d.m.Y H:i:s');
-    }
+    // protected function serializeDate(DateTimeInterface $date): string {
+    //     return $date->format('d.m.Y H:i:s');
+    // }
 
     //
     // SCOPES
@@ -46,7 +46,15 @@ class Location extends Model {
      * @description This scope is used for the Dropdown in the frontend
      */
     public function scopeShowLocationsList($query) {
-        return $query->get(['id', 'city']);
+        // return $query->get(['id', 'city']);
+        // return $query->get(['id as value', 'city as key']);
+        return $query->get(['id', 'city'])
+            ->map(function ($location) {
+                return [
+                    'key' => $location->city,
+                    'value' => (string) $location->id,
+                ];
+            });
     }
 
 

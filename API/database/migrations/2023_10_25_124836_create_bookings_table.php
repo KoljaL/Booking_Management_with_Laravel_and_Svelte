@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('comment_member')->nullable();
             $table->string('comment_staff')->nullable();
             $table->date('date');
-            $table->string('time');
+            // $table->string('time');
             $table->integer('slots');
             $table->integer('state');
             $table->timestamp('started_at')->nullable();

@@ -63,6 +63,10 @@ body {
 	max-height: 200px;
 	overflow-y: scroll;
 }
+
+label {
+	font-size: 1.1rem;
+}
 select,
 button {
 	position: relative;

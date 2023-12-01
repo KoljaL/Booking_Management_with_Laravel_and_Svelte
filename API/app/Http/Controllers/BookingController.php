@@ -95,8 +95,7 @@ class BookingController extends Controller {
         // validate the request
         $request->validate([
             'member_id' => 'required|integer',
-            'date' => 'required|date',
-            'time' => 'required|date_format:H:i',
+            'date' => 'required|date_format:Y-m-d H:i:s',
             'slots' => 'required|integer',
         ]);
         DB::beginTransaction();
@@ -108,7 +107,6 @@ class BookingController extends Controller {
                 'member_id' => $request->member_id,
                 'location_id' => $location_id,
                 'date' => $request->date,
-                'time' => $request->time,
                 'slots' => $request->slots,
                 'state' => 'created by ' . $userRole,
             ]);
@@ -138,8 +136,7 @@ class BookingController extends Controller {
         $request->validate([
             'member_id' => 'integer',
             'location_id' => 'integer',
-            'date' => 'date',
-            'time' => 'date_format:H:i',
+            'date' => 'required|date_format:Y-m-d H:i:s',
             'slots' => 'integer',
             'comment_member' => 'string',
             'comment_staff' => 'string',
@@ -158,13 +155,12 @@ class BookingController extends Controller {
                 // 'member_id' => $request->member_id,
                 // 'location_id' => $request->location_id,
                 'date' => $request->date,
-                'time' => $request->time,
                 'slots' => $request->slots,
                 'comment_member' => $request->comment_member,
                 'comment_staff' => $request->comment_staff,
             ]);
             DB::commit();
-            return response()->json(['message' => 'Booking updated', 'data' => $booking], 200);
+            return response()->json(['message' => 'Booking updated', 'data' => $booking], 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Booking not updated', 'error' => $e], 404);

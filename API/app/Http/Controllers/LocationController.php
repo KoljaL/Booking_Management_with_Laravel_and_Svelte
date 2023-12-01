@@ -25,6 +25,8 @@ class LocationController extends Controller {
         isAdmin($request->role_isAdmin);
         try {
             $locations = Location::byAccessLevel()->showLocationsList();
+            // rename the key id to value
+
             $count_locations = $locations->count();
             return response()->json(['message' => 'List of ' . $count_locations . ' Members', 'data' => $locations], 200);
         } catch (\Throwable $th) {

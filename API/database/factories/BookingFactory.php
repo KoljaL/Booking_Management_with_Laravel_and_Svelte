@@ -28,12 +28,15 @@ class BookingFactory extends Factory {
             // },
             'comment_staff' => fake()->colorName(),
             'comment_member' => fake()->emoji() . fake()->emoji() . fake()->emoji(),
-            'date' => fake()->dateTimeBetween('-5 days', '+5 days')->format('d.m.Y'),
-            'time' => fake()->dateTimeBetween('09:00', '18:00')->format('H:00'),
+            // 'date' => fake()->dateTimeBetween('-5 days', '+5 days'),
+            // dateTime between -10 and +10 days and between 09:00 and 18:00
+            // 'date' => fake()->dateTimeBetween('-10 days', '+10 days'),
+            'date' => fake()->dateTimeBetween('-10 days', '+10 days')->setTime(rand(9, 17), rand(0, 59), rand(0, 59)),
             'slots' => fake()->numberBetween(1, 4),
             'state' => fake()->numberBetween(1, 3),
             'started_at' => '',
             'ended_at' => '',
+            // 'time' => fake()->dateTimeBetween('09:00', '18:00')->format('H:00'),
             // 'started_at' => function (array $attributes) {
             //     return \Carbon\Carbon::parse($attributes['time'])->addMinutes(15);
             // },

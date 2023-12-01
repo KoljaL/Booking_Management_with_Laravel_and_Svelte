@@ -1,14 +1,33 @@
 <script lang="ts">
-	import type { Endpoint } from '../../../../lib/types';
+	import type { Endpoint, List } from '$lib/types';
 	import { request } from '$lib/request';
 	import DataTable from '$lib/components/DataTable.svelte';
 	import { userST } from '$lib/store';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import JsonView from '$lib/components/debug/JsonView.svelte';
-	import EditMember from '$lib/components/forms/EditMember.svelte';
+	import EditMember from '$lib/components/edit/EditMember.svelte';
+	import Select from '$lib/components/form/Select.svelte';
 	import { delay } from '$lib/utils';
-	// console.log('userST', $userST);
+
+	///////////////////
+	///////////////////
+	///////////////////
+	///////////////////
+	import { makeListStore } from '$lib/store';
+	let store = makeListStore('location/list');
+
+	onMount(() => {
+		store.subscribe((data: any) => {
+			// console.log('store', data);
+			locationList = [{ key: 'All', value: '0' }, ...data];
+			// console.log('locationList', locationList);
+		});
+	});
+	///////////////////
+	///////////////////
+	///////////////////
+	///////////////////
 
 	let model: Endpoint = 'member';
 	let responseMessage: string = '';
@@ -16,8 +35,8 @@
 	let showModal = false;
 	let showTable = false;
 	let id: number = 0;
-	let locationList: any = [{ id: 0, city: 'All' }];
-	let parameterLocation: number = 0;
+	let locationList: List[] = [];
+	let parameterLocation: string = '0';
 	let parameterShow: string = 'active';
 
 	const showParameter = [
@@ -84,34 +103,21 @@
 
 	onMount(() => {
 		loadData(model);
-		setTimeout(() => {
-			getLocationList();
-		}, 200);
 	});
 
-	async function getLocationList() {
-		const { status, message, data } = await request('GET', 'location/list');
-		if (status === 200) {
-			locationList = [...locationList, ...data];
-		} else {
-			console.error('Location list loading failed', message);
-			return [];
-		}
+	$: if (parameterShow || parameterLocation) {
+		loadData(model);
 	}
 
 	async function loadData(path: string) {
-		if (parameterLocation !== 0) {
+		if (parameterLocation !== '0') {
 			path += '?location=' + parameterLocation;
 		}
 		if (parameterShow !== 'all') {
-			path += parameterLocation !== 0 ? '&show=' + parameterShow : '?show=' + parameterShow;
+			path += parameterLocation !== '0' ? '&show=' + parameterShow : '?show=' + parameterShow;
 		}
-		// console.log('path', path);
 		showTable = false;
-		console.time('loadData');
-
 		const { status, message, data } = await request('GET', path);
-		console.timeEnd('loadData');
 		if (status === 200) {
 			tableData = data;
 			responseMessage = message;
@@ -138,37 +144,19 @@
 	<title>RB - Member</title>
 </svelte:head>
 
-<label>
-	Show
-	<div class="shadowWrapper">
-		<select bind:value={parameterShow} on:change={() => loadData(model)}>
-			{#each showParameter as show}
-				<option value={show.value}>{show.key}</option>
-			{/each}
-		</select>
-	</div>
-</label>
+<div class="selection">
+	<Select label={'Show'} bind:value={parameterShow} options={showParameter} />
 
-{#if $userST.is_admin}
-	<label>
-		Location
-		<div class="shadowWrapper">
-			<select bind:value={parameterLocation} on:change={() => loadData(model)}>
-				{#each locationList as location}
-					<option value={location.id}>{location.city}</option>
-				{/each}
-			</select>
-		</div>
-	</label>
-{/if}
+	{#if $userST.is_admin && locationList.length > 1}
+		<Select label={'Location'} bind:value={parameterLocation} options={locationList} />
+	{/if}
 
-<button on:click={() => openModal(0)}>Add member</button>
+	<button class="addMember" on:click={() => openModal(0)}>Add member</button>
+</div>
 
 <!-- <JsonView json={tableData} open={true} /> -->
 
 {#if tableData.length > 0}
-	<!-- {JSON.stringify(tableData)} -->
-
 	{#key tableData}
 		<DataTable
 			{showTable}
@@ -183,3 +171,16 @@
 {#if showModal}
 	<EditMember {id} {closeModal} />
 {/if}
+
+<style>
+	.selection {
+		display: flex;
+		gap: 1rem;
+		flex-direction: row;
+		margin-bottom: 1rem;
+	}
+	.addMember {
+		margin-right: 0; /* Remove margin for the last child */
+		margin-left: auto; /* Push the last child to the right */
+	}
+</style>

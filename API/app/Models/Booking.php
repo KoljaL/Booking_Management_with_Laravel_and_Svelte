@@ -94,11 +94,11 @@ class Booking extends Model {
         }
     }
 
-    protected $dateFormat = 'd.m.Y H:i:s';
+    // protected $dateFormat = 'd.m.Y H:i:s';
 
-    protected function serializeDate(DateTimeInterface $date): string {
-        return $date->format('d.m.Y H:i:s');
-    }
+    // protected function serializeDate(DateTimeInterface $date): string {
+    //     return $date->format('d.m.Y H:i:s');
+    // }
 
 }
 

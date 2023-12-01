@@ -32,8 +32,8 @@ export const request = async (method, endpoint, body: unknown = null, externalTo
 
 	const token = externalToken ? externalToken : get(tokenST);
 	// show token
-	console.log('endpoint', endpoint);
-	console.log('get(tokenST)', token);
+	// console.log('endpoint', endpoint);
+	// console.log('get(tokenST)', token);
 
 	const url = URL + endpoint;
 	const options = {

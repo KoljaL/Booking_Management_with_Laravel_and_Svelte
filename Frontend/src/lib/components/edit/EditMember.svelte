@@ -4,7 +4,7 @@
 	import { delay } from '$lib/utils';
 	import JsonView from '$lib/components/debug/JsonHighlight.svelte';
 	import Modal from '$lib/components/Modal.svelte';
-	import EditBooking from '$lib/components/forms/EditBooking.svelte';
+	import EditBooking from '$lib/components/edit/EditBooking.svelte';
 
 	export let id: number = 0;
 	export let closeModal: () => void;

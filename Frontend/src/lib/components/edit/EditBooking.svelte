@@ -3,7 +3,7 @@
 	import { request } from '$lib/request';
 	import JsonView from '$lib/components/debug/JsonView.svelte';
 	import Modal from '$lib/components/Modal.svelte';
-	import EditMember from '$lib/components/forms/EditMember.svelte';
+	import EditMember from '$lib/components/edit/EditMember.svelte';
 	import { delay } from '$lib/utils';
 	import { userST } from '$lib/store';
 	export let id: number;

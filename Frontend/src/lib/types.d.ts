@@ -101,6 +101,12 @@ export type TableData = {
 	[key: string]: string;
 };
 
+export type List = {
+	[key: string]: string;
+	[value: string]: string;
+	// id: number;
+};
+
 export type TableColumns = {
 	header: string;
 	accessor: string;

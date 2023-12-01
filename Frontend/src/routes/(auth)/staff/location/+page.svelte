@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import Modal from '$lib/components/Modal.svelte';
-	import EditLocation from '$lib/components/forms/EditLocation.svelte';
+	import EditLocation from '$lib/components/edit/EditLocation.svelte';
 
 	let model: Endpoint = 'location';
 	let responseMessage: string = '';

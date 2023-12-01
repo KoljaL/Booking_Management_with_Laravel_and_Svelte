@@ -64,9 +64,9 @@ class User extends Authenticatable {
         'password' => 'hashed',
     ];
 
-    protected $dateFormat = 'd.m.Y H:i';
+    // protected $dateFormat = 'd.m.Y H:i';
 
-    protected function serializeDate(DateTimeInterface $date): string {
-        return $date->format('d.m.Y H:i');
-    }
+    // protected function serializeDate(DateTimeInterface $date): string {
+    //     return $date->format('d.m.Y H:i');
+    // }
 }

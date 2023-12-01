@@ -35,11 +35,11 @@ class Staff extends Model {
         return $staff;
     }
 
-    protected $dateFormat = 'd.m.Y H:i:s';
+    // protected $dateFormat = 'd.m.Y H:i:s';
 
-    protected function serializeDate(DateTimeInterface $date): string {
-        return $date->format('d.m.Y H:i:s');
-    }
+    // protected function serializeDate(DateTimeInterface $date): string {
+    //     return $date->format('d.m.Y H:i:s');
+    // }
 
     // public function members() {
     //     return $this->hasMany(Member::class, 'staff_id');

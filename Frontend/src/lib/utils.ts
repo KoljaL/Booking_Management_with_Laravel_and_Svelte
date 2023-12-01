@@ -1,3 +1,5 @@
+import { bubble, listen } from 'svelte/internal';
+
 /**
  * @description Dispatch event on click outside of node
  * @example <div use:clickOutside on:click_outside={handleClickOutside}>
@@ -85,4 +87,17 @@ export function getParamFromUrl(param: string) {
 
 export function delay(ms: number = 300) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export function getEventsAction(component) {
+	return (node) => {
+		const events = Object.keys(component.$$.callbacks);
+		const listeners = [];
+		events.forEach((event) => listeners.push(listen(node, event, (e) => bubble(component, e))));
+		return {
+			destroy: () => {
+				listeners.forEach((listener) => listener());
+			}
+		};
+	};
 }

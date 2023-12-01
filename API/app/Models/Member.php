@@ -33,17 +33,17 @@ class Member extends Model {
     ];
 
     // $dateFormat is used to specify the format of the date attributes
-    protected $dateFormat = 'd.m.Y H:i:s';
+    // protected $dateFormat = 'd.m.Y H:i:s';
 
     // serializeDate() is used to specify the format of the date attributes
-    protected function serializeDate(DateTimeInterface $date): string {
-        return $date->format('d.m.Y H:i:s');
-    }
+    // protected function serializeDate(DateTimeInterface $date): string {
+    //     return $date->format('d.m.Y H:i:s');
+    // }
 
     // $dates is used to specify which attributes are dates
     // so that when you retrieve the attributes, they will be Carbon objects
     // A carbon object is a wrapper around the PHP DateTime class
-    protected $dates = ['created_at', 'updated_at'];
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
 
 

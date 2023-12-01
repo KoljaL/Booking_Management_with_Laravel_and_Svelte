@@ -34,6 +34,7 @@
 		justify-content: space-between;
 		align-items: center;
 		height: var(--header-height);
+		margin-bottom: 0.5rem;
 	}
 	.left {
 		display: flex;

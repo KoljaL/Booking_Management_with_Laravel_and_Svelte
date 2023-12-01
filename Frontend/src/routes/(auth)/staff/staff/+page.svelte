@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import Modal from '$lib/components/Modal.svelte';
-	import EditStaff from '$lib/components/forms/EditStaff.svelte';
+	import EditStaff from '$lib/components/edit/EditStaff.svelte';
 
 	let model: Endpoint = 'staff';
 	let responseMessage: string = '';

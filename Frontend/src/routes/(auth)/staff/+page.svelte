@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import Modal from '$lib/components/Modal.svelte';
-	import EditBooking from '$lib/components/forms/EditBooking.svelte';
+	import EditBooking from '$lib/components/edit/EditBooking.svelte';
 	import MenuStaff from '$lib/components/MenuStaff.svelte';
 	import URLHandler from '$lib/urlHandler';
 
@@ -57,8 +57,7 @@
 			width: '20ch'
 		}
 	];
-	// const { getHash, setHash } = urlStore;
-	// console.log('hash', hash);
+
 	onMount(() => {
 		loadData(model);
 		urlHandler = new URLHandler();
