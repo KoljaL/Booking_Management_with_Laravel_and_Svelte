@@ -14,21 +14,32 @@
 	///////////////////
 	///////////////////
 	///////////////////
-	import { makeListStore } from '$lib/store';
-	let store = makeListStore('location/list');
+	// import { httpStore } from '$lib/store';
+	// let myHttpStore: any;
+	// onMount(async () => {
+	// 	myHttpStore = httpStore('location/list');
+	// 	locationList = await myHttpStore.getData();
+	// });
+	// $: console.log('myHttpStore', myHttpStore);
 
-	onMount(() => {
-		store.subscribe((data: any) => {
-			// console.log('store', data);
-			locationList = [{ key: 'All', value: '0' }, ...data];
-			// console.log('locationList', locationList);
-		});
+	///////////////////
+	///////////////////
+	///////////////////
+	///////////////////
+	import { asyncable } from '$lib/asyncStore';
+
+	const locLi = asyncable(async () => {
+		const { data } = await request('GET', 'location/list');
+		console.log('data', data);
+		return data;
 	});
-	///////////////////
-	///////////////////
-	///////////////////
-	///////////////////
+	$: console.log('locLi', $locLi);
 
+	///////////////////
+	///////////////////
+	///////////////////
+	///////////////////
+	let locationListStore: any;
 	let model: Endpoint = 'member';
 	let responseMessage: string = '';
 	let tableData: any = [];
@@ -38,7 +49,8 @@
 	let locationList: List[] = [];
 	let parameterLocation: string = '0';
 	let parameterShow: string = 'active';
-
+	// $: console.log('locationListStore', locationListStore);
+	// $: console.log('locationList', locationList);
 	const showParameter = [
 		{
 			key: 'Active',
@@ -102,7 +114,7 @@
 	];
 
 	onMount(() => {
-		loadData(model);
+		// loadData(model);
 	});
 
 	$: if (parameterShow || parameterLocation) {
@@ -144,11 +156,17 @@
 	<title>RB - Member</title>
 </svelte:head>
 
+{#await $locLi then list}
+	{JSON.stringify(list)}
+{/await}
+
 <div class="selection">
 	<Select label={'Show'} bind:value={parameterShow} options={showParameter} />
 
-	{#if $userST.is_admin && locationList.length > 1}
-		<Select label={'Location'} bind:value={parameterLocation} options={locationList} />
+	{#if $userST.is_admin}
+		{#await $locLi then list}
+			<Select label={'Location'} bind:value={parameterLocation} options={list} />
+		{/await}
 	{/if}
 
 	<button class="addMember" on:click={() => openModal(0)}>Add member</button>

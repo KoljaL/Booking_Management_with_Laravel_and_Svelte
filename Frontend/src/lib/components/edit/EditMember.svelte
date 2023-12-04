@@ -5,6 +5,7 @@
 	import JsonView from '$lib/components/debug/JsonHighlight.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import EditBooking from '$lib/components/edit/EditBooking.svelte';
+	import Select from '$lib/components/form/Select.svelte';
 
 	export let id: number = 0;
 	export let closeModal: () => void;
@@ -125,7 +126,8 @@
 			{#if member.bookings === undefined || member.bookings.length === 0}
 				<p>No bookings found</p>
 			{:else}
-				<ul>
+				<!-- <Select label={'Show'} bind:value={bookingId} options={member.bookings} /> -->
+				<!-- <ul>
 					{#each member.bookings as booking}
 						<li>
 							<button
@@ -138,7 +140,7 @@
 							</button>
 						</li>
 					{/each}
-				</ul>
+				</ul> -->
 			{/if}
 		</details>
 

@@ -1,15 +1,11 @@
 <script lang="ts">
 	import type { Endpoint } from '$lib/types';
-	// import type { Endpoint } from '../../../../lib/types';
-	import { request } from '$lib/request';
+	// import { request } from '$lib/request';
 	import DataTable from '$lib/components/DataTable.svelte';
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
-	import Modal from '$lib/components/Modal.svelte';
 	import EditBooking from '$lib/components/edit/EditBooking.svelte';
-	import MenuStaff from '$lib/components/MenuStaff.svelte';
 	import URLHandler from '$lib/urlHandler';
-
+	import { request, bookingStore } from '$lib/store';
 	let urlHandler: URLHandler;
 
 	let model: Endpoint = 'booking';
@@ -70,9 +66,7 @@
 
 	async function loadData(path: Endpoint) {
 		tableData = [];
-		console.time('loadData Bookings');
-		const { status, message, data } = await request('GET', path);
-		console.timeEnd('loadData Bookings');
+		const { status, data, message } = await request('GET', path, null, bookingStore as any);
 		if (status === 200) {
 			tableData = data;
 			// console.log('tableData', tableData);
@@ -106,11 +100,11 @@
 <svelte:head>
 	<title>RB - Booking</title>
 </svelte:head>
+
+<!-- {JSON.stringify(tableData)} -->
 <button on:click={() => openModal(0)}>New Booking</button>
 
-<!-- {model} -->
 {#if tableData.length > 0}
-	<!-- {JSON.stringify(tableData)} -->
 	{#key tableData}
 		<DataTable
 			{showTable}

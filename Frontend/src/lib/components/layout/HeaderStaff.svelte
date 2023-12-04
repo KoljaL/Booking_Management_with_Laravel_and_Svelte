@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Rocket from '$lib/icons/AnimatedRocket.svelte';
-	import { tokenST, userST } from '$lib/store';
+	import { userST } from '$lib/store';
 	import { browser } from '$app/environment';
 
 	function logout() {
-		tokenST.set('');
 		userST.set({});
-		window.location.href = 'http://localhost:5173/';
+		localStorage.removeItem('RB_user');
+		window.location.href = 'http://localhost:5173/login/';
 	}
 </script>
 
@@ -23,7 +23,9 @@
 		{/if}
 	</div>
 	<div class="right">
-		<h3>{$userST.name}</h3>
+		{#if browser}
+			<h3>{$userST.name}</h3>
+		{/if}
 		<button on:click={logout}>Logout</button>
 	</div>
 </header>

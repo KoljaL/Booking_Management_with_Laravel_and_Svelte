@@ -1,5 +1,6 @@
 <script>
 	import '$lib/style/app.css';
+	console.log('layout');
 </script>
 
 <main>

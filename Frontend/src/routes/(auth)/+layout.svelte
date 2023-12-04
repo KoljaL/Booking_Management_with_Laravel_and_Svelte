@@ -1,39 +1,34 @@
 <script lang="ts">
 	import '$lib/style/app.css';
-	import { tokenST, userST } from '$lib/store';
-	import HeaderStaff from '$lib/components/layout/HeaderStaff.svelte';
+	import { userST } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
-	// get url from page store
 	const pathname = $page.url.pathname;
-	// console.log('pathname', pathname);
+	const params = $page.url.search;
 
-	if (!$tokenST && browser) {
-		// console.log('no token');
-		// goto('./login?noToken=true');
-		// try to get token from local storage
-		const token = localStorage.getItem('RB_token');
-		const user = localStorage.getItem('RB_user');
-
-		if (token && user) {
-			const userObj = JSON.parse(user);
-			userST.set(userObj);
-			tokenST.set(token);
-			if (userObj.role === 'member') {
-				goto('/member');
-			} else if (userObj.role === 'staff') {
-				// goto('/staff');
-				goto(pathname);
-			}
-		} else {
-			goto('./login?noToken=true');
-		}
-	}
+	onMount(() => {
+		// console.log('userST', $userST.token);
+		// console.log('browser', browser);
+		// if (!$userST.token && browser) {
+		// 	const user = localStorage.getItem('RB_user');
+		// 	console.log('userST', user);
+		// 	if (user) {
+		// 		const userObj = JSON.parse(user);
+		// 		userST.set(userObj);
+		// 		if (userObj.role === 'member') {
+		// 			goto('/member');
+		// 		} else if (userObj.role === 'staff') {
+		// 			goto(pathname + params);
+		// 		}
+		// 	} else {
+		// 		goto('./login');
+		// 	}
+		// }
+	});
 </script>
-
-<HeaderStaff />
 
 <main>
 	<slot />

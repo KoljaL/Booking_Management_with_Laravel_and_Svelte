@@ -3,7 +3,7 @@
 	import type { List } from '$lib/types';
 
 	export let options: List[];
-	console.log('options', options);
+	// console.log('options', options);
 	export let value: string = '';
 	export let label: string = 'Select';
 	export let name: string = 'select';
@@ -16,6 +16,11 @@
 	$: value = options[0]?.value;
 	$: selectedKey = options[0]?.key;
 
+	// const valuesOfOptions = Object.values(options);
+	// console.log('valuesOfOptions', valuesOfOptions);
+	// const keysOfOptions = Object.keys(options);
+	// console.log('keysOfOptions', keysOfOptions);
+
 	let open: boolean = false;
 	let width =
 		options.reduce((acc, cur) => {
@@ -23,7 +28,7 @@
 		}, 0) *
 			0.75 +
 		'rem';
-	console.log('width', width);
+	// console.log('width', width);
 
 	function selectOption(event: Event) {
 		const target = event.target as HTMLElement;

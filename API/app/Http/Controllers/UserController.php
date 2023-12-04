@@ -39,7 +39,7 @@ class UserController extends Controller {
             $user->invite_token = null;
             $user->save();
             return response()->json([
-                'user' => $user,
+                'data' => $user,
                 'request' => $request->token,
                 'message' => 'User registered and password added',
             ], 201);
@@ -98,14 +98,15 @@ class UserController extends Controller {
                 'is_admin' => $userData->is_admin,
                 'location' => $userData->location,
             ];
+            $data['token'] = $token;
+
         } else {
-            return response()->json(['message' => 'User role not found'], 404);
+            return response()->json(['message' => 'User role not found', 'data' => []], 404);
         }
 
         return response()->json([
-            // 'userdata' => $userData,
-            'user' => $data,
-            'token' => $token,
+            'message' => 'Logged in',
+            'data' => $data,
         ], 201);
     }
 

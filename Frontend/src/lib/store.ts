@@ -1,96 +1,174 @@
-import type { Writable } from 'svelte/store';
-import type { UserStore } from '$types';
-import { writable, get, readable } from 'svelte/store';
-import { request } from '$lib/request';
+// import type { Writable } from 'svelte/store';
+// import type { UserStore } from '$types';
+import { writable } from 'svelte/store';
+import { asyncable } from './asyncStore';
+// import { get } from 'svelte/store';
+const URL = 'https://public.test/api/';
+// import { browser } from '$app/environment';
 
-export const tokenST: Writable<string> = writable('');
 export const userST: UserStore = writable({});
 
+const initialUserData = null;
+export const userStore = asyncable(
+	(userData) => userData,
+	(newUserData) => localStorage.setItem('RB_user', JSON.stringify(newUserData)),
+	[],
+	initialUserData
+);
+
+const initialBookingData = null;
+export const bookingStore = asyncable(
+	(bookingData) => bookingData,
+	(newBookingData) => localStorage.setItem('RB_booking', JSON.stringify(newBookingData)),
+	[],
+	initialBookingData
+);
 /**
- * @description create a store for Member List
+ * Request wrapper for the fetch API
  *
- * @param {string} token
- * @returns {object} store
+ * @param {string} method - The HTTP method
+ * @param {string} endpoint - The API endpoint
+ * @param {object} body - The request body, optional
+ * @param {object} asyncStore - The async store
+ *
+ * @returns {object} - The response object with status, message and data
+ *
+ * @example const { status, message, data } = await request('GET', 'location');
+ *
+ * @description The request function is a wrapper for the fetch API.
+ * It takes the HTTP method, the API endpoint and the request body as arguments.
+ * It returns an object with the status, message and data properties.
  */
-// const createLocationListStore = () => {
-// 	// const { subscribe, update } = writable({ data: null, timestamp: 0 });
-// 	const store = writable({ data: null, timestamp: 0 });
-// 	const { subscribe, update } = store;
-// 	// console.log('store', store);
-// 	// console.log('subscribe', subscribe);
-// 	// console.log('get', get(tokenST));
-// 	const fetchData = async () => {
-// 		try {
-// 			const { status, data, message } = await request('GET', 'location/list', null, get(tokenST));
-// 			// const { status, message, data } = await request('GET', 'member/list');
+export const request = async (method, endpoint, body = null | any, asyncStore) => {
+	console.log('asyncStore', asyncStore);
+	console.log('method', method);
+	console.log('endpoint', endpoint);
+	console.log('body', body);
+	// Strange bug where PATCH method doesn't work with FormData
+	if (method === 'PATCH') {
+		body = new URLSearchParams(body);
+	}
 
-// 			// console.log('data', data);
-// 			// console.log('status', status);
-// 			// console.log('message', message);
-// 			// Update the store with new data and current timestamp
-// 			update((state) => ({ ...state, data, timestamp: Date.now() }));
-// 		} catch (error) {
-// 			console.error('Error fetching data:', error);
-// 		}
-// 	};
+	let token = null;
 
-// 	const refreshDataIfNeeded = () => {
-// 		const { timestamp } = get(store);
-// 		// const { timestamp } = 1;
-// 		const oneMinuteAgo = Date.now() - 60000;
+	// Retrieve the user data from the async store
+	const user = await asyncStore.get();
+	console.log('user', user);
+	if (user && user.token) {
+		token = user.token;
+	}
 
-// 		if (timestamp < oneMinuteAgo) {
-// 			fetchData();
-// 		}
-// 	};
+	const url = URL + endpoint;
+	const options = {
+		method,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			Accept: 'application/json'
+		},
+		body
+	};
 
-// 	// Initial fetch
-// 	refreshDataIfNeeded();
-
-// 	return {
-// 		subscribe,
-// 		refresh: refreshDataIfNeeded
-// 	};
-// };
-
-// export const locationList = createLocationListStore();
+	try {
+		const response = await fetch(url, options);
+		const responseData = await response.json();
+		if (!response.ok) {
+			throw new Error(responseData.message || 'Something went wrong');
+		}
+		return {
+			status: response.status,
+			message: responseData.message,
+			data: responseData.data
+		};
+	} catch (error) {
+		return {
+			status: 500,
+			message: error.message,
+			data: { data: 'no data' },
+			error
+		};
+	}
+};
 
 //
 //
 // Managing fetch promises with a store • REPL • Svelte
 // https://svelte.dev/repl/dcc69ccad6c341e8b75ee38c3eac1524?version=4.2.8
 
-export function initialValue() {
-	return [];
-}
+// export function initialValue() {
+// 	return [];
+// }
 
-export function makeListStore(endpoint) {
-	const initial = initialValue();
-	const store = readable(initial, makeSubscribe(endpoint));
-	return store;
-}
+// export function makeListStore(endpoint) {
+// 	const initial = initialValue();
+// 	const store = readable(initial, makeSubscribe(endpoint));
+// 	return store;
+// }
 
-function unsubscribe() {}
+// function unsubscribe() {}
 
-function makeSubscribe(endpoint) {
-	// console.log('endpoint', endpoint);
-	return (set) => {
-		fetchListData(endpoint, set);
-		return unsubscribe;
-	};
-}
+// function makeSubscribe(endpoint) {
+// 	// console.log('endpoint', endpoint);
+// 	return (set) => {
+// 		fetchListData(endpoint, set);
+// 		return unsubscribe;
+// 	};
+// }
 
-async function fetchListData(endpoint, set) {
-	try {
-		const { status, data, message } = await request('GET', endpoint, null, get(tokenST));
-		if (status === 200) {
-			// console.log('data', data);
-			set(data);
-		} else {
-			throw new Error(message);
-		}
-	} catch (error) {
-		data.error = error;
-		set(data);
-	}
-}
+// async function fetchListData(endpoint, set) {
+// 	try {
+// 		const { status, data, message } = await request('GET', endpoint, null, get(userST).token);
+// 		if (status === 200) {
+// 			// console.log('data', data);
+// 			set(data);
+// 		} else {
+// 			throw new Error(message);
+// 		}
+// 	} catch (error) {
+// 		data.error = error;
+// 		set(data);
+// 	}
+// }
+
+// https://github.com/joshnuss/svelte-http-store
+// export function httpStore(url, options = {}) {
+// 	let set;
+// 	let data, message;
+
+// 	const initialValue = { loading: true };
+// 	const store = readable(initialValue, (setter) => {
+// 		set = setter;
+// 	});
+
+// 	get(store);
+
+// 	store.fetch = async (url, options = {}) => {
+// 		return new Promise((resolve, reject) => {
+// 			set({ loading: true, ...data });
+// 			request('GET', url, null, get(userST).token)
+// 				.then((res) => {
+// 					if (res.status === 200) {
+// 						data = res.data;
+// 						set({ loading: false, ...data });
+// 						resolve(data);
+// 					} else {
+// 						throw new Error(message);
+// 					}
+// 				})
+// 				.catch((error) => reject(error));
+// 		});
+// 	};
+
+// 	store.refresh = () => {
+// 		return new Promise((resolve, reject) => {
+// 			store
+// 				.fetch(url, options)
+// 				.then(() => resolve(store.getData()))
+// 				.catch((error) => reject(error));
+// 		});
+// 	};
+// 	store.getData = () => data;
+
+// 	store.refresh();
+
+// 	return store;
+// }

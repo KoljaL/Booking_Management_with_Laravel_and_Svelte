@@ -1,24 +1,25 @@
 <script lang="ts">
 	import MenuStaff from '$lib/components/MenuStaff.svelte';
 	import { beforeNavigate, afterNavigate, onNavigate } from '$app/navigation';
+	import HeaderStaff from '$lib/components/layout/HeaderStaff.svelte';
 	import type { Endpoint } from '$lib/types';
 	let endpoint: Endpoint = '';
-	// beforeNavigate(async (to) => {
-	// 	const dataTable = document.querySelector('.tableWrapper');
 
+	// beforeNavigate(async (to) => {
+	// 	console.log('beforeNavigate', to);
+	// 	const dataTable = document.querySelector('.tableWrapper');
 	// 	if (dataTable) {
 	// 		dataTable.classList.add('fadeOut');
 	// 	}
-	// 	// console.log('beforeNavigate', to);
 	// 	return await new Promise((resolve) => setTimeout(resolve, 1500));
 	// });
 
 	// afterNavigate((to) => {
-	// console.log('afterNavigate', to);
-	// const dataTable = document.querySelector('.tableWrapper');
-	// if (dataTable) {
-	// 	dataTable.classList.remove('fadeOut');
-	// }
+	// 	console.log('afterNavigate', to);
+	// 	const dataTable = document.querySelector('.tableWrapper');
+	// 	if (dataTable) {
+	// 		dataTable.classList.remove('fadeOut');
+	// 	}
 	// });
 
 	onNavigate((navigation) => {
@@ -28,10 +29,9 @@
 		endpoint = route?.slice(14) as Endpoint;
 		// @ts-ignore
 		// if (!document.startViewTransition) {
-		// console.log('no transition');
-		// return;
+		// 	console.log('no transition');
+		// 	return;
 		// }
-
 		// return new Promise((resolve) => {
 		// 	// @ts-ignore
 		// 	document.startViewTransition(async () => {
@@ -41,11 +41,13 @@
 		// });
 	});
 
-	// $: console.log('showModal', showModal);
 	// $: console.log('endpoint', endpoint);
 </script>
 
+<HeaderStaff />
+
 <MenuStaff {endpoint} />
+
 <slot />
 
 <style>
