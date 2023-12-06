@@ -1,13 +1,8 @@
 <script lang="ts">
 	import Rocket from '$lib/icons/AnimatedRocket.svelte';
-	import { userST } from '$lib/store';
+	import { tokenStore, userStore } from '$lib/store';
+	import Config from '$lib/components/Config.svelte';
 	import { browser } from '$app/environment';
-
-	function logout() {
-		userST.set({});
-		localStorage.removeItem('RB_user');
-		window.location.href = 'http://localhost:5173/login/';
-	}
 </script>
 
 <header>
@@ -24,9 +19,9 @@
 	</div>
 	<div class="right">
 		{#if browser}
-			<h3>{$userST.name}</h3>
+			<h3>{$tokenStore.name}</h3>
 		{/if}
-		<button on:click={logout}>Logout</button>
+		<Config />
 	</div>
 </header>
 

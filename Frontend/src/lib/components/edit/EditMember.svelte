@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ModelMember } from '$lib/types';
-	import { request } from '$lib/request';
+	import { request } from '$lib/store';
 	import { delay } from '$lib/utils';
 	import JsonView from '$lib/components/debug/JsonHighlight.svelte';
 	import Modal from '$lib/components/Modal.svelte';
@@ -173,7 +173,7 @@
 		margin-bottom: 1rem;
 		margin-top: 1rem;
 	}
-
+	/* 
 	ul {
 		padding-left: 0;
 		list-style: none;
@@ -192,7 +192,7 @@
 		white-space: nowrap;
 	}
 
-	/* button.openBooking {
+	button.openBooking {
 		color: var(--black);
 		text-decoration: none;
 		font-size: 1rem;

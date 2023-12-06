@@ -1,7 +1,13 @@
 <script lang="ts">
 	import type { ModelMenu, Endpoint } from '$lib/types';
-	import { userST } from '$lib/store';
+	import { tokenStore } from '$lib/store';
 	import { base } from '$app/paths';
+	import { slide } from 'svelte/transition';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		showNav = true;
+	});
 
 	export let endpoint: Endpoint;
 
@@ -32,6 +38,7 @@
 		}
 	];
 
+	let showNav: boolean = false;
 	let sliderWidth: number = 0;
 	let sliderLeft: number = 0;
 	let sliderClass: string = 'left';
@@ -58,23 +65,27 @@
 	}
 </script>
 
-<nav>
-	<ul>
-		{#each menuItems as item, i (i)}
-			{#if $userST.is_admin || !item.is_admin}
-				<li bind:this={menuItems[i].element}>
-					<a href="{base}/staff/{item.slug}">
-						{item.name}
-					</a>
-				</li>
-			{/if}
-		{/each}
-	</ul>
-	<div
-		class="slider {sliderClass}"
-		style="--slider-left:{sliderLeft}px; --slider-width:{sliderWidth}px; --transition-time:{transitionTime}s;"
-	/>
-</nav>
+{#if showNav}
+	<nav>
+		<ul transition:slide={{ delay: 200, axis: 'x' }}>
+			{#each menuItems as item, i (i)}
+				{#if $tokenStore.is_admin || !item.is_admin}
+					<li bind:this={menuItems[i].element}>
+						<a href="{base}/staff/{item.slug}">
+							{item.name}
+						</a>
+					</li>
+				{/if}
+			{/each}
+		</ul>
+		<div
+			class="slider {sliderClass}"
+			style="--slider-left:{sliderLeft}px; --slider-width:{sliderWidth}px; --transition-time:{transitionTime}s;"
+		/>
+	</nav>
+{:else}
+	<nav></nav>
+{/if}
 
 <style>
 	nav {
@@ -159,6 +170,17 @@
 		box-shadow: var(--box-shadow-after), var(--box-shadow);
 		/* z-index: 1; */
 		margin: 0;
+		opacity: 0;
+		animation: fadein 0.5s 0.5s ease-in-out forwards;
+	}
+
+	@keyframes fadein {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
 	}
 	.slider.left {
 		border-radius: var(--border-radius-m) var(--border-radius-s) var(--border-radius-s)

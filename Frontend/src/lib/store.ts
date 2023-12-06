@@ -1,28 +1,112 @@
-// import type { Writable } from 'svelte/store';
-// import type { UserStore } from '$types';
 import { writable } from 'svelte/store';
 import { asyncable } from './asyncStore';
-// import { get } from 'svelte/store';
-const URL = 'https://public.test/api/';
-// import { browser } from '$app/environment';
-
+import { goto } from '$app/navigation';
+import { browser } from '$app/environment';
+import { base as baseUrl } from '$app/paths';
 export const userST: UserStore = writable({});
+export const tokenStore: UserStore = writable({});
+// export const tokenStore = writable('');
 
-const initialUserData = null;
-export const userStore = asyncable(
-	(userData) => userData,
-	(newUserData) => localStorage.setItem('RB_user', JSON.stringify(newUserData)),
-	[],
-	initialUserData
-);
+const URL = 'https://public.test/api/';
 
-const initialBookingData = null;
-export const bookingStore = asyncable(
-	(bookingData) => bookingData,
-	(newBookingData) => localStorage.setItem('RB_booking', JSON.stringify(newBookingData)),
-	[],
-	initialBookingData
-);
+interface ResponseData<T> {
+	status: number;
+	message: string;
+	data: T;
+}
+
+/**
+ * USER store
+ *
+ * @description The user store is an asyncable store that stores the user data.
+ * It is used to store the user data in the local storage.
+ *
+ */
+
+export function userStore(method, endpoint, body: unknown = null) {
+	return asyncable(async () => {
+		return await request(method, endpoint, body);
+	});
+}
+
+/**
+ * BOOKING store
+ *
+ * @description The booking store is an asyncable store that stores the booking data.
+ * It is used to store the booking data in the local storage.
+ *
+ */
+export function bookingStore(method, endpoint, body: unknown = null) {
+	return asyncable(async () => {
+		return await request(method, endpoint, body);
+	});
+}
+
+/**
+ * MEMBER store
+ *
+ * @description The member store is an asyncable store that stores the member data.
+ * It is used to store the member data in the local storage.
+ *
+ */
+export function memberStore(method, endpoint, body: unknown = null) {
+	return asyncable(async () => {
+		return await request(method, endpoint, body);
+	});
+}
+
+/**
+ * STAFF store
+ *
+ * @description The staff store is an asyncable store that stores the staff data.
+ * It is used to store the staff data in the local storage.
+ *
+ */
+export function staffStore(method, endpoint, body: unknown = null) {
+	return asyncable(async () => {
+		return await request(method, endpoint, body);
+	});
+}
+
+/**
+ * LOCATION store
+ *
+ * @description The location store is an asyncable store that stores the location data.
+ * It is used to store the location data in the local storage.
+ *
+ */
+export function locationStore(method, endpoint, body: unknown = null) {
+	return asyncable(async () => {
+		return await request(method, endpoint, body);
+	});
+}
+
+/**
+ * LOCATION LIST store
+ *
+ * @description The location list store is an asyncable store that stores the location data. list
+ * It is used to store the location data in the local storage. list
+ *
+ */
+export function locationListStore(method, endpoint, body: unknown = null) {
+	return asyncable(async () => {
+		return await request(method, endpoint, body);
+	});
+}
+
+/**
+ * MEMBER LIST store
+ *
+ * @description The member list store is an asyncable store that stores the member data. list
+ * It is used to store the member data in the local storage. list
+ *
+ */
+export function memberListStore(method, endpoint, body: unknown = null) {
+	return asyncable(async () => {
+		return await request(method, endpoint, body);
+	});
+}
+
 /**
  * Request wrapper for the fetch API
  *
@@ -39,26 +123,39 @@ export const bookingStore = asyncable(
  * It takes the HTTP method, the API endpoint and the request body as arguments.
  * It returns an object with the status, message and data properties.
  */
-export const request = async (method, endpoint, body = null | any, asyncStore) => {
-	console.log('asyncStore', asyncStore);
-	console.log('method', method);
-	console.log('endpoint', endpoint);
-	console.log('body', body);
+// export const request = async (method, endpoint, body = null | FormData, asyncStore) => {
+
+export const request = async <T>(
+	method: string,
+	endpoint: string,
+	body: object | FormData | null = null
+): Promise<ResponseData<T>> => {
+	console.log('\nREQUEST', { endpoint, method, body });
+
+	// endpoints no auth required
+	const noAuthEndpoints = ['login', 'register', 'password/email', 'password/reset'];
+
 	// Strange bug where PATCH method doesn't work with FormData
 	if (method === 'PATCH') {
 		body = new URLSearchParams(body);
 	}
 
-	let token = null;
+	// const token = tokenStore.get();
+	let token;
+	tokenStore.subscribe((value) => {
+		token = value.token;
+		// console.log('Current value of tokenStore:', token);
+	});
 
-	// Retrieve the user data from the async store
-	const user = await asyncStore.get();
-	console.log('user', user);
-	if (user && user.token) {
-		token = user.token;
+	if (!noAuthEndpoints.includes(endpoint) && !token && browser) {
+		goto(`${baseUrl}/login`);
+		return {
+			status: 404,
+			message: 'Auth required',
+			data: { data: 'no data' }
+		};
 	}
 
-	const url = URL + endpoint;
 	const options = {
 		method,
 		headers: {
@@ -69,11 +166,15 @@ export const request = async (method, endpoint, body = null | any, asyncStore) =
 	};
 
 	try {
-		const response = await fetch(url, options);
+		const response = await fetch(URL + endpoint, options);
 		const responseData = await response.json();
 		if (!response.ok) {
 			throw new Error(responseData.message || 'Something went wrong');
 		}
+
+		// Set the data to the provided store
+		// dataStore.set(responseData.data);
+
 		return {
 			status: response.status,
 			message: responseData.message,
@@ -88,6 +189,24 @@ export const request = async (method, endpoint, body = null | any, asyncStore) =
 		};
 	}
 };
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 //
 //

@@ -27,6 +27,7 @@ export interface UserStore {
 	location: unknown;
 	name: string;
 	role: string;
+	timestamp: number;
 }
 
 export interface ModelMember {

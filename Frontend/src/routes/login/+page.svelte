@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { request, userStore } from '$lib/store';
-	// import { request } from '$lib/request';
+	import { tokenStore, userStore } from '$lib/store';
 
 	let form: HTMLFormElement;
 	let valid = false;
@@ -11,13 +10,14 @@
 
 	async function login() {
 		const formData = new FormData(form);
-		const { status, data, message } = await request('POST', 'login', formData, userStore as any);
-		// console.log('login', status, data, message);
+		const userAsyncable = userStore('POST', 'login', formData);
+		const { status, data, message } = await userAsyncable.get();
 		if (status === 201) {
-			data.timestamp = Date.now();
-			if (data.role === 'member') {
+			let userData = data as { token: string; role: string };
+			tokenStore.set(data);
+			if ((userData.role as string) === 'member') {
 				goto('/member');
-			} else if (data.role === 'staff') {
+			} else if (userData.role === 'staff') {
 				goto('/staff');
 			}
 		} else {
@@ -49,6 +49,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>RB - Login</title>
+</svelte:head>
 <div class="loginWrapper">
 	<div class="buttons">
 		<button on:click={() => loginAs('admin')}>Admin</button>

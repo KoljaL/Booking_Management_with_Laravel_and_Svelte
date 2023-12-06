@@ -11,7 +11,7 @@ use App\Models\Member;
 class BookingController extends Controller {
 
 
-    /**
+    /** 
      * Bookings INDEX
      * 
      * @param \Illuminate\Http\Request $request

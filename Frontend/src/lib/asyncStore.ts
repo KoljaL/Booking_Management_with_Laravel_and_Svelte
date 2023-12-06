@@ -84,6 +84,10 @@ export function asyncable(getter, setter = () => {}, stores = []) {
 			}
 		},
 		get() {
+			// console.log(
+			// 	'get',
+			// 	store$.subscribe((value) => console.log('value', value))
+			// );
 			return get(store$);
 		}
 	};

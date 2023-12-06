@@ -1,56 +1,25 @@
 <script lang="ts">
-	import type { Endpoint, List } from '$lib/types';
-	import { request } from '$lib/request';
+	import type { Endpoint, List, ModelMember } from '$lib/types';
 	import DataTable from '$lib/components/DataTable.svelte';
-	import { userST } from '$lib/store';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import JsonView from '$lib/components/debug/JsonView.svelte';
 	import EditMember from '$lib/components/edit/EditMember.svelte';
 	import Select from '$lib/components/form/Select.svelte';
+	import { browser } from '$app/environment';
 	import { delay } from '$lib/utils';
+	import { locationListStore, tokenStore, memberStore } from '$lib/store';
 
-	///////////////////
-	///////////////////
-	///////////////////
-	///////////////////
-	// import { httpStore } from '$lib/store';
-	// let myHttpStore: any;
-	// onMount(async () => {
-	// 	myHttpStore = httpStore('location/list');
-	// 	locationList = await myHttpStore.getData();
-	// });
-	// $: console.log('myHttpStore', myHttpStore);
-
-	///////////////////
-	///////////////////
-	///////////////////
-	///////////////////
-	import { asyncable } from '$lib/asyncStore';
-
-	const locLi = asyncable(async () => {
-		const { data } = await request('GET', 'location/list');
-		console.log('data', data);
-		return data;
-	});
-	$: console.log('locLi', $locLi);
-
-	///////////////////
-	///////////////////
-	///////////////////
-	///////////////////
-	let locationListStore: any;
 	let model: Endpoint = 'member';
 	let responseMessage: string = '';
 	let tableData: any = [];
 	let showModal = false;
 	let showTable = false;
 	let id: number = 0;
-	let locationList: List[] = [];
+	let locationList: List[] = [{ key: 'All', value: '0' }];
 	let parameterLocation: string = '0';
 	let parameterShow: string = 'active';
-	// $: console.log('locationListStore', locationListStore);
-	// $: console.log('locationList', locationList);
+
 	const showParameter = [
 		{
 			key: 'Active',
@@ -115,13 +84,26 @@
 
 	onMount(() => {
 		// loadData(model);
+		loadLocationList();
 	});
 
-	$: if (parameterShow || parameterLocation) {
-		loadData(model);
+	$: if ((parameterShow && browser) || (parameterLocation && browser)) {
+		setTimeout(() => {
+			loadData(model);
+		}, 100);
 	}
 
-	async function loadData(path: string) {
+	async function loadLocationList() {
+		const locationListAsyncable = locationListStore('GET', 'location/list', null);
+		const { status, data, message } = await locationListAsyncable.get();
+		if (status === 200) {
+			locationList = [{ key: 'All', value: '0' }, ...(data as List[])];
+		} else {
+			console.error('LocationList loading failed', message);
+		}
+	}
+
+	async function loadData(path: Endpoint) {
 		if (parameterLocation !== '0') {
 			path += '?location=' + parameterLocation;
 		}
@@ -129,14 +111,15 @@
 			path += parameterLocation !== '0' ? '&show=' + parameterShow : '?show=' + parameterShow;
 		}
 		showTable = false;
-		const { status, message, data } = await request('GET', path);
+		const memberAsyncable = memberStore('GET', path, null);
+		const { status, data, message } = await memberAsyncable.get();
 		if (status === 200) {
 			tableData = data;
 			responseMessage = message;
 			showTable = true;
 		} else {
-			tableData = [];
 			responseMessage = 'Error: ' + message;
+			showTable = true;
 			console.error('TableData loading failed', message);
 		}
 	}
@@ -156,17 +139,11 @@
 	<title>RB - Member</title>
 </svelte:head>
 
-{#await $locLi then list}
-	{JSON.stringify(list)}
-{/await}
-
 <div class="selection">
 	<Select label={'Show'} bind:value={parameterShow} options={showParameter} />
 
-	{#if $userST.is_admin}
-		{#await $locLi then list}
-			<Select label={'Location'} bind:value={parameterLocation} options={list} />
-		{/await}
+	{#if $tokenStore.is_admin && locationList.length > 0}
+		<Select label={'Location'} bind:value={parameterLocation} options={locationList} />
 	{/if}
 
 	<button class="addMember" on:click={() => openModal(0)}>Add member</button>
@@ -184,6 +161,19 @@
 			getRowId={openModal}
 		/>
 	{/key}
+{:else if showTable && tableData.length === 0}
+	<p class="noDataMessage">
+		<span>
+			No data for: {model}
+		</span>
+		<span>
+			Location: {locationList.find((item) => item.value === parameterLocation)?.key}
+		</span>
+		<span>
+			Show: {parameterShow}
+		</span>
+		<span>{responseMessage}</span>
+	</p>
 {/if}
 
 {#if showModal}
@@ -198,7 +188,20 @@
 		margin-bottom: 1rem;
 	}
 	.addMember {
-		margin-right: 0; /* Remove margin for the last child */
-		margin-left: auto; /* Push the last child to the right */
+		margin-right: 0;
+		margin-left: auto;
 	}
+	.noDataMessage {
+		padding-top: 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	/* .noDataMessage span {
+		padding-top: 0.5rem;
+		font-weight: bold;
+		display: block;
+		font-size: 1.2rem;
+	} */
 </style>

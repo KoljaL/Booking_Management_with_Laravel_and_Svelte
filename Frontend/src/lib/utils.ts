@@ -8,17 +8,47 @@ import { bubble, listen } from 'svelte/internal';
  *
  * @returns {object} destroy
  */
-export function clickOutside(node: HTMLElement, handler: () => void): { destroy: () => void } {
-	const onClick = (event: MouseEvent) =>
-		node && !node.contains(event.target as HTMLElement) && !event.defaultPrevented && handler();
-	document.addEventListener('click', onClick, true);
+export function clickOutside(node: HTMLElement) {
+	const handleClick = (event: MouseEvent) => {
+		if (node && !node.contains(event.target as HTMLElement) && !event.defaultPrevented) {
+			node.dispatchEvent(new CustomEvent('click_outside', { detail: { node } }));
+		}
+	};
+	document.addEventListener('click', handleClick, true);
 	return {
 		destroy() {
-			document.removeEventListener('click', onClick, true);
+			document.removeEventListener('click', handleClick, true);
 		}
 	};
 }
 
+import type { ActionReturn } from 'svelte/action';
+
+interface Attributes {
+	'on:clickoutside'?: (e: CustomEvent<void>) => void;
+}
+
+type Callback = () => unknown;
+
+export function clickOutsideAction(
+	node: HTMLElement,
+	callback?: Callback
+): ActionReturn<Record<string, never>, Attributes> {
+	const handleClick = (event: Event) => {
+		if (event.target !== null && !node.contains(event.target as Node)) {
+			node.dispatchEvent(new CustomEvent('clickoutside'));
+			callback?.();
+		}
+	};
+
+	const stop = listen(document, 'click', handleClick, true);
+
+	return {
+		destroy() {
+			stop();
+		}
+	};
+}
 /**
  * @description format datetime to dd.mm.yyyy hh:mm
  *

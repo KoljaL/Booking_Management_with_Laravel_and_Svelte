@@ -12,6 +12,7 @@
 	let tableWrapper: HTMLDivElement;
 	let rowCount = tableData.length;
 	onMount(() => {
+		// console.log('tableData', tableData);
 		createTable(tableData);
 	});
 	// console.log('tableData', tableData);
