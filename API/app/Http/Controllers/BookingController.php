@@ -21,19 +21,24 @@ class BookingController extends Controller {
      * @path GET api/bookings
      */
     public function index(Request $request) {
-        $date = request()->date ?? null;
-        $show = request()->show ?? null;
         try {
-            // dd($request->all());
-            $bookings = Booking::byAccessLevel()->showBookings($show, $date);
-            // dd($bookings);
+            // $bookings = Booking::filter($request->all())->get();
+            // $count_bookings = $bookings->count();
+
+            // return response()->json([
+            //     'message' => $count_bookings . ' Bookings filtered by',
+            //     'count_bookings' => $count_bookings,
+            //     'data' => $bookings
+            // ], 200);
+            $filters = $request->all();
+            $bookings = Booking::filter($filters)->get();
             $count_bookings = $bookings->count();
 
-            $messageDate = $date ? ' date: ' . $date : '';
-            $messageShow = $show ? ' show: ' . $show : '';
+            // Generate a dynamic message based on applied filters
+            $filterMessage = $this->generateFilterMessage($filters, $count_bookings);
 
             return response()->json([
-                'message' => 'All Bookings' . $messageDate . $messageShow,
+                'message' => $filterMessage,
                 'count_bookings' => $count_bookings,
                 'data' => $bookings
             ], 200);
@@ -41,6 +46,40 @@ class BookingController extends Controller {
         } catch (\Exception $th) {
             return response()->json(['message' => 'bookings not found or no bookings associated staff.', 'error' => $th->getMessage()], 404);
         }
+    }
+
+    private function generateFilterMessage($filters, $count_bookings) {
+        $message = $count_bookings . ' Bookings ';
+
+        if (isset($filters['date'])) {
+            $message .= ' on: ' . $filters['date'] . ',';
+        } else {
+            $message .= ' on: ' . date('Y-m-d') . ',';
+        }
+
+        if (isset($filters['member']) || isset($filters['show']) || isset($filters['location'])) {
+            $message .= ' filtered by';
+        }
+
+        if (isset($filters['member'])) {
+            $message .= ' Member ID: ' . $filters['member'] . ',';
+        }
+
+        if (isset($filters['show'])) {
+            $message .= ' Show: ' . $filters['show'] . ',';
+        }
+
+        if (isset($filters['location'])) {
+            $message .= ' Location ID: ' . $filters['location'] . ',';
+        }
+
+        // Remove trailing comma and space
+        $message = rtrim($message, ', ');
+
+        // Add a period at the end
+        $message .= '.';
+
+        return $message;
     }
     /**
      * Bookings SHOW
@@ -198,3 +237,11 @@ class BookingController extends Controller {
         }
     }
 }
+
+
+// $date = request()->date ?? null;
+// $show = request()->show ?? null;
+// dd($request->all());
+// $bookings = Booking::byAccessLevel()->showBookings($show, $date);
+// $messageDate = $date ? ' date: ' . $date : '';
+// $messageShow = $show ? ' show: ' . $show : '';

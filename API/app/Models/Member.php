@@ -170,9 +170,25 @@ class Member extends Model {
      * @description This scope is used for the Dropdown 
      */
     public function scopeShowMembersList($query) {
-        return $query->where('active', true)->get(['id', 'name']);
+        return $query->where('active', true)->get(['id', 'name'])
+            ->map(function ($member) {
+                return [
+                    'key' => $member->name,
+                    'value' => (string) $member->id,
+                ];
+            });
     }
-
+    public function scopeShowLocationsList($query) {
+        // return $query->get(['id', 'city']);
+        // return $query->get(['id as value', 'city as key']);
+        return $query->get(['id', 'city'])
+            ->map(function ($location) {
+                return [
+                    'key' => $location->city,
+                    'value' => (string) $location->id,
+                ];
+            });
+    }
 
 }
 

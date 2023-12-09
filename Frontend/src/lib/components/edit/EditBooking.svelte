@@ -1,22 +1,19 @@
 <script lang="ts">
-	import type { ModelBooking, ModelMember } from '$lib/types';
-	import { request } from '$lib/request';
+	import type { ModelBooking, ModelMember, List } from '$lib/types';
+	// import { request } from '$lib/request';
 	import JsonView from '$lib/components/debug/JsonView.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import EditMember from '$lib/components/edit/EditMember.svelte';
 	import { delay } from '$lib/utils';
-	import { userST } from '$lib/store';
+	import { request, memberListStore } from '$lib/store';
 	export let id: number;
 	export let closeModal: () => void;
 
-	let memberList: ModelMember[] = [];
-
-	// $: console.log('locationList', $locationList);
-
 	async function getMemberList() {
-		const { status, message, data } = await request('GET', 'member/list');
+		const locationListAsyncable = memberListStore('GET', 'member/list', null);
+		const { status, data, message } = await locationListAsyncable.get();
 		if (status === 200) {
-			return data;
+			memberList = data as ModelMember[];
 		} else {
 			console.error('Member list loading failed', message);
 			return [];
@@ -30,6 +27,7 @@
 	let form: HTMLFormElement;
 	let formMessage: string = '';
 	let modalTitle: string = 'Add Booking';
+	let memberList: ModelMember[] = [];
 	let booking: ModelBooking;
 	const emptyBooking: ModelBooking = {
 		id: 0,
@@ -58,13 +56,14 @@
 	 * Get booking data from database.
 	 */
 	const getBookingData = async (id: number) => {
+		console.log('getBookingData', id);
 		if (id === 0) {
 			showModal = true;
-			memberList = await getMemberList();
-			console.log('memberList', memberList);
+			getMemberList();
 			return emptyBooking as ModelBooking;
 		}
 		const { status, message, data } = await request('GET', 'booking/' + id);
+		// console.log('getBookingData', status, message, data);
 		if (status === 200) {
 			setTimeout(() => {
 				showModal = true;
@@ -138,27 +137,7 @@
 		memberId = id;
 	}
 
-	const members = [
-		{
-			id: 1,
-			name: 'John Doe'
-		},
-		{
-			id: 2,
-			name: 'Jane Doe'
-		}
-	];
-
-	const locations = [
-		{
-			id: 1,
-			name: 'Location 1'
-		},
-		{
-			id: 2,
-			name: 'Location 2'
-		}
-	];
+	$: console.log('EditBooking', id);
 </script>
 
 {#await getBookingData(id) then booking}
@@ -191,26 +170,14 @@
 				</label>
 			{/if}
 
-			{#if $userST.is_admin}
-				<label class="locationLabel">
-					Location
-					<select name="location_id">
-						<option value="0">Select location</option>
-						{#each locations as location}
-							<option value={location.id}>{location.name}</option>
-						{/each}
-					</select>
-				</label>
-			{/if}
-
 			<label>
 				Date
 				<input type="text" name="date" value={booking.date} />
 			</label>
-			<label>
+			<!-- <label>
 				Time
 				<input type="text" name="time" value={booking.time} />
-			</label>
+			</label> -->
 			<label>
 				Slots
 				<input type="text" name="slots" value={booking.slots} />
@@ -236,12 +203,10 @@
 			<input type="hidden" name="id" value={booking.id} />
 		</form>
 
-		<!-- <div slot="footer"> -->
 		<svelte:fragment slot="footer">
 			<JsonView json={booking} />
 			<button type="button" on:click={() => storeBookingData(booking.id)}>Submit</button>
 			<button type="button" on:click={() => deleteBookingData(booking.id)}>Delete</button>
-			<!-- </div> -->
 		</svelte:fragment>
 		<div slot="beyondFooter">
 			{#if formMessage}

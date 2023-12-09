@@ -130,7 +130,7 @@ export const request = async <T>(
 	endpoint: string,
 	body: object | FormData | null = null
 ): Promise<ResponseData<T>> => {
-	console.log('\nREQUEST', { endpoint, method, body });
+	// console.log('\nREQUEST', { endpoint, method, body });
 
 	// endpoints no auth required
 	const noAuthEndpoints = ['login', 'register', 'password/email', 'password/reset'];

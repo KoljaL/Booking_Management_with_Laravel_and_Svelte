@@ -1,13 +1,16 @@
 <script lang="ts">
-	import type { Endpoint, List } from '$lib/types';
-	import DataTable from '$lib/components/DataTable.svelte';
+	import type { Endpoint, List, TableColumn } from '$lib/types';
 	import { onMount } from 'svelte';
-	import EditBooking from '$lib/components/edit/EditBooking.svelte';
-	import URLHandler from '$lib/urlHandler';
-	import type { Asyncable } from '$lib/asyncStore';
-	import Select from '$lib/components/form/Select.svelte';
-	import { locationListStore, tokenStore, bookingStore } from '$lib/store';
+	import { locationListStore, tokenStore, bookingStore, memberListStore } from '$lib/store';
 	import { browser } from '$app/environment';
+	import URLHandler from '$lib/urlHandler';
+	import Select from '$lib/components/form/Select.svelte';
+	import DataTable from '$lib/components/DataTable.svelte';
+	import EditBooking from '$lib/components/edit/EditBooking.svelte';
+	import SveltyPicker, { config } from 'svelty-picker';
+	import Plus from '$lib/icons/Plus.svelte';
+	import { de, jp } from 'svelty-picker/i18n';
+	// config.i18n = de;
 	let urlHandler: URLHandler;
 	let model: Endpoint = 'booking';
 	let responseMessage: string = '';
@@ -16,17 +19,14 @@
 	let showTable = false;
 	let id: number;
 	let locationList: List[] = [{ key: 'All', value: '0' }];
-	let parameterLocation: string = '0';
-	let parameterShow: string = 'active';
+	let memberList: List[] = [{ key: 'All', value: '0' }];
+	// let parameterLocation: string = '0';
+	// let parameterShow: string = 'active';
 
 	const showParameter = [
 		{
 			key: 'Active',
-			value: 'active'
-		},
-		{
-			key: 'Inactive',
-			value: 'inactive'
+			value: ''
 		},
 		{
 			key: 'Deleted',
@@ -38,54 +38,76 @@
 		}
 	];
 
-	const tableColumns = [
+	const tableColumns: TableColumn[] = [
 		{
 			header: 'Id',
 			accessor: 'id',
-			width: '4ch'
+			width: '6ch',
+			type: 'number',
+			sortOrder: null
 		},
 		{
 			header: 'Member',
 			accessor: 'member_name',
-			width: '20ch'
+			width: '20ch',
+			type: 'string',
+			sortOrder: null
 		},
 		{
 			header: 'Date',
 			accessor: 'date',
-			width: '11ch'
-		},
-		{
-			header: 'Time',
-			accessor: 'time',
-			width: '7ch'
+			width: '20ch',
+			type: 'date',
+			sortOrder: null
 		},
 		{
 			header: 'Slots',
 			accessor: 'slots',
-			width: '5ch'
+			width: '5ch',
+			type: 'number',
+			sortOrder: null
 		},
 		{
 			header: 'Location',
 			accessor: 'location_city',
-			width: '16ch'
+			width: '16ch',
+			type: 'string',
+			sortOrder: null
 		},
 
 		{
 			header: 'Created',
 			accessor: 'created_at',
-			width: '20ch'
+			width: '20ch',
+			type: 'date',
+			sortOrder: null
 		}
 	];
 
-	$: if ((parameterShow && browser) || (parameterLocation && browser)) {
+	type FilterParameter = {
+		show: 'active' | 'inactive' | 'deleted' | 'all' | null;
+		date: string | undefined;
+		location: string | number | null;
+		member: string | number | null;
+	};
+
+	let filterParameter: FilterParameter = {
+		show: null,
+		date: new Date().toISOString().slice(0, 10),
+		location: null,
+		member: null
+	};
+	// $: console.log('filterParameter', filterParameter);
+
+	$: if (filterParameter && browser) {
 		setTimeout(() => {
 			loadData(model);
 		}, 100);
 	}
 
 	onMount(async () => {
-		// loadData(model);
 		loadLocationList();
+		loadMemberList();
 
 		urlHandler = new URLHandler();
 		const modelId = urlHandler.read('bid');
@@ -94,6 +116,16 @@
 			openModal(id);
 		}
 	});
+
+	async function loadMemberList() {
+		const memberListAsyncable = memberListStore('GET', 'member/list', null);
+		const { status, data, message } = await memberListAsyncable.get();
+		if (status === 200) {
+			memberList = [{ key: 'All', value: '0' }, ...(data as List[])];
+		} else {
+			console.error('MemberList loading failed', message);
+		}
+	}
 
 	async function loadLocationList() {
 		const locationListAsyncable = locationListStore('GET', 'location/list', null);
@@ -106,14 +138,9 @@
 	}
 
 	async function loadData(path: Endpoint) {
-		if (parameterLocation !== '0') {
-			path += '?location=' + parameterLocation;
-		}
-		if (parameterShow !== 'all') {
-			path += parameterLocation !== '0' ? '&show=' + parameterShow : '?show=' + parameterShow;
-		}
-		// tableData = [];
 		showTable = false;
+		path += addFilterParameter(filterParameter);
+
 		const bookingAsyncable = bookingStore('GET', path, null);
 		const { status, data, message } = await bookingAsyncable.get();
 		if (status === 200) {
@@ -128,6 +155,26 @@
 		}
 	}
 
+	function addFilterParameter(filterParameter: FilterParameter): string {
+		const params = new URLSearchParams();
+		if (filterParameter.show) {
+			params.set('show', filterParameter.show);
+		}
+		if (filterParameter.date && filterParameter.date !== 'All') {
+			params.set('date', filterParameter.date);
+		}
+		if (filterParameter.location && filterParameter.location !== '0') {
+			params.set('location', filterParameter.location as string);
+		}
+		if (filterParameter.member && filterParameter.member !== '0') {
+			params.set('member', filterParameter.member as string);
+		}
+		const queryString = params.toString();
+		const path = queryString ? `?${queryString}` : '';
+		// console.log('path', path);
+		return path;
+	}
+
 	function openModal(rowId: number) {
 		id = rowId;
 		showModal = true;
@@ -135,15 +182,31 @@
 	}
 
 	function closeModal() {
-		// console.log('closeModal');
 		showModal = false;
 		urlHandler.remove('bid');
 	}
 
+	// $: if (filterParameter.date === null) {
+	// console.log('filterParameter.date', filterParameter.date);
+	// filterParameter.date = 'All';
+	// // click on body to close datepicker
+	// // document.body.click();
+	// const input = document.querySelector(
+	// 	'.std-component-wrap input[name="date_input"]'
+	// ) as HTMLInputElement;
+	// console.log('input', input);
+	// input.readOnly = false;
+	// input?.value === 'All';
+	// console.log('input', input);
+	// setTimeout(() => {
+	// 	document.body.click();
+	// }, 100);
+	// }
+	// $: console.log('filterParameter.date', filterParameter.date);
+
 	// $: console.log('showModal', showModal);
 	// $: console.log('endpoint', endpoint);
 	// $: console.log('pageTitle', pageTitle);
-	// $: console.log('modelForm', modelForm);
 </script>
 
 <svelte:head>
@@ -152,13 +215,24 @@
 
 <!-- {JSON.stringify(tableData)} -->
 <div class="selection">
-	<Select label={'Show'} bind:value={parameterShow} options={showParameter} />
+	<Select label={'Show'} bind:value={filterParameter.show} options={showParameter} />
+
+	<label for="date">
+		Date
+		<SveltyPicker
+			bind:value={filterParameter.date}
+			displayFormat="j. n. Y"
+			displayFormatType="php"
+		/>
+	</label>
+
+	<Select label={'Member'} bind:value={filterParameter.member} options={memberList} />
 
 	{#if $tokenStore.is_admin && locationList.length > 0}
-		<Select label={'Location'} bind:value={parameterLocation} options={locationList} />
+		<Select label={'Location'} bind:value={filterParameter.location} options={locationList} />
 	{/if}
 
-	<button class="addBooking" on:click={() => openModal(0)}>Add Booking</button>
+	<button class="addBooking" on:click={() => openModal(0)}><Plus /></button>
 </div>
 
 {#if tableData.length > 0}
@@ -200,11 +274,20 @@
 	.addBooking {
 		margin-right: 0;
 		margin-left: auto;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 	.noDataMessage {
 		padding-top: 1rem;
 		display: flex;
 		flex-direction: column;
+		gap: 0.5rem;
+	}
+	label {
+		display: flex;
+		align-items: center;
+		flex-wrap: nowrap;
 		gap: 0.5rem;
 	}
 </style>

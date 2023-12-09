@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\AccessControlTrait;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Builder;
 
 class Booking extends Model {
     use HasFactory, SoftDeletes, AccessControlTrait;
@@ -60,39 +61,85 @@ class Booking extends Model {
 
 
 
-
     //
     // SCOPES
     //
-    public function scopeShowBookings($query, $show, $date) {
-        // dd($show);
-        // $date = request()->date ?? null;
-        // $show = request()->show ?? null;
-        // dd($date, $show);
+    public function scopeShowMembers($query, $request) {
+        $show = $request->show ?? 'active';
+        $location_id = $request->location;
 
-        switch ($show) {
-            case 'all':
-                return $query->withTrashed()->showBookingsByDate($date);
-            case 'deleted':
-                return $query->onlyTrashed()->showBookingsByDate($date);
-            default:
-                return $query->showBookingsByDate($date);
+        if ($show) {
+            switch ($show) {
+                case 'active':
+                    $query->where('active', true);
+                    break;
+                case 'inactive':
+                    $query->where('active', false);
+                    break;
+                case 'all':
+                    $query->withTrashed();
+                    break;
+                case 'deleted':
+                    $query->onlyTrashed();
+                    break;
+            }
         }
+
+        // Apply 'location_id' filter
+        if ($location_id) {
+            // dd($location_id);
+            $query->where('location_id', $location_id);
+        }
+
+        // Retrieve the results
+        return $query->get();
+    }
+    //
+    // SCOPES
+    //
+
+    public function scopeFilter(Builder $query, $filters) {
+        if (!isset($filters['date'])) {
+            // $filters['date'] = 'today';
+        }
+        if (isset($filters['date'])) {
+            switch ($filters['date']) {
+                case 'upcoming':
+                    $query->whereDate('date', '>=', today());
+                    break;
+                case 'today':
+                    $query->whereDate('date', today());
+                    break;
+                default:
+                    $query->whereDate('date', $filters['date']);
+            }
+        }
+
+        if (isset($filters['member'])) {
+            $query->where('member_id', $filters['member']);
+        }
+
+        if (isset($filters['show'])) {
+            switch ($filters['show']) {
+                case 'active':
+                    $query; //->where('state', 1);
+                    break;
+                case 'all':
+                    $query->withTrashed();
+                    break;
+                case 'deleted':
+                    $query->onlyTrashed();
+                    break;
+            }
+        }
+
+        if (isset($filters['location'])) {
+            $query->where('location_id', $filters['location']);
+        }
+
+        return $query;
     }
 
-    public function scopeShowBookingsByDate($query, $date) {
-        // return $query->whereDate('date', $date)->get();
-        switch ($date) {
-            case null:
-                return $query->get();
-            case 'today':
-                return $query->whereDate('date', date('Y-m-d'))->get();
-            case 'upcoming':
-                return $query->whereDate('date', '>=', date('Y-m-d'))->get();
-            default:
-                return $query->whereDate('date', $date)->get();
-        }
-    }
 
     // protected $dateFormat = 'd.m.Y H:i:s';
 
@@ -101,6 +148,38 @@ class Booking extends Model {
     // }
 
 }
+
+
+// public function scopeShowBookings($query, $show, $date) {
+//     // public function scopeShowBookings($query, $show, $date, $location_id, $member_id, $staff_id) {
+//     // dd($show);
+//     // $date = request()->date ?? null;
+//     // $show = request()->show ?? null;
+//     // dd($date, $show);
+//     switch ($show) {
+//         case 'all':
+//             return $query->withTrashed()->showBookingsByDate($date);
+//         case 'deleted':
+//             return $query->onlyTrashed()->showBookingsByDate($date);
+//         default:
+//             return $query->showBookingsByDate($date);
+//     }
+// }
+// public function scopeShowBookingsByDate($query, $date) {
+//     // return $query->whereDate('date', $date)->get();
+//     switch ($date) {
+//         case null:
+//             return $query->get();
+//         case 'today':
+//             return $query->whereDate('date', date('Y-m-d'))->get();
+//         case 'upcoming':
+//             return $query->whereDate('date', '>=', date('Y-m-d'))->get();
+//         default:
+//             return $query->whereDate('date', $date)->get();
+//     }
+// }
+
+
 
 // get the date from the $show parameter
 // if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $show)) {

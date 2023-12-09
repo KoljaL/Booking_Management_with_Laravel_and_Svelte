@@ -36,11 +36,11 @@
 		return re.test(email);
 	}
 
-	$: if (valid) {
-		setTimeout(() => {
-			login();
-		}, 200);
-	}
+	// $: if (valid) {
+	// 	setTimeout(() => {
+	// 		login();
+	// 	}, 200);
+	// }
 
 	function loginAs(user: string) {
 		email = user + '@example.com';

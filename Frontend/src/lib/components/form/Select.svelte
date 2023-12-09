@@ -4,7 +4,7 @@
 
 	export let options: List[];
 	// console.log('options', options);
-	export let value: string = '';
+	export let value: string | number | null = '';
 	export let label: string = 'Select';
 	export let name: string = 'select';
 	// export let onInput: (event: Event) => void;

@@ -70,7 +70,7 @@
 - [svelte-plugins/datepicker: A simple datepicker component designed for Svelte.](https://github.com/svelte-plugins/datepicker)
 - [Use events • REPL • Svelte](https://svelte.dev/repl/dbeabf42636545b3a8dc6ebe84c2d98c?version=3.17.3)
 - [Laravel Database Structure: 11 Mistakes Developers Make](https://laraveldaily.com/post/laravel-database-structure-11-mistakes-developers-make)
-
+- [How to Set Up and Use Vue 3 in Your Laravel 10 App with Vite.](https://www.linkedin.com/pulse/how-set-up-use-vue-3-your-laravel-10-app-vite-mohamed-annajar)
 
 [Eloquent question, get relationship from collection](https://laracasts.com/discuss/channels/eloquent/eloquent-question-get-relationship-from-collection)
 

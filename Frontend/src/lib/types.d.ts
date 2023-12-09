@@ -108,8 +108,10 @@ export type List = {
 	// id: number;
 };
 
-export type TableColumns = {
+export type TableColumn = {
 	header: string;
 	accessor: string;
 	width: string;
+	type: 'number' | 'string' | 'date' | 'time' | 'datetime' | 'boolean';
+	sortOrder: 'asc' | 'desc' | null;
 };

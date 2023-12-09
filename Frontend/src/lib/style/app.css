@@ -12,6 +12,23 @@
 	--colors-gray11: hsl(0, 0%, 62.8%);
 	--colors-gray12: hsl(0, 0%, 93%);
 	--colors-gray13: hsl(0, 0%, 97%);
+	--color-00: hsl(0, 0%, 0%);
+	--color-01: hsl(0, 0%, 6.66667%);
+	--color-02: hsl(0, 0%, 13.33333%);
+	--color-03: hsl(0, 0%, 20%);
+	--color-04: hsl(0, 0%, 26.66667%);
+	--color-05: hsl(0, 0%, 33.33333%);
+	--color-06: hsl(0, 0%, 40%);
+	--color-07: hsl(0, 0%, 46.66667%);
+	--color-08: hsl(0, 0%, 53.33333%);
+	--color-09: hsl(0, 0%, 60%);
+	--color-10: hsl(0, 0%, 66.66667%);
+	--color-11: hsl(0, 0%, 73.33333%);
+	--color-12: hsl(0, 0%, 80%);
+	--color-13: hsl(0, 0%, 86.66667%);
+	--color-14: hsl(0, 0%, 93.33333%);
+	--color-15: hsl(0, 0%, 100%);
+
 	--php: #4f5b93;
 	--svelte: hsl(15, 100%, 50%);
 	--laravel: rgb(249, 50, 44);
@@ -56,7 +73,7 @@ body {
 	margin: 0;
 	padding: 0;
 	font-family: 'Roboto', sans-serif;
-	background-color: #f5f5f5;
+	background-color: var(--colors-gray13);
 }
 
 .jsonWrapper {
@@ -133,12 +150,12 @@ button:after {
 	border-radius: inherit;
 	box-shadow: var(--box-shadow-after);
 }
-
 .shadowWrapper {
 	position: relative;
 	display: inline-block;
 	box-shadow: var(--box-shadow);
 	border-radius: var(--border-radius-m);
+	border: none;
 }
 .shadowWrapper:after {
 	position: absolute;
@@ -179,4 +196,173 @@ summary:after {
 	content: '';
 	border-radius: inherit;
 	box-shadow: var(--box-shadow-after);
+}
+
+summary::-webkit-details-marker {
+	display: none;
+}
+
+/* 
+	DATAPICKER 
+*/
+.std-component-wrap {
+	position: relative;
+	display: flex !important;
+	height: 27.35px;
+	width: 110px;
+	box-shadow: var(--box-shadow);
+	border-radius: var(--border-radius-m);
+	border: none;
+	background-color: var(--blue);
+	transition: all 0.3s ease-in-out;
+}
+.std-component-wrap:after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	content: '';
+	border-radius: inherit;
+	box-shadow: var(--box-shadow-after);
+}
+.std-component-wrap:hover {
+	box-shadow:
+		var(--box-shadow),
+		2px 2px 2px rgba(0, 0, 0, 0.5);
+	/* filter: brightness(1.1); */
+}
+.std-component-wrap:hover > div {
+	filter: none;
+}
+
+.std-component-wrap input {
+	position: relative;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 0;
+	/* outline: 1px solid red; */
+	padding: 0.25rem 0.5rem;
+	padding-right: 0.5rem;
+	font-size: 1rem;
+	line-height: 1rem;
+	background-color: transparent;
+	height: 27.35px;
+	/* border-radius: var(--border-radius-m); */
+	/* background-color: var(--blue); */
+	color: var(--colors-gray1);
+	/* box-shadow: var(--box-shadow); */
+	transition: all 0.3s ease-in-out;
+	/* margin: 0.25rem; */
+	margin: 0;
+}
+
+.std-calendar-wrap button {
+	border-radius: unset;
+	box-shadow: unset;
+	margin: 0 !important;
+	padding: 0.3rem !important;
+}
+
+.sdt-action-btn {
+	box-shadow: var(--box-shadow) !important;
+	position: relative;
+	margin-inline: 2px;
+}
+.sdt-action-btns:after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	content: '';
+	border-radius: inherit;
+	box-shadow: var(--box-shadow-after);
+}
+
+.sdt-action-btn:hover {
+	box-shadow:
+		var(--box-shadow),
+		2px 2px 2px rgba(0, 0, 0, 0.5) !important;
+	filter: brightness(1.1);
+	background-color: var(--blue) !important;
+}
+
+.sdt-action-btn:active {
+	box-shadow:
+		var(--box-shadow),
+		0px 0px 0px rgba(0, 0, 0, 0.5) !important;
+	filter: brightness(0.9);
+}
+.sdt-clear-btn {
+	border: none !important;
+}
+
+.sdt-clear-btn:hover {
+	background-color: white !important;
+	color: var(--red) !important;
+}
+
+.is-selected .sdt-btn-day {
+	box-shadow: var(--box-shadow) !important;
+	position: relative;
+}
+
+.is-selected .sdt-btn-day::after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	content: '';
+	border-radius: inherit;
+	box-shadow: var(--box-shadow-after);
+}
+
+:root {
+	/* general */
+	--sdt-bg-main: #fff; /** wrap background color */
+	--sdt-shadow-color: #ccc; /** wrap shadow color */
+	--sdt-wrap-shadow: 0 1px 6px var(--sdt-shadow-color); /** wrap shadow settings */
+	--sdt-radius: 4px; /** wrap radius */
+	--sdt-color: #000; /** data to select(e.g date/time) text color (except header & buttons) */
+	--sdt-color-selected: #000; /** selected data(e.g date/time) text color */
+	--sdt-header-color: #000; /** header items color (e.g. text & buttons) */
+	--sdt-btn-header-bg-hover: #dfdfdf; /** header items hover background color */
+	--sdt-bg-selected: var(--blue); /** selected data(e.g date/time) background color */
+
+	/* action buttons */
+	--sdt-today-bg: transparent; /** date picker today button hover background color */
+	--sdt-today-color: #000; /** date picker today button text & border color */
+	--sdt-clear-color: #dc3545; /** clear button text & border color */
+	--sdt-clear-bg: transparent; /** clear button background color */
+	--sdt-clear-hover-color: var(--sdt-bg-main); /** clear button hover text color */
+	--sdt-clear-hover-bg: #dc3545; /** clear button hover background color */
+
+	/* time picker */
+	--sdt-clock-selected-bg: var(--sdt-bg-selected); /** selected time background color */
+	--sdt-clock-bg: #eeeded; /** time picker inner circle background color */
+	--sdt-clock-color: var(--sdt-color); /** time picker text color (watch "--sdt-color") */
+	--sdt-clock-color-hover: var(
+		--sdt-color
+	); /** time picker hover text color (watch "--sdt-color") */
+	--sdt-clock-time-bg: transparent; /** time picker time background color */
+	--sdt-clock-time-bg-hover: transparent; /** time picker time selection hover background color */
+	--sdt-clock-disabled-time: #b22222; /** disabled time picker time text color */
+	--sdt-clock-disabled-time-bg: #eee; /** disabled time picker time background color */
+
+	/* date picker */
+	--sdt-table-selected-bg: var(--sdt-bg-selected); /** selected date background color */
+	--sdt-table-disabled-date: #b22222; /** disabled dates text color */
+	--sdt-table-disabled-date-bg: #eee; /** disabled dates background color */
+	--sdt-table-bg: transparent; /** date picker inner table background color */
+	--sdt-table-data-bg-hover: #eee; /** table selection data hover background color */
+	--sdt-table-today-indicator: #ccc; /** date picker current day marker color */
 }
