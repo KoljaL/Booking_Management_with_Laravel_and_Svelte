@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Endpoint, List, ModelMember } from '$lib/types';
+	import type { Endpoint, List, TableColumn } from '$lib/types';
 	import DataTable from '$lib/components/DataTable.svelte';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
@@ -8,6 +8,7 @@
 	import Select from '$lib/components/form/Select.svelte';
 	import { browser } from '$app/environment';
 	import { delay } from '$lib/utils';
+	import Plus from '$lib/icons/Plus.svelte';
 	import { locationListStore, tokenStore, memberStore } from '$lib/store';
 
 	let model: Endpoint = 'member';
@@ -39,48 +40,82 @@
 		}
 	];
 
-	const tableColumns = [
+	let tableColumns: TableColumn[] = [
 		{
 			header: 'Id',
 			accessor: 'id',
-			width: '4ch'
+			width: '5ch',
+			type: 'number',
+			sortOrder: null
 		},
 		{
 			header: 'Name',
 			accessor: 'name',
-			width: '20ch'
+			width: '25ch',
+			type: 'string',
+			sortOrder: null
 		},
 		{
 			header: 'Email',
 			accessor: 'email',
-			width: '25ch'
+			width: '25ch',
+			type: 'string',
+			sortOrder: null
 		},
 		{
 			header: 'Phone',
 			accessor: 'phone',
-			width: '20ch'
+			width: '20ch',
+			type: 'number',
+			sortOrder: null
 		},
 		{
 			header: 'City',
 			accessor: 'location_city',
-			width: '10ch'
+			width: '10ch',
+			type: 'string',
+			sortOrder: null
 		},
 		{
-			header: 'Created',
-			accessor: 'created_at',
-			width: '15ch'
+			header: 'JC-Number',
+			accessor: 'jc_number',
+			width: '15ch',
+			type: 'number',
+			sortOrder: null
 		},
-		{
-			header: 'Deleted',
-			accessor: 'deleted_at',
-			width: '5ch'
-		},
+		// {
+		// 	header: 'Max Bookings',
+		// 	accessor: 'max_booking',
+		// 	width: '5ch',
+		// 	type: 'number',
+		// 	sortOrder: null
+		// },
+		// {
+		// 	header: 'Created',
+		// 	accessor: 'created_at',
+		// 	width: '15ch',
+		// 	type: 'date',
+		// 	sortOrder: null
+		// },
+		// {
+		// 	header: 'Deleted',
+		// 	accessor: 'deleted_at',
+		// 	width: '5ch',
+		// 	type: 'date',
+		// 	sortOrder: null
+		// },
 		{
 			header: 'Active',
 			accessor: 'active',
-			width: '7ch'
+			width: '7ch',
+			type: 'string',
+			sortOrder: null
 		}
 	];
+
+	if (!$tokenStore.is_admin) {
+		tableColumns = tableColumns.filter((column) => column.header !== 'City');
+	}
 
 	onMount(() => {
 		// loadData(model);
@@ -146,7 +181,7 @@
 		<Select label={'Location'} bind:value={parameterLocation} options={locationList} />
 	{/if}
 
-	<button class="addMember" on:click={() => openModal(0)}>Add member</button>
+	<button class="addMember" on:click={() => openModal(0)}><Plus /></button>
 </div>
 
 <!-- <JsonView json={tableData} open={true} /> -->
@@ -190,6 +225,11 @@
 	.addMember {
 		margin-right: 0;
 		margin-left: auto;
+		padding: 0.25rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		line-height: 1;
 	}
 	.noDataMessage {
 		padding-top: 1rem;

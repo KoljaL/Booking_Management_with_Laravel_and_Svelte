@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import { locationListStore, tokenStore, bookingStore, memberListStore } from '$lib/store';
 	import { browser } from '$app/environment';
+	import { fade, slide } from 'svelte/transition';
 	import URLHandler from '$lib/urlHandler';
 	import Select from '$lib/components/form/Select.svelte';
 	import DataTable from '$lib/components/DataTable.svelte';
@@ -10,6 +11,7 @@
 	import SveltyPicker, { config } from 'svelty-picker';
 	import Plus from '$lib/icons/Plus.svelte';
 	import { de, jp } from 'svelty-picker/i18n';
+
 	// config.i18n = de;
 	let urlHandler: URLHandler;
 	let model: Endpoint = 'booking';
@@ -17,6 +19,7 @@
 	let tableData: any = [];
 	let showModal = false;
 	let showTable = false;
+	let showSelection = false;
 	let id: number;
 	let locationList: List[] = [{ key: 'All', value: '0' }];
 	let memberList: List[] = [{ key: 'All', value: '0' }];
@@ -63,7 +66,7 @@
 		{
 			header: 'Slots',
 			accessor: 'slots',
-			width: '5ch',
+			width: '7ch',
 			type: 'number',
 			sortOrder: null
 		},
@@ -76,10 +79,17 @@
 		},
 
 		{
-			header: 'Created',
-			accessor: 'created_at',
+			header: 'Comment Member',
+			accessor: 'comment_member',
 			width: '20ch',
-			type: 'date',
+			type: 'string',
+			sortOrder: null
+		},
+		{
+			header: 'Comment Staff',
+			accessor: 'comment_staff',
+			width: '20ch',
+			type: 'string',
 			sortOrder: null
 		}
 	];
@@ -108,6 +118,9 @@
 	onMount(async () => {
 		loadLocationList();
 		loadMemberList();
+		setTimeout(() => {
+			showSelection = true;
+		}, 500);
 
 		urlHandler = new URLHandler();
 		const modelId = urlHandler.read('bid');
@@ -148,6 +161,7 @@
 			// console.log('tableData', tableData);
 			responseMessage = message;
 			showTable = true;
+			showSelection = true;
 		} else {
 			responseMessage = 'Error: ' + message;
 			showTable = true;
@@ -185,28 +199,6 @@
 		showModal = false;
 		urlHandler.remove('bid');
 	}
-
-	// $: if (filterParameter.date === null) {
-	// console.log('filterParameter.date', filterParameter.date);
-	// filterParameter.date = 'All';
-	// // click on body to close datepicker
-	// // document.body.click();
-	// const input = document.querySelector(
-	// 	'.std-component-wrap input[name="date_input"]'
-	// ) as HTMLInputElement;
-	// console.log('input', input);
-	// input.readOnly = false;
-	// input?.value === 'All';
-	// console.log('input', input);
-	// setTimeout(() => {
-	// 	document.body.click();
-	// }, 100);
-	// }
-	// $: console.log('filterParameter.date', filterParameter.date);
-
-	// $: console.log('showModal', showModal);
-	// $: console.log('endpoint', endpoint);
-	// $: console.log('pageTitle', pageTitle);
 </script>
 
 <svelte:head>
@@ -214,26 +206,33 @@
 </svelte:head>
 
 <!-- {JSON.stringify(tableData)} -->
-<div class="selection">
-	<Select label={'Show'} bind:value={filterParameter.show} options={showParameter} />
+{#if showSelection}
+	<div class="selection" transition:fade={{ duration: 300 }}>
+		<Select label={'Show'} bind:value={filterParameter.show} options={showParameter} />
 
-	<label for="date">
-		Date
-		<SveltyPicker
-			bind:value={filterParameter.date}
-			displayFormat="j. n. Y"
-			displayFormatType="php"
+		<label for="date">
+			Date
+			<SveltyPicker
+				bind:value={filterParameter.date}
+				displayFormat="j. n. Y"
+				displayFormatType="php"
+			/>
+		</label>
+
+		<Select
+			label={'Member'}
+			bind:value={filterParameter.member}
+			options={memberList}
+			maxwidth={'10ch'}
 		/>
-	</label>
 
-	<Select label={'Member'} bind:value={filterParameter.member} options={memberList} />
+		{#if $tokenStore.is_admin && locationList.length > 0}
+			<Select label={'Location'} bind:value={filterParameter.location} options={locationList} />
+		{/if}
 
-	{#if $tokenStore.is_admin && locationList.length > 0}
-		<Select label={'Location'} bind:value={filterParameter.location} options={locationList} />
-	{/if}
-
-	<button class="addBooking" on:click={() => openModal(0)}><Plus /></button>
-</div>
+		<button class="addBooking" on:click={() => openModal(0)}><Plus /></button>
+	</div>
+{/if}
 
 {#if tableData.length > 0}
 	{#key tableData}
@@ -267,13 +266,23 @@
 <style>
 	.selection {
 		display: flex;
+		align-items: center;
 		gap: 1rem;
 		flex-direction: row;
 		margin-bottom: 1rem;
 	}
+	@keyframes fade-in {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
 	.addBooking {
 		margin-right: 0;
 		margin-left: auto;
+		padding: 0.25rem;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -286,7 +295,7 @@
 	}
 	label {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		flex-wrap: nowrap;
 		gap: 0.5rem;
 	}

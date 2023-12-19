@@ -7,6 +7,7 @@
 	export let value: string | number | null = '';
 	export let label: string = 'Select';
 	export let name: string = 'select';
+	export let maxwidth: string = 'var(--width)';
 	// export let onInput: (event: Event) => void;
 	// export let onFocus?: (event: Event | null) => void;
 	// export let onBlur: (event: Event | null) => void;
@@ -27,7 +28,7 @@
 			return cur.key.length > acc ? cur.key.length : acc;
 		}, 0) *
 			0.75 +
-		'rem';
+		'ch';
 	// console.log('width', width);
 
 	function selectOption(event: Event) {
@@ -44,7 +45,7 @@
 	};
 </script>
 
-<div class="selectWrapper" style="--width:{width}">
+<div class="selectWrapper" style="--width:{width}; --maxwidth:{maxwidth};">
 	<label on:focusout={handleDropdownFocusLoss}>
 		{label}
 		<button class="toggleButton" on:click={() => (open = !open)}>
@@ -79,18 +80,22 @@
 <style>
 	.selectWrapper {
 		position: relative;
-		width: fit-content;
+		/* width: fit-content; */
+		/* width: calc(var(--width) + 12ch); */
+		/* width: var(--width); */
+		/* max-width: var(--maxwidth); */
 	}
 
 	label {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		flex-wrap: nowrap;
 		gap: 0.25rem;
 	}
 	.toggleButton {
 		min-width: fit-content;
 		width: var(--width);
+		max-width: var(--maxwidth);
 		text-align: left;
 		display: flex;
 		align-items: center;
@@ -116,6 +121,7 @@
 	.options {
 		min-width: fit-content;
 		width: var(--width);
+		max-width: var(--maxwidth);
 		position: absolute;
 		top: 100%;
 		right: 0;

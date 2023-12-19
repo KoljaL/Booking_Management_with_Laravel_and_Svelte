@@ -3,19 +3,18 @@
 	import { tokenStore, userStore } from '$lib/store';
 	import Config from '$lib/components/Config.svelte';
 	import { browser } from '$app/environment';
+	import MenuStaff from '$lib/components/layout/MenuStaff.svelte';
+	import type { Endpoint } from '$lib/types';
+
+	export let endpoint: Endpoint = '';
 </script>
 
 <header>
 	<div class="left">
 		<Rocket />
-		<!-- <h2>Rocket Booking</h2> -->
 	</div>
 	<div class="center">
-		{#if browser}
-			<!-- <p>{$userST.role}</p> -->
-			<!-- <p>{$userST.is_admin}</p> -->
-			<!-- <p>Location: {$userST.location.city}</p> -->
-		{/if}
+		<MenuStaff {endpoint} />
 	</div>
 	<div class="right">
 		{#if browser}
@@ -31,7 +30,7 @@
 		justify-content: space-between;
 		align-items: center;
 		height: var(--header-height);
-		margin-bottom: 0.5rem;
+		margin-bottom: 1.5rem;
 	}
 	.left {
 		display: flex;

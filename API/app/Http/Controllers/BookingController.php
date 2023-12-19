@@ -22,16 +22,9 @@ class BookingController extends Controller {
      */
     public function index(Request $request) {
         try {
-            // $bookings = Booking::filter($request->all())->get();
-            // $count_bookings = $bookings->count();
 
-            // return response()->json([
-            //     'message' => $count_bookings . ' Bookings filtered by',
-            //     'count_bookings' => $count_bookings,
-            //     'data' => $bookings
-            // ], 200);
             $filters = $request->all();
-            $bookings = Booking::filter($filters)->get();
+            $bookings = Booking::byAccessLevel()->filter($filters)->get();
             $count_bookings = $bookings->count();
 
             // Generate a dynamic message based on applied filters
@@ -52,9 +45,10 @@ class BookingController extends Controller {
         $message = $count_bookings . ' Bookings ';
 
         if (isset($filters['date'])) {
-            $message .= ' on: ' . $filters['date'] . ',';
+            $formattedDate = date('d.m.Y', strtotime($filters['date']));
+            $message .= ' on: ' . $formattedDate . ',';
         } else {
-            $message .= ' on: ' . date('Y-m-d') . ',';
+            $message .= ' on: ' . date('d.m.Y') . ',';
         }
 
         if (isset($filters['member']) || isset($filters['show']) || isset($filters['location'])) {
@@ -134,7 +128,8 @@ class BookingController extends Controller {
         // validate the request
         $request->validate([
             'member_id' => 'required|integer',
-            'date' => 'required|date_format:Y-m-d H:i:s',
+            'date' => 'required',
+            // 'date' => 'required|date_format:Y-m-d H:i:s',
             'slots' => 'required|integer',
         ]);
         DB::beginTransaction();
@@ -175,7 +170,8 @@ class BookingController extends Controller {
         $request->validate([
             'member_id' => 'integer',
             'location_id' => 'integer',
-            'date' => 'required|date_format:Y-m-d H:i:s',
+            // 'date' => 'required|date_format:Y-m-d H:i:s',
+            'date' => 'required',
             'slots' => 'integer',
             'comment_member' => 'string',
             'comment_staff' => 'string',

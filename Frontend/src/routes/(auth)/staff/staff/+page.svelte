@@ -1,16 +1,23 @@
 <script lang="ts">
-	import type { Endpoint } from '../../../../lib/types';
+	import type { Endpoint, List, TableColumn } from '$lib/types';
+	import { locationListStore, tokenStore, bookingStore, memberListStore } from '$lib/store';
 	import { request } from '$lib/request';
 	import DataTable from '$lib/components/DataTable.svelte';
+	import { browser } from '$app/environment';
+	import URLHandler from '$lib/urlHandler';
 	import { onMount } from 'svelte';
+	import Plus from '$lib/icons/Plus.svelte';
 	import { page } from '$app/stores';
 	import Modal from '$lib/components/Modal.svelte';
 	import EditStaff from '$lib/components/edit/EditStaff.svelte';
 
+	let urlHandler: URLHandler;
 	let model: Endpoint = 'staff';
 	let responseMessage: string = '';
+	let showSelection = false;
 	let tableData: any = [];
 	let showModal = false;
+	let locationList: List[] = [{ key: 'All', value: '0' }];
 	let showTable = false;
 	let id: number;
 
@@ -48,12 +55,24 @@
 		}
 	];
 
-	onMount(() => {
-		loadData(model);
-		// if ($page.url.searchParams.get('id')) {
-		// 	id = $page.url.searchParams.get('id')!;
-		// 	openModal(id);
-		// }
+	$: if (locationList && browser) {
+		setTimeout(() => {
+			loadData(model);
+		}, 100);
+	}
+
+	onMount(async () => {
+		loadLocationList();
+		setTimeout(() => {
+			showSelection = true;
+		}, 500);
+
+		urlHandler = new URLHandler();
+		const modelId = urlHandler.read('bid');
+		if (modelId) {
+			id = typeof modelId === 'string' ? parseInt(modelId.slice(1)) : modelId;
+			openModal(id);
+		}
 	});
 
 	async function loadData(path: Endpoint) {
@@ -74,6 +93,16 @@
 		id = rowId;
 		console.log('openModal', id);
 		showModal = true;
+	}
+
+	async function loadLocationList() {
+		const locationListAsyncable = locationListStore('GET', 'location/list', null);
+		const { status, data, message } = await locationListAsyncable.get();
+		if (status === 200) {
+			locationList = [{ key: 'All', value: '0' }, ...(data as List[])];
+		} else {
+			console.error('LocationList loading failed', message);
+		}
 	}
 
 	function onClose() {

@@ -148,7 +148,7 @@ export const request = async <T>(
 	});
 
 	if (!noAuthEndpoints.includes(endpoint) && !token && browser) {
-		goto(`${baseUrl}/login`);
+		// goto(`${baseUrl}/login`);
 		return {
 			status: 404,
 			message: 'Auth required',

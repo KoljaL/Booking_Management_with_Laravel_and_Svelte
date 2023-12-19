@@ -93,7 +93,7 @@
 		height: var(--menu-height);
 		display: flex;
 		max-width: fit-content;
-		margin-bottom: 1rem;
+		/* margin-bottom: 1.5rem; */
 		position: relative;
 	}
 	ul {

@@ -113,5 +113,5 @@ export type TableColumn = {
 	accessor: string;
 	width: string;
 	type: 'number' | 'string' | 'date' | 'time' | 'datetime' | 'boolean';
-	sortOrder: 'asc' | 'desc' | null;
+	sortOrder: 'asc' | 'desc' | '' | null;
 };

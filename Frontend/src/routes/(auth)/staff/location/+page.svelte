@@ -1,18 +1,37 @@
 <script lang="ts">
 	import type { Endpoint } from '../../../../lib/types';
-	import { request } from '$lib/request';
 	import DataTable from '$lib/components/DataTable.svelte';
+	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import Select from '$lib/components/form/Select.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import EditLocation from '$lib/components/edit/EditLocation.svelte';
-
+	import { locationStore } from '$lib/store';
+	import { browser } from '$app/environment';
 	let model: Endpoint = 'location';
 	let responseMessage: string = '';
 	let tableData: any = [];
 	let showModal = false;
 	let showTable = false;
+	let showSelection = false;
 	let id: number;
+
+	const showParameter = [
+		{
+			key: 'Active',
+			value: ''
+		},
+		{
+			key: 'Deleted',
+			value: 'deleted'
+		},
+		{
+			key: 'All',
+			value: 'all'
+		}
+	];
+
 	const tableColumns = [
 		{
 			header: 'Id',
@@ -65,24 +84,63 @@
 			width: '10ch'
 		}
 	];
+
+	type FilterParameter = {
+		show: 'active' | 'inactive' | 'deleted' | 'all' | null;
+		date: string | undefined;
+		location: string | number | null;
+		member: string | number | null;
+	};
+
+	let filterParameter: FilterParameter = {
+		show: null,
+		date: new Date().toISOString().slice(0, 10),
+		location: null,
+		member: null
+	};
+
+	$: if (filterParameter && browser) {
+		setTimeout(() => {
+			loadData(model);
+		}, 100);
+	}
+
 	onMount(() => {
-		loadData(model);
+		// loadData(model);
 		// if ($page.url.searchParams.get('id')) {
 		// 	id = $page.url.searchParams.get('id')!;
 		// 	openModal(id);
 		// }
 	});
 
+	// async function loadData(path: Endpoint) {
+	// 	tableData = [];
+	// 	const { status, message, data } = await request('GET', path);
+	// 	if (status === 200) {
+	// 		tableData = data;
+	// 		console.log('tableData', tableData);
+	// 		responseMessage = message;
+	// 		showTable = true;
+	// 	} else {
+	// 		responseMessage = 'Error: ' + message;
+	// 		console.error('TableData loading failed', message);
+	// 	}
+	// }
+
 	async function loadData(path: Endpoint) {
-		tableData = [];
-		const { status, message, data } = await request('GET', path);
+		showTable = false;
+
+		const locationAsyncable = locationStore('GET', path, null);
+		const { status, data, message } = await locationAsyncable.get();
 		if (status === 200) {
 			tableData = data;
-			console.log('tableData', tableData);
+			// console.log('tableData', tableData);
 			responseMessage = message;
 			showTable = true;
+			showSelection = true;
 		} else {
 			responseMessage = 'Error: ' + message;
+			showTable = true;
 			console.error('TableData loading failed', message);
 		}
 	}
@@ -110,6 +168,12 @@
 <svelte:head>
 	<title>RB - Location</title>
 </svelte:head>
+
+{#if showSelection}
+	<div class="selection" transition:fade={{ duration: 300 }}>
+		<Select label={'Show'} bind:value={filterParameter.show} options={showParameter} />
+	</div>
+{/if}
 
 {#if tableData.length > 0}
 	<DataTable
